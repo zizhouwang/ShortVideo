@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/videoLL"
+    android:layout_width="match_parent"
+    android:layout_height="220dp">
+    android:layout_gravity="center">
+
+    <FrameLayout
+        android:id="@+id/videoParentFL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <FrameLayout
+            android:id="@+id/videoFL"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/blackColor"
+            android:clipChildren="false">
+
+            <ImageView
+                android:id="@+id/cropThumbnailIV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/partAlphaBlack" />
+
+            <ImageView
+                android:id="@+id/videoThumbnailIV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/video_thumbnail" />
+
+            <FrameLayout
+                android:id="@+id/videoControlFL"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/playVideoIV"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:background="@color/clearColor"
+                    android:src="@drawable/play50_50" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/videoTitleTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_gradient"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:text="The Leap of Faith Water Slide at Atlantis"
+                android:textColor="@color/whiteColor"
+                android:textSize="16sp" />
+        </FrameLayout>
+    </FrameLayout>
+
+
+</LinearLayout>

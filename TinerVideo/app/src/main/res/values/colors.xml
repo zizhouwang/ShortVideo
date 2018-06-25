@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="grayLine">#CCCCCC</color>
+    <color name="whiteColor">#FFFFFF</color>
+    <color name="processGrayLine">#828282</color>
+    <color name="partAlphaBlack">#80000000</color>
+    <color name="startGradientColor">#80000000</color>
+    <color name="highAlphaBlack">#40000000</color>
+    <color name="defaultThumbColor">#F0F0F0</color>
+    <color name="tabBackgroundColor">#F0F0F0</color>
+    <color name="lineColor">#DDDDDD</color>
+    <color name="textColor">#444444</color>
+    <color name="clearColor">#00000000</color>
+    <color name="blackColor">#000000</color>
+    <color name="thumbBackgroundColor">#333333</color>
+    <color name="tabClickColor">#343434</color>
+    <color name="tabNotClickColor">#aaaaaa</color>
+    <color name="testColor">#d4665b</color>
+</resources>

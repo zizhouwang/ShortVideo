@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120px"
+    android:background="@color/tabBackgroundColor"
+    android:layout_gravity="bottom">
+
+    <FrameLayout
+        android:id="@+id/bottomHomeFL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/bottomHomeIV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50px"
+            android:layout_marginTop="18px"
+            android:src="@drawable/home_click" />
+
+        <TextView
+            android:id="@+id/bottomHomeTV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="60px"
+            android:gravity="center"
+            android:text="Home"
+            android:textColor="@color/tabClickColor"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/bottomMeFL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/bottomMeIV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50px"
+            android:layout_marginTop="18px"
+            android:src="@drawable/me_button" />
+
+        <TextView
+            android:id="@+id/bottomMeTV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="60px"
+            android:gravity="center"
+            android:text="Me"
+            android:textColor="@color/tabNotClickColor" />
+    </FrameLayout>
+</LinearLayout>

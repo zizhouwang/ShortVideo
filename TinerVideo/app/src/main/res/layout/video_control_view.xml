@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/videoProgressFL"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_gravity="bottom">
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/videoProgressInlineFL"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/video_control_bottom_background_color">
+
+        <TextView
+            android:id="@+id/currentTimeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="16dp"
+            android:text="00:00:29"
+            android:textColor="@color/whiteColor"
+            android:textSize="16dp" />
+
+        <SeekBar
+            android:id="@+id/currentTimeSB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="74dp"
+            android:layout_marginRight="114dp"
+            android:progress="50"
+            android:progressBackgroundTint="@color/whiteColor"
+            android:progressTint="@color/whiteColor"
+            android:secondaryProgressTint="@color/whiteColor"
+            android:thumbTint="@color/whiteColor" />
+
+        <TextView
+            android:id="@+id/totalTimeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="56dp"
+            android:text="00:01:09"
+            android:textColor="@color/whiteColor"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:id="@+id/fullScreenIV"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/full_screen" />
+
+    </FrameLayout>
+    <View
+        android:id="@+id/fullScreenView"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right|bottom"
+        android:src="@drawable/full_screen"/>
+</FrameLayout>

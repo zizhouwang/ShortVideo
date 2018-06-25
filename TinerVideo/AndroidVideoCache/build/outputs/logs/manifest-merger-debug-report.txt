@@ -1,0 +1,37 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+	package
+		ADDED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:3:5-38
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+		ADDED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+		ADDED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:2:1-5:12
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+application
+ADDED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml:4:5-20
+uses-sdk
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+		ADDED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+		ADDED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml
+		INJECTED from /Users/zizhouwang/Downloads/TinerVideo/AndroidVideoCache/src/main/AndroidManifest.xml

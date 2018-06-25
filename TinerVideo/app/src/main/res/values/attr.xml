@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="customView">
+        <attr name="imageViewResource" format="reference|color"/>
+    </declare-styleable>
+    <declare-styleable name="album">
+        <attr name="android:layout_width"/>
+        <attr name="android:layout_height"/>
+        <attr name="android:layout_marginLeft"/>
+        <attr name="android:layout_marginRight"/>
+        <attr name="android:layout_marginTop"/>
+        <attr name="android:layout_marginBottom"/>
+        <attr name="android:paddingLeft"/>
+        <attr name="android:paddingRight"/>
+        <attr name="android:paddingTop"/>
+        <attr name="android:paddingBottom"/>
+    </declare-styleable>
+</resources>

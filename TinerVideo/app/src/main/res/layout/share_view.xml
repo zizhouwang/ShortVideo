@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customView="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shareFL"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/highAlphaBlack">
+
+    <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/bottomShareFL"
+        android:layout_width="1080px"
+        android:layout_height="864px"
+        android:layout_gravity="bottom"
+        android:background="@color/defaultThumbColor">
+        
+        <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout
+            android:id="@+id/shareFacebookFL"
+            android:layout_width="270px"
+            android:layout_height="432px">
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaImageView
+                android:layout_width="200px"
+                android:layout_height="200px"
+                android:src="@drawable/facebook_logo"
+                android:layout_marginLeft="40px"
+                android:layout_marginTop="80px"
+                android:scaleType="fitXY"/>
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
+                android:layout_width="270px"
+                android:layout_height="wrap_content"
+                android:text="facebook"
+                android:gravity="center"
+                android:layout_marginTop="300px"
+                android:paddingLeft="10dp"
+                android:paddingRight="6dp"
+                android:textColor="@color/textColor"/>
+
+        </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
+
+        <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout
+            android:id="@+id/shareTwitterFL"
+            android:layout_width="270px"
+            android:layout_height="432px"
+            android:layout_marginLeft="270px">
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaImageView
+                android:layout_width="200px"
+                android:layout_height="200px"
+                android:src="@drawable/twitter_logo"
+                android:layout_marginLeft="40px"
+                android:layout_marginTop="80px"
+                android:scaleType="fitXY"/>
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
+                android:layout_width="270px"
+                android:layout_height="wrap_content"
+                android:text="twitter"
+                android:gravity="center"
+                android:layout_marginTop="300px"
+                android:paddingLeft="10dp"
+                android:paddingRight="6dp"
+                android:textColor="@color/textColor"/>
+
+        </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
+
+        <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout
+            android:id="@+id/shareMessageFL"
+            android:layout_width="270px"
+            android:layout_height="432px"
+            android:layout_marginLeft="540px">
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaImageView
+                android:layout_width="200px"
+                android:layout_height="200px"
+                android:src="@drawable/message_logo1"
+                android:layout_marginLeft="40px"
+                android:layout_marginTop="80px"
+                android:scaleType="fitXY"/>
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
+                android:layout_width="270px"
+                android:layout_height="wrap_content"
+                android:text="message"
+                android:gravity="center"
+                android:layout_marginTop="300px"
+                android:paddingLeft="10dp"
+                android:paddingRight="6dp"
+                android:textColor="@color/textColor"/>
+
+        </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:background="@color/lineColor"/>
+
+        <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout
+            android:id="@+id/downloadFL"
+            android:layout_width="270px"
+            android:layout_height="432px"
+            android:layout_marginTop="432px"
+            android:layout_marginLeft="0px">
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.OvalImageView
+                android:layout_width="200px"
+                android:layout_height="200px"
+                android:src="@drawable/download_button"
+                android:layout_marginLeft="40px"
+                android:layout_marginTop="80px"
+                android:paddingLeft="60px"
+                android:paddingRight="60px"
+                android:paddingTop="40px"
+                android:paddingBottom="60px"
+                android:background="@drawable/oval_background"
+                customView:imageViewResource="@drawable/download_button"/>
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
+                android:layout_width="270px"
+                android:layout_height="wrap_content"
+                android:text="download"
+                android:gravity="center"
+                android:layout_marginTop="300px"
+                android:paddingLeft="10dp"
+                android:paddingRight="6dp"
+                android:textColor="@color/textColor"/>
+
+        </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
+
+        <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout
+            android:id="@+id/saveFL"
+            android:layout_width="270px"
+            android:layout_height="432px"
+            android:layout_marginTop="432px"
+            android:layout_marginLeft="270px">
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.OvalImageView
+                android:layout_width="200px"
+                android:layout_height="200px"
+                android:src="@drawable/save_button"
+                android:layout_marginLeft="40px"
+                android:layout_marginTop="80px"
+                android:paddingLeft="60px"
+                android:paddingRight="60px"
+                android:paddingTop="55px"
+                android:paddingBottom="65px"
+                android:background="@drawable/oval_background"
+                customView:imageViewResource="@drawable/save_button"/>
+
+            <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
+                android:layout_width="200px"
+                android:layout_height="wrap_content"
+                android:text="save"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="300px"
+                android:textColor="@color/textColor"/>
+
+        </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
+
+    </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
+
+</FrameLayout>

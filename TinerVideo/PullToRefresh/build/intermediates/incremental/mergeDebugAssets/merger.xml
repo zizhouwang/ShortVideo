@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/zizhouwang/Downloads/TinerVideo/PullToRefresh/src/main/assets"/><source path="/Users/zizhouwang/Downloads/TinerVideo/PullToRefresh/build/generated/assets/shaders/debug"/></dataSet><dataSet config="debug"><source path="/Users/zizhouwang/Downloads/TinerVideo/PullToRefresh/src/debug/assets"/></dataSet></merger>
