@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,6 +24,8 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,10 +38,12 @@ import com.danikula.videocache.HttpProxyCacheServer;
 import com.video.tiner.zizhouwang.tinervideo.ImageLoader.ImageLoader;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
+import com.video.tiner.zizhouwang.tinervideo.adapter.VideoListAdapter;
 import com.video.tiner.zizhouwang.tinervideo.model.VideoModel;
 import com.video.tiner.zizhouwang.tinervideo.videoProxy.HttpGetProxy;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/6/2.
@@ -49,16 +54,16 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     public int height;
     public int videoWidth;
     public String videoPath;
+    private List<VideoListAdapter.ViewHolder> viewHolders;
 
     public SurfaceTexture savedSurfaceTexture;
     public Surface savedSurface;
 
-    public Boolean isFullScreen;
+    public Boolean isFullScreen = false;
     public Boolean isLoading;
     public Boolean isNeedPlay;
     public Boolean isSetVideoPath;
     public Boolean isPrepare;
-    public Boolean isNeedRepairFullScreenHeight;
     private Boolean isNeedStart;
     private Boolean isLoadedAfterAvai;
     private Boolean isLoadedAfterPrepare;
@@ -130,7 +135,8 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         loadVideoLayoutParams.gravity = Gravity.CENTER;
         loadVideoPB.setLayoutParams(loadVideoLayoutParams);
         loadVideoPB.setVisibility(INVISIBLE);
-        videoFL.addView(loadVideoPB, 2);
+        videoFL.addView(loadVideoPB, 0);
+        loadVideoPB.bringToFront();
     }
 
     private void initControlFrameLayout(final Handler videoStartHandlerr) {
@@ -205,83 +211,94 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 public void onClick(View v) {
                     int screenHeight = FormatUtil.getScreenHeight(FormatUtil.mainContext);
                     int screenWidth = FormatUtil.getScreenWidth(FormatUtil.mainContext);
+                    Window window = ((AppCompatActivity) FormatUtil.mainContext).getWindow();
+                    ((ViewGroup) videoFL.getParent()).removeView(videoFL);
                     if (isFullScreen == false) {
-                        videoParentFL.removeView(videoFL);
                         ViewGroup vg = FormatUtil.getWindow(((AppCompatActivity) FormatUtil.mainContext));
-
-                        int systemUiVIsi = vg.getSystemUiVisibility();
-                        int fullScreenFlag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-                        systemUiVIsi |= fullScreenFlag;
-                        vg.setSystemUiVisibility(systemUiVIsi);
-
-                        vg.addView(videoFL);
-                        fullScreenIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.shrink_screen));
-                        isFullScreen = true;
-
-                        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoFL.getLayoutParams();
-                        ViewGroup.LayoutParams videoTextureLayoutParams = tinerTextureView.getLayoutParams();
-                        float screenXY = screenWidth * 1.0f / screenHeight;
-                        float videoXY = videoWidth * 1.0f / height;
-                        float screenYX = screenHeight * 1.0f / screenWidth;
-                        if (videoXY > screenYX) {
-                            layoutParams.width = screenHeight;
-                            layoutParams.height = screenWidth;
-                            layoutParams.gravity = Gravity.CENTER;
-                            videoFL.setRotation(90);
-                            videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                            videoTextureLayoutParams.height = height * screenHeight / videoWidth;
-                        } else if (videoXY > 1) {
-                            layoutParams.width = screenHeight;
-                            layoutParams.height = screenWidth;
-                            layoutParams.gravity = Gravity.CENTER;
-                            videoFL.setRotation(90);
-                            videoTextureLayoutParams.width = videoWidth * screenWidth / height;
-                            videoTextureLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                        } else if (videoXY > screenXY) {
-                            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                            layoutParams.gravity = Gravity.CENTER;
+                        if (Build.VERSION.SDK_INT >= 21) {
+                            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                         } else {
-                            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                            layoutParams.gravity = Gravity.CENTER;
-
-                            videoTextureLayoutParams.width = videoWidth * screenHeight / height;
-                            videoTextureLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                            int systemUiVIsi = vg.getSystemUiVisibility();
+                            int fullScreenFlag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                            systemUiVIsi |= fullScreenFlag;
+                            vg.setSystemUiVisibility(systemUiVIsi);
                         }
-                        videoFL.setLayoutParams(layoutParams);
-                        tinerTextureView.setLayoutParams(videoTextureLayoutParams);
-                        isNeedRepairFullScreenHeight = true;
+                        vg.addView(videoFL);
                     } else {
                         ViewGroup vg = FormatUtil.getWindow(((AppCompatActivity) FormatUtil.mainContext));
-                        vg.removeView(videoFL);
                         videoParentFL.addView(videoFL);
-                        videoLL.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-                        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoFL.getLayoutParams();
-                        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                        layoutParams.height = height;
-                        layoutParams.setMargins(0, 0, 0, 0);
-                        videoFL.setLayoutParams(layoutParams);
-                        videoFL.setRotation(0);
-
-                        int systemUiVIsi = vg.getSystemUiVisibility();
-                        int fullScreenFlag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-                        systemUiVIsi &= ~fullScreenFlag;
-                        vg.setSystemUiVisibility(systemUiVIsi);
-
-                        fullScreenIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.full_screen));
-                        isFullScreen = false;
-
-                        FrameLayout.LayoutParams videoTextureFL = (FrameLayout.LayoutParams) tinerTextureView.getLayoutParams();
-                        videoTextureFL.width = videoWidth;
-                        videoTextureFL.height = height;
-                        tinerTextureView.setLayoutParams(videoTextureFL);
+                        if (Build.VERSION.SDK_INT >= 21) {
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        } else {
+                            int systemUiVIsi = vg.getSystemUiVisibility();
+                            int fullScreenFlag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+                            systemUiVIsi &= ~fullScreenFlag;
+                            vg.setSystemUiVisibility(systemUiVIsi);
+                        }
                     }
+                    changeFullScreenLayout(screenWidth, screenHeight);
                 }
             });
             updateControlFrameLayout();
         }
     };
+
+    public void changeFullScreenLayout(int screenWidth, int screenHeight) {
+        if (isFullScreen == false) {
+            isFullScreen = true;
+            fullScreenIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.shrink_screen));
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoFL.getLayoutParams();
+            ViewGroup.LayoutParams videoTextureLayoutParams = tinerTextureView.getLayoutParams();
+            float screenXY = screenWidth * 1.0f / screenHeight;
+            float videoXY = videoWidth * 1.0f / height;
+            float screenYX = screenHeight * 1.0f / screenWidth;
+            if (videoXY > screenYX) {
+                layoutParams.width = screenHeight;
+                layoutParams.height = screenWidth;
+                layoutParams.gravity = Gravity.CENTER;
+                videoFL.setRotation(90);
+                videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                videoTextureLayoutParams.height = height * screenHeight / videoWidth;
+            } else if (videoXY > 1) {
+                layoutParams.width = screenHeight;
+                layoutParams.height = screenWidth;
+                layoutParams.gravity = Gravity.CENTER;
+                videoFL.setRotation(90);
+                videoTextureLayoutParams.width = videoWidth * screenWidth / height;
+                videoTextureLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            } else if (videoXY > screenXY) {
+                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                layoutParams.gravity = Gravity.CENTER;
+
+                videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                videoTextureLayoutParams.height = height * screenWidth / videoWidth;
+            } else {
+                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                layoutParams.gravity = Gravity.CENTER;
+
+                videoTextureLayoutParams.width = videoWidth * screenHeight / height;
+                videoTextureLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            }
+            videoFL.setLayoutParams(layoutParams);
+            tinerTextureView.setLayoutParams(videoTextureLayoutParams);
+        } else {
+            isFullScreen = false;
+            fullScreenIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.full_screen));
+            videoLL.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoFL.getLayoutParams();
+            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            layoutParams.height = height;
+            layoutParams.setMargins(0, 0, 0, 0);
+            videoFL.setLayoutParams(layoutParams);
+            videoFL.setRotation(0);
+            FrameLayout.LayoutParams videoTextureFL = (FrameLayout.LayoutParams) tinerTextureView.getLayoutParams();
+            videoTextureFL.width = videoWidth;
+            videoTextureFL.height = height;
+            tinerTextureView.setLayoutParams(videoTextureFL);
+        }
+    }
 
     private void loadControlFrameLayoutAfterAvai() {
         if (isNeedStart == true && isPrepare == false && isLoadedAfterAvai == false) {
@@ -432,41 +449,42 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
 
     }
 
-    public void updateUIAndData(int position, int height, int videoWidth, VideoModel bean, HashMap<String, HttpGetProxy> httpGetProxyHashMap, int port) {
+    public void updateUIAndData(int position, int height, int videoWidth, VideoModel bean, HashMap<String, HttpGetProxy> httpGetProxyHashMap, int port, List<VideoListAdapter.ViewHolder> viewHolders) {
         if (tinerMediaPlayer != null) {
-            tinerMediaPlayer.release();
-            tinerMediaPlayer = null;
+//            tinerMediaPlayer.release();
+//            tinerMediaPlayer = null;
         }
         if (tinerTextureView != null) {
-            videoFL.removeView(tinerTextureView);
-            tinerTextureView = null;
+//            videoFL.removeView(tinerTextureView);
+//            tinerTextureView = null;
         }
         if (savedSurfaceTexture != null) {
-            savedSurfaceTexture.release();
-            savedSurfaceTexture = null;
+//            savedSurfaceTexture.release();
+//            savedSurfaceTexture = null;
         }
         if (savedSurface != null) {
-            savedSurface.release();
-            savedSurface = null;
+//            savedSurface.release();
+//            savedSurface = null;
         }
         if (videoProgressFL != null) {
             videoProgressFL.setVisibility(View.INVISIBLE);
         }
+        this.viewHolders = viewHolders;
         this.height = height;
         this.videoWidth = videoWidth;
         proxyURL = null;
         videoPath = bean.getVideo_cdn_url();
         videoTitleTV.setText(bean.getShare_text());
-        tinerTextureView = new TextureView(getContext());
-        tinerTextureView.setSurfaceTextureListener(this);
-        videoFL.addView(tinerTextureView, 2, new FrameLayout.LayoutParams(videoWidth, ViewGroup.LayoutParams.MATCH_PARENT));
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) tinerTextureView.getLayoutParams();
-        layoutParams.gravity = Gravity.CENTER;
-        tinerTextureView.setLayoutParams(layoutParams);
+        if (tinerTextureView == null) {
+            tinerTextureView = new TextureView(getContext());
+            tinerTextureView.setSurfaceTextureListener(this);
+            videoFL.addView(tinerTextureView, 2, new FrameLayout.LayoutParams(videoWidth, ViewGroup.LayoutParams.MATCH_PARENT));
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) tinerTextureView.getLayoutParams();
+            layoutParams.gravity = Gravity.CENTER;
+            tinerTextureView.setLayoutParams(layoutParams);
+        }
         tinerTextureView.setVisibility(View.VISIBLE);
         final TinerVideoView thiss = this;
-        isNeedRepairFullScreenHeight = false;
-        isFullScreen = false;
         isSetVideoPath = false;
         isPrepare = false;
         isNeedStart = false;
@@ -495,7 +513,9 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         isNeedPlay = false;
         isLoading = false;
         int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
-        videoFL.setLayoutParams(new FrameLayout.LayoutParams(screenWidth, height));
+        if (isFullScreen != true) {
+            videoFL.setLayoutParams(new FrameLayout.LayoutParams(screenWidth, height));
+        }
         this.setLayoutParams(new LinearLayout.LayoutParams(screenWidth, height));
         if (FormatUtil.isPlayingVideoView == this) {
             FormatUtil.isPlayingVideoView = null;
@@ -537,6 +557,11 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             super.handleMessage(msg);
             try {
                 if (isSetVideoPath == false) {
+                    try {
+                        tinerMediaPlayer.reset();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     tinerMediaPlayer.setDataSource(proxyURL);
                     tinerMediaPlayer.prepareAsync();
                     isSetVideoPath = true;
@@ -596,6 +621,11 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             FormatUtil.isPlayingVideoView = FormatUtil.waitPlayingVideoView;
             if (isSetVideoPath == false) {
                 try {
+                    try {
+                        tinerMediaPlayer.reset();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     tinerMediaPlayer.setDataSource(proxyURL);
                     tinerMediaPlayer.prepareAsync();
                 } catch (Exception e) {

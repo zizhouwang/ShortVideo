@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ContentFrameLayout;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -29,6 +32,7 @@ import com.video.tiner.zizhouwang.tinervideo.subview.TinerVideoView;
 import com.video.tiner.zizhouwang.tinervideo.videoProxy.HttpGetProxy;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import wseemann.media.FFmpegMediaMetadataRetriever;
@@ -38,9 +42,11 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
  */
 
 public class VideoListAdapter extends BaseAdapter {
+    public ListView listView;
     public List<VideoModel> mList;
     private LayoutInflater mInflater;
     private int videoProxyPort = 9180;
+    private List<ViewHolder> viewHolders = new LinkedList<>();
 
     private HashMap<String, HttpGetProxy> httpGetProxyHashMap = new HashMap<>();
 
@@ -76,6 +82,7 @@ public class VideoListAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.video_list_item, null);
             viewHolder.videoListVerticalLL = convertView.findViewById(R.id.videoListVerticalLL);
             viewHolder.shareLayout = convertView.findViewById(R.id.shareLayout);
+            viewHolder.likeLayout = convertView.findViewById(R.id.likeLayout);
             viewHolder.videoChannelTV = convertView.findViewById(R.id.videoChannelTV);
             viewHolder.likeCountTV = convertView.findViewById(R.id.likeCountTV);
             viewHolder.shareCountTV = convertView.findViewById(R.id.shareCountTV);
@@ -90,6 +97,8 @@ public class VideoListAdapter extends BaseAdapter {
 
             // 通过setTag将ViewHolder与convertView绑定
             convertView.setTag(viewHolder);
+
+            viewHolders.add(viewHolder);
         } else {
             // 通过ViewHolder对象找到对应控件
             viewHolder = (ViewHolder) convertView.getTag();
@@ -116,12 +125,16 @@ public class VideoListAdapter extends BaseAdapter {
             videoWidth = screenWidth;
             height = screenWidth;
         }
-        Boolean isFullScreen = viewHolder.tinerInteView.isFullScreen;
-        if (isFullScreen == null) {
-            viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, httpGetProxyHashMap, videoProxyPort + position);
-        } else if (isFullScreen == false) {
-            viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, httpGetProxyHashMap, videoProxyPort + position);
-        }
+        viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, httpGetProxyHashMap, videoProxyPort + position, viewHolders);
+//        Boolean isFullScreen = viewHolder.tinerInteView.isFullScreen;
+//        Log.v("触发了getView", "触发了getView " + position);
+//        if (isFullScreen == null) {
+//            Log.v("触发了getView1", "触发了getView1 " + position);
+//            viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, httpGetProxyHashMap, videoProxyPort + position);
+//        } else if (isFullScreen == false) {
+//            Log.v("触发了getView2", "触发了getView2 " + position);
+//            viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, httpGetProxyHashMap, videoProxyPort + position);
+//        }
         viewHolder.videoChannelTV.setText(bean.getChannel());
         int likedNumber = bean.getVideo_details().getLiked_number();
         if (likedNumber > 1000) {
@@ -151,6 +164,13 @@ public class VideoListAdapter extends BaseAdapter {
             }
         });
 
+        viewHolder.likeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return convertView;
     }
 
@@ -158,6 +178,7 @@ public class VideoListAdapter extends BaseAdapter {
     public class ViewHolder {
         public LinearLayout videoListVerticalLL;
         public LinearLayout shareLayout;
+        public LinearLayout likeLayout;
         public TextView videoChannelTV;
         public TextView likeCountTV;
         public TextView shareCountTV;

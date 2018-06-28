@@ -85,6 +85,16 @@ public class HomeFragment extends Fragment {
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
         pullToRefreshLayout = view.findViewById(R.id.videoListView);
 
+//        final Handler videoPlayHandler = new Handler(Looper.getMainLooper());
+//        Runnable task = new Runnable() {
+//            @Override
+//            public void run() {
+//                pullToRefreshLayout.smoothScrollToPositionFromTop(pullToRefreshLayout.getFirstVisiblePosition() + 2, 0, 0);
+//                videoPlayHandler.postDelayed(this, 3000);
+//            }
+//        };
+//        videoPlayHandler.postDelayed(task, 3000);
+
         pullToRefreshLayout.setPullLoadEnable(true);
         View emptyView = view.findViewById(R.id.emptyview);
         pullToRefreshLayout.setEmptyView(emptyView);
@@ -124,6 +134,7 @@ public class HomeFragment extends Fragment {
                 sendRequestWithHttpURLConnection(view.getContext(), false);
             } else {
                 VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList);
+                videoListAdapter.listView = pullToRefreshLayout;
                 pullToRefreshLayout.setAdapter(videoListAdapter);
             }
         } else {
