@@ -12,4 +12,9 @@ public class BaseImageView extends AppCompatImageView {
     public BaseImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
 }

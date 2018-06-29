@@ -19,6 +19,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -35,6 +36,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseImageView;
 import com.video.tiner.zizhouwang.tinervideo.ImageLoader.ImageLoader;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
@@ -50,6 +52,13 @@ import java.util.List;
  */
 
 public class TinerVideoView extends LinearLayout implements TextureView.SurfaceTextureListener {
+
+    private float mPosX, mPosY, mCurPosX, mCurPosY;
+    private static final int FLING_MIN_DISTANCE = 20;// 移动最小距离
+    private static final int FLING_MIN_VELOCITY = 200;// 移动最大速度
+    private FrameLayout.LayoutParams videoFLLayout = null;
+    private int videoFLLeftMargin = -1;
+    private int videoFLRightMargin = -1;
 
     public int height;
     public int videoWidth;
@@ -70,7 +79,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
 
     public TextureView tinerTextureView;
     public MediaPlayer tinerMediaPlayer;
-    private ImageView videoThumbnailIV;
+    private BaseImageView videoThumbnailIV;
     private ImageView cropThumbnailIV;
     public ImageView playVideoIV;
     public TextView videoTitleTV;
@@ -106,6 +115,11 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         init(context, convertView);
     }
 
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
+
     private void init(final Context context, LinearLayout convertView) {
         final TinerVideoView thiss = this;
         videoThumbnailIV = convertView.findViewById(R.id.videoThumbnailIV);
@@ -116,6 +130,47 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         videoParentFL = convertView.findViewById(R.id.videoParentFL);
         videoLL = convertView.findViewById(R.id.videoLL);
         videoControlFL = convertView.findViewById(R.id.videoControlFL);
+
+        videoThumbnailIV.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        videoFLLayout = (FrameLayout.LayoutParams) videoFL.getLayoutParams();
+                        videoFLLeftMargin = videoFLLayout.leftMargin;
+                        videoFLRightMargin = videoFLLayout.rightMargin;
+                        mCurPosX = -1;
+                        mCurPosY = -1;
+                        mPosX = event.getRawX();
+                        mPosY = event.getY();
+                        Log.v("ACTION_DOWN", "" + mPosX);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        mCurPosX = event.getRawX();
+                        mCurPosY = event.getY();
+                        Log.v("leftMargin", "" + videoFLLeftMargin);
+                        videoFLLayout.leftMargin = (int)(videoFLLeftMargin - (mPosX - mCurPosX));
+                        videoFLLayout.rightMargin = (int)(videoFLRightMargin + (mPosX - mCurPosX));
+                        videoFL.setLayoutParams(videoFLLayout);
+                        Log.v("ACTION_MOVE", "" + mCurPosX);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        videoFLLayout = null;
+                        if (isFullScreen == false || (mCurPosX == -1 && mCurPosY == -1)) {
+                            v.performClick();
+                            return true;
+                        }
+                        if (mCurPosY - mPosY > 0 && (Math.abs(mCurPosY - mPosY) > 25)) {
+
+                        } else if (mCurPosY - mPosY < 0 && (Math.abs(mCurPosY - mPosY) > 25)) {
+
+                        }
+
+                        break;
+                }
+                return true;
+            }
+        });
 
         playVideoIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,28 +310,28 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             if (videoXY > screenYX) {
                 layoutParams.width = screenHeight;
                 layoutParams.height = screenWidth;
-                layoutParams.gravity = Gravity.CENTER;
+//                layoutParams.gravity = Gravity.CENTER;
                 videoFL.setRotation(90);
                 videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 videoTextureLayoutParams.height = height * screenHeight / videoWidth;
             } else if (videoXY > 1) {
                 layoutParams.width = screenHeight;
                 layoutParams.height = screenWidth;
-                layoutParams.gravity = Gravity.CENTER;
+//                layoutParams.gravity = Gravity.CENTER;
                 videoFL.setRotation(90);
                 videoTextureLayoutParams.width = videoWidth * screenWidth / height;
                 videoTextureLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
             } else if (videoXY > screenXY) {
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                layoutParams.gravity = Gravity.CENTER;
+//                layoutParams.gravity = Gravity.CENTER;
 
                 videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 videoTextureLayoutParams.height = height * screenWidth / videoWidth;
             } else {
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                layoutParams.gravity = Gravity.CENTER;
+//                layoutParams.gravity = Gravity.CENTER;
 
                 videoTextureLayoutParams.width = videoWidth * screenHeight / height;
                 videoTextureLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -402,6 +457,9 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 tinerMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                     @Override
                     public boolean onError(MediaPlayer mp, int what, int extra) {
+                        if (extra == -2147483648 || extra == -107) {
+                            return true;
+                        }
                         if (playVideoIV.isEnabled() == false) {
                             return true;
                         }
@@ -411,7 +469,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                         playVideoIV.setEnabled(false);
                         playVideoIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.load_video_error));
                         int pading = playVideoIV.getPaddingBottom();
-                        playVideoIV.setPadding(pading + 30, pading + 30, pading + 30, pading + 30);
+                        playVideoIV.setPadding(pading + 0, pading + 0, pading + 0, pading + 0);
                         return true;
                     }
                 });
@@ -479,7 +537,11 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             tinerTextureView = new TextureView(getContext());
             tinerTextureView.setSurfaceTextureListener(this);
             videoFL.addView(tinerTextureView, 2, new FrameLayout.LayoutParams(videoWidth, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+        if (isFullScreen == false) {
             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) tinerTextureView.getLayoutParams();
+            layoutParams.width = videoWidth;
+            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
             layoutParams.gravity = Gravity.CENTER;
             tinerTextureView.setLayoutParams(layoutParams);
         }

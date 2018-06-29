@@ -112,18 +112,18 @@ public class VideoListAdapter extends BaseAdapter {
         int videoHeight = Integer.parseInt(widthAndHeight[1]);
         int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
         int screenHeight = context.getResources().getDisplayMetrics().heightPixels;
-        videoHeight = videoHeight * screenWidth / videoWidth;
-        videoWidth = screenWidth;
+//        videoHeight = videoHeight * screenWidth / videoWidth;
+//        videoWidth = screenWidth;
         int height;
         if (videoWidth > 0) {
-            height = screenWidth * videoHeight / videoWidth;
+            height = videoHeight * screenWidth / videoWidth;
             if (height > screenHeight / 3) {
                 height = screenHeight / 3;
-                videoWidth = screenWidth * height / screenHeight;
+                videoWidth = videoWidth * height / videoHeight;
             }
         } else {
-            videoWidth = screenWidth;
-            height = screenWidth;
+            videoWidth = screenHeight / 3;
+            height = screenHeight / 3;
         }
         viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, httpGetProxyHashMap, videoProxyPort + position, viewHolders);
 //        Boolean isFullScreen = viewHolder.tinerInteView.isFullScreen;

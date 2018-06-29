@@ -142,13 +142,13 @@ class NetCacheUtils {
             if (result != null) {
                 if (tag == -1 || tag == (int)mImageView.getTag()) {
                     mImageView.setImageBitmap(result);
+                    mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     if (centerCropImageView != null) {
                         centerCropImageView.setImageBitmap(result);
                     }
                 }
                 int width = mImageView.getWidth();
                 int height = mImageView.getHeight();
-                mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                 //从网络获取图片后,保存至本地缓存
                 if (videoWidth > 0 && result.getWidth() != videoWidth) {
