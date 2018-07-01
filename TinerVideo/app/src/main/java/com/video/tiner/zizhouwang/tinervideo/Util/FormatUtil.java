@@ -12,6 +12,8 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +27,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Scroller;
 import android.widget.Toast;
 
 import com.danikula.videocache.HttpProxyCacheServer;
@@ -38,6 +42,7 @@ import com.video.tiner.zizhouwang.tinervideo.model.XmlAttrModel;
 import com.video.tiner.zizhouwang.tinervideo.subview.TinerNavView;
 import com.video.tiner.zizhouwang.tinervideo.subview.TinerShareView;
 import com.video.tiner.zizhouwang.tinervideo.subview.TinerVideoView;
+import com.video.tiner.zizhouwang.tinervideo.xListView.XListView;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -80,7 +85,9 @@ public class FormatUtil {
     public static ShareDialog shareDialog;
     public static Context mainContext;
     private static HttpProxyCacheServer proxy;
-    private static ProgressBar loadVideoPB;
+    public static Scroller mScroller;
+
+    public static XListView homeListView;
 
     public static String md5(String string) {
         if (TextUtils.isEmpty(string)) {
@@ -502,5 +509,44 @@ public class FormatUtil {
                 return value * metrics.xdpi * (1.0f / 25.4f);
         }
         return 0;
+    }
+
+    private static int moveCount = 0;
+
+    public static void moveViewByMargin(final FrameLayout frameLayout, final int leftMargin, final int topMargin, final int rightMargin, final int bottomMargin, int duration) {
+        final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) frameLayout.getLayoutParams();
+        final int startLeftMargin = layoutParams.leftMargin;
+        final int startTopMargin = layoutParams.topMargin;
+        final int startRightMargin = layoutParams.rightMargin;
+        final int startBottomMargin = layoutParams.bottomMargin;
+        if (duration == 0) {
+            layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+            frameLayout.setLayoutParams(layoutParams);
+        } else {
+            moveCount = 0;
+            final int frameNumber = 10;
+            final int times = duration / frameNumber;
+            final Handler handler = new Handler(Looper.getMainLooper());
+            final Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    moveCount++;
+                    int leftMargenResult = startLeftMargin + (leftMargin - startLeftMargin) * moveCount / times;
+                    int topMargenResult = startTopMargin + (topMargin - startTopMargin) * moveCount / times;
+                    int rightMargenResult = startRightMargin + (rightMargin - startRightMargin) * moveCount / times;
+                    int bottomMargenResult = startBottomMargin + (bottomMargin - startBottomMargin) * moveCount / times;
+                    layoutParams.setMargins(leftMargenResult, topMargenResult, rightMargenResult, bottomMargenResult);
+                    frameLayout.setLayoutParams(layoutParams);
+                    if (moveCount < times) {
+                        handler.postDelayed(this, frameNumber);
+                    } else {
+                        layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+                        frameLayout.setLayoutParams(layoutParams);
+                    }
+                }
+            };
+
+            handler.postDelayed(runnable, frameNumber);
+        }
     }
 }

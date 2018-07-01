@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center">
 
-        <FrameLayout
+        <com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseFrameLayout
             android:id="@+id/videoFL"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -64,7 +64,7 @@
                 android:text="The Leap of Faith Water Slide at Atlantis"
                 android:textColor="@color/whiteColor"
                 android:textSize="16sp" />
-        </FrameLayout>
+        </com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseFrameLayout>
     </FrameLayout>
 
 

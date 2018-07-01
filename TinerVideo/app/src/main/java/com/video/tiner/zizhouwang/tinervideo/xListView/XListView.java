@@ -22,9 +22,14 @@ import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
 
+import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView;
 import com.video.tiner.zizhouwang.tinervideo.R;
+import com.video.tiner.zizhouwang.tinervideo.adapter.VideoListAdapter;
 
-public class XListView extends ListView implements OnScrollListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class XListView extends BaseListView implements OnScrollListener {
 
 	private float mLastY = -1; // save event y
 	private Scroller mScroller; // used for scroll back

@@ -42,6 +42,7 @@ import com.twitter.sdk.android.tweetui.TweetUi;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.HomeFragment;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.MeFragment;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
+import com.video.tiner.zizhouwang.tinervideo.checkUICaton.LooperPrinter;
 import com.video.tiner.zizhouwang.tinervideo.downloadModules.VideoDownloadManager;
 
 import io.fabric.sdk.android.Fabric;

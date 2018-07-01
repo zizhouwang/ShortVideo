@@ -13,7 +13,7 @@ public class LogMonitor {
     private static LogMonitor INSTANCE = new LogMonitor();
     private HandlerThread handlerThread = new HandlerThread("log");
     private Handler handler;
-    private static final long TIME_BLOCK = 600L;
+    private static final long TIME_BLOCK = 50L;
 
     private LogMonitor() {
         handlerThread.start();
@@ -28,7 +28,7 @@ public class LogMonitor {
             for (StackTraceElement element : stackTrace) {
                 builder.append(element.toString() + "\n");
             }
-            Log.e("TAG", builder.toString());
+            Log.e("low load", builder.toString());
         }
     };
 

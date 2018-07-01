@@ -19,10 +19,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
 import com.video.tiner.zizhouwang.tinervideo.adapter.VideoListAdapter;
@@ -84,20 +86,11 @@ public class HomeFragment extends Fragment {
         tinerNavView.navTextView.setGravity(Gravity.CENTER);
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
         pullToRefreshLayout = view.findViewById(R.id.videoListView);
+        FormatUtil.homeListView = pullToRefreshLayout;
 
-//        final Handler videoPlayHandler = new Handler(Looper.getMainLooper());
-//        Runnable task = new Runnable() {
-//            @Override
-//            public void run() {
-//                pullToRefreshLayout.smoothScrollToPositionFromTop(pullToRefreshLayout.getFirstVisiblePosition() + 2, 0, 0);
-//                videoPlayHandler.postDelayed(this, 3000);
-//            }
-//        };
-//        videoPlayHandler.postDelayed(task, 3000);
-
-        pullToRefreshLayout.setPullLoadEnable(true);
         View emptyView = view.findViewById(R.id.emptyview);
         pullToRefreshLayout.setEmptyView(emptyView);
+        pullToRefreshLayout.setPullLoadEnable(true);
         pullToRefreshLayout.setXListViewListener(new XListView.IXListViewListener() {
             @Override
             public void onRefresh() {
@@ -133,8 +126,7 @@ public class HomeFragment extends Fragment {
             if (videoModelList.size() == 0) {
                 sendRequestWithHttpURLConnection(view.getContext(), false);
             } else {
-                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList);
-                videoListAdapter.listView = pullToRefreshLayout;
+                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, pullToRefreshLayout);
                 pullToRefreshLayout.setAdapter(videoListAdapter);
             }
         } else {
@@ -200,7 +192,7 @@ public class HomeFragment extends Fragment {
                                     videoListAdapter.notifyDataSetChanged();
                                 } else {
                                     Log.v("videoListSize", "" + videoModelList.size());
-                                    VideoListAdapter videoListAdapter = new VideoListAdapter(context, videoModelList);
+                                    VideoListAdapter videoListAdapter = new VideoListAdapter(context, videoModelList, pullToRefreshLayout);
                                     pullToRefreshLayout.setAdapter(videoListAdapter);
                                 }
                             }

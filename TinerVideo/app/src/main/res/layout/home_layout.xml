@@ -8,8 +8,12 @@
         android:id="@+id/videoListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
     </com.video.tiner.zizhouwang.tinervideo.xListView.XListView>
+
+    <!--<com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView-->
+        <!--android:id="@+id/videoListView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"></com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView>-->
 
     <include
         android:id="@+id/emptyview"
