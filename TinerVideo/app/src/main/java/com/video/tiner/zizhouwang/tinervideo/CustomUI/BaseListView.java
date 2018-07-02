@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 public class BaseListView extends ListView {
-    public int currentFullScreenTag = -1;
+    public int currentFullScreenTag = 0;
     public List<VideoListAdapter.ViewHolder> mTotalItemViews = new ArrayList<>();
 
     public BaseListView(Context context) {

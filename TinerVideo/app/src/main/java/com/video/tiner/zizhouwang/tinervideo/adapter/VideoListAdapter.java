@@ -51,6 +51,7 @@ public class VideoListAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private int videoProxyPort = 9180;
     private List<View> convertViews = new ArrayList<>();
+    private int leastItemCount = 4;
 
     private HashMap<String, HttpGetProxy> httpGetProxyHashMap = new HashMap<>();
 
@@ -62,7 +63,7 @@ public class VideoListAdapter extends BaseAdapter {
         this.listView = listView;
         listView.mTotalItemViews = new ArrayList<>();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < leastItemCount; i++) {
             final ViewHolder viewHolder;
             viewHolder = new ViewHolder();
             View convertView = mInflater.inflate(R.layout.video_list_item, null);
@@ -131,7 +132,9 @@ public class VideoListAdapter extends BaseAdapter {
                 // 通过setTag将ViewHolder与convertView绑定
                 convertView.setTag(viewHolder);
             }
-            listView.mTotalItemViews.add(viewHolder);
+            if (listView.mTotalItemViews.contains(viewHolder) == false) {
+                listView.mTotalItemViews.add(viewHolder);
+            }
         } else {
             // 通过ViewHolder对象找到对应控件
             viewHolder = (ViewHolder) convertView.getTag();
