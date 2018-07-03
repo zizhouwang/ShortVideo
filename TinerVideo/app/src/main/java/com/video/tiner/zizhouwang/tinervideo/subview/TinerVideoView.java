@@ -56,11 +56,12 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     private FrameLayout.LayoutParams videoFLLayout = null;
     private int videoFLTopMargin = -1;
     private int videoFLBottomMargin = -1;
+    private boolean isNeedUpdateLayout = false;
 
     public int height;
     public int videoWidth;
-    private int fullScreenTopMargin;
-    private int fullScreenBottomMargin;
+    private int fullScreenBaseTopMargin = -1;
+    private int fullScreenBaseBottomMargin = -1;
     public String videoPath;
     public SurfaceTexture savedSurfaceTexture;
     public Surface savedSurface;
@@ -175,13 +176,8 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == (int) FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.videoThumbnailIV.getTag()) {
                     FormatUtil.homeListView.smoothScrollToPositionFromTop((int) videoThumbnailIV.getTag() + 1, -100, 0);
                 }
-                Log.v("moveVideoFL change", "" + videoThumbnailIV.getTag() + " isFullScreen:" + isFullScreen);
-                if (isFullScreen == false) {
-//                        Log.v("add new convertView", "" + FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView.videoThumbnailIV.getTag());
-//                        FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView.changeFullScreenViewLevel();
-                } else {
-                    changeFullScreenLayout(false);
-                }
+                Log.v("moveVideoFLChange", "" + videoThumbnailIV.getTag() + " isFullScreen:" + isFullScreen);
+                isNeedUpdateLayout = true;
                 videoFLLayout = (FrameLayout.LayoutParams) videoFL.getLayoutParams();
                 videoFLTopMargin = videoFLLayout.topMargin;
                 videoFLBottomMargin = videoFLLayout.bottomMargin;
@@ -195,6 +191,14 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 mPointerId = event.getPointerId(0);
                 break;
             case MotionEvent.ACTION_MOVE:
+//                if (isNeedUpdateLayout == true) {
+//                    Log.v("ACTION_MOVE", "" + videoThumbnailIV.getTag() + " isFullScreen:" + isFullScreen);
+//                    if (isFullScreen == false) {
+//                        changeFullScreenViewLevel();
+//                    } else {
+//                        changeFullScreenLayout(false);
+//                    }
+//                }
                 if (isFullScreen == false) {
                     break;
                 }
@@ -203,6 +207,8 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 mCurPosY = event.getRawY();
                 videoFLLayout.topMargin = (int) (videoFLTopMargin - (mPosY - mCurPosY));
                 videoFLLayout.bottomMargin = (int) (videoFLBottomMargin + (mPosY - mCurPosY));
+                Log.v("topMargin", "" + videoFLLayout.topMargin + " videoThumbnailIVTag:" + videoThumbnailIV.getTag());
+                Log.v("bottomMargin", "" + videoFLLayout.bottomMargin + " videoThumbnailIVTag:" + videoThumbnailIV.getTag());
 //                updateFullScreenLayout(videoFL, videoFLLayout.topMargin, videoFLLayout.bottomMargin);
                 videoFL.setLayoutParams(videoFLLayout);
 
@@ -431,9 +437,17 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             }
             videoFL.setLayoutParams(layoutParams);
             tinerTextureView.setLayoutParams(videoTextureLayoutParams);
-            fullScreenTopMargin = layoutParams.topMargin;
-            fullScreenBottomMargin = layoutParams.bottomMargin;
-            updateFullScreenLayout(videoFL, layoutParams.topMargin, layoutParams.bottomMargin);
+            if (fullScreenBaseTopMargin == -1) {
+                fullScreenBaseTopMargin = layoutParams.topMargin;
+            }
+            if (fullScreenBaseBottomMargin == -1) {
+                fullScreenBaseBottomMargin = layoutParams.bottomMargin;
+            }
+            Log.v("fullScreenTopMargin1", "" + layoutParams.topMargin);
+            Log.v("fullScreenBottomMargin1", "" + layoutParams.bottomMargin);
+            updateFullScreenLayout(videoFL, fullScreenBaseTopMargin, fullScreenBaseBottomMargin);
+            Log.v("fullScreenTopMargin2", "" + layoutParams.topMargin);
+            Log.v("fullScreenBottomMargin2", "" + layoutParams.bottomMargin);
         } else {
             if (fullScreenIV != null) {
                 fullScreenIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.full_screen));
@@ -458,12 +472,11 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         videoFLLayout.topMargin = layoutDataList.get(0);
         videoFLLayout.bottomMargin = layoutDataList.get(1);
         frameLayout.setLayoutParams(videoFLLayout);
+        isNeedUpdateLayout = false;
     }
 
     private List<Integer> calculateFullScreenLayout(int startTopMargin, int startBottomMargin) {
         int diffItemCount = (int) videoThumbnailIV.getTag() - FormatUtil.homeListView.currentFullScreenTag;
-//        videoFLLayout.topMargin = startTopMargin + diffItemCount * FormatUtil.getScreenHeight(FormatUtil.mainContext);
-//        videoFLLayout.bottomMargin = startBottomMargin - diffItemCount * FormatUtil.getScreenHeight(FormatUtil.mainContext);
         List<Integer> layoutDataList = new ArrayList<>();
         layoutDataList.add(startTopMargin + diffItemCount * FormatUtil.getScreenHeight(FormatUtil.mainContext));
         layoutDataList.add(startBottomMargin - diffItemCount * FormatUtil.getScreenHeight(FormatUtil.mainContext));
@@ -680,7 +693,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             }
         });
         ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.loadImageViewWithTagAndVideoPath(videoThumbnailIV, bean.getVideo_cdn_url(), position, videoWidth, height, cropThumbnailIV);
+        imageLoader.loadImageViewWithTagAndVideoPath(videoThumbnailIV, bean.getVideo_image_url(), position, videoWidth, height, cropThumbnailIV);
         playVideoIV.setVisibility(View.VISIBLE);
         playVideoIV.setEnabled(true);
         playVideoIV.setImageBitmap(FormatUtil.readBitMap(this.getContext(), R.drawable.play50_50));
@@ -715,7 +728,11 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         if (loadVideoPB == null) {
             initLoadVideoPB();
         }
-        changeFullScreenViewLevel();
+        if (isNeedUpdateLayout == true) {
+            if (isFullScreen == true) {
+                changeFullScreenLayout(false);
+            }
+        }
     }
 
     private void updateControlFrameLayout() {

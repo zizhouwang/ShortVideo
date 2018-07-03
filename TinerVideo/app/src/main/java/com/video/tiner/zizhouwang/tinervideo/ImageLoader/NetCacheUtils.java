@@ -101,25 +101,26 @@ class NetCacheUtils {
             }
             Bitmap bitmap = null;
             if (params.length > 3) {
-                if (params[3].equals(FormatUtil.getThumbImg)) {
-                    FFmpegMediaMetadataRetriever mm = new FFmpegMediaMetadataRetriever();
-                    try {
-                        //获取视频文件数据
-                        mm.setDataSource(url);
-                        bitmap = mm.getFrameAtTime();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        bitmap = null;
-                    } finally {
-                        mm.release();
-                        mm = null;
-                    }
-                    return bitmap;
-                }
+//                if (params[3].equals(FormatUtil.getThumbImg)) {
+//                    FFmpegMediaMetadataRetriever mm = new FFmpegMediaMetadataRetriever();
+//                    try {
+//                        //获取视频文件数据
+//                        mm.setDataSource(url);
+//                        bitmap = mm.getFrameAtTime();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        bitmap = null;
+//                    } finally {
+//                        mm.release();
+//                        mm = null;
+//                    }
+//                    return bitmap;
+//                }
+                return downLoadBitmap(url);
             } else {
                 return downLoadBitmap(url);
             }
-            return null;
+//            return null;
         }
 
         /**
@@ -188,7 +189,9 @@ class NetCacheUtils {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            conn.disconnect();
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
 
         return null;

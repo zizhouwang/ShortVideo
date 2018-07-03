@@ -170,7 +170,7 @@ public class VideoListAdapter extends BaseAdapter {
             }
         });
         for (int i = 0; i < listView.mTotalItemViews.size(); i++) {
-            Log.v("videoThumbnailIVTag", "" + listView.mTotalItemViews.get(i).tinerInteView.videoThumbnailIV.getTag());
+            Log.v("getViewThumbnailIVTag", "" + listView.mTotalItemViews.get(i).tinerInteView.videoThumbnailIV.getTag());
         }
         viewHolder.videoChannelTV.setText(bean.getChannel());
         int likedNumber = bean.getVideo_details().getLiked_number();
