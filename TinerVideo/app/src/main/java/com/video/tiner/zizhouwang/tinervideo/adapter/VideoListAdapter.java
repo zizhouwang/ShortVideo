@@ -137,6 +137,11 @@ public class VideoListAdapter extends BaseAdapter {
             }
         } else {
             // 通过ViewHolder对象找到对应控件
+//            if (listView.mTotalItemViews.get(0).tinerInteView.customPosition > position) {
+//                viewHolder = listView.mTotalItemViews.get(listView.mTotalItemViews.size() - 1);
+//            } else {
+//                viewHolder = listView.mTotalItemViews.get(0);
+//            }
             viewHolder = (ViewHolder) convertView.getTag();
         }
         final Context context = convertView.getContext();
