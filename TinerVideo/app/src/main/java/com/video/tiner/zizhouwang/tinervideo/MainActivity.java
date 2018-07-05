@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         tabContentFL = findViewById(R.id.tabContentFL);
         windowFL = (FrameLayout) tabContentFL.getParent();
         homeFragment = new HomeFragment();
+        FormatUtil.homeFragment = homeFragment;
+
         getFragmentManager().beginTransaction().replace(R.id.tabContentFL, homeFragment).commit();
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         try {

@@ -73,9 +73,9 @@ public class VideoListAdapter extends BaseAdapter {
             viewHolder.videoChannelTV = convertView.findViewById(R.id.videoChannelTV);
             viewHolder.likeCountTV = convertView.findViewById(R.id.likeCountTV);
             viewHolder.shareCountTV = convertView.findViewById(R.id.shareCountTV);
-            viewHolder.downloadCoinsTV = convertView.findViewById(R.id.downloadCoinsTV);
-            viewHolder.downloadVideoIV = convertView.findViewById(R.id.downloadVideoIV);
-            viewHolder.downloadVideoIV.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.download_button));
+//            viewHolder.downloadCoinsTV = convertView.findViewById(R.id.downloadCoinsTV);
+//            viewHolder.downloadVideoIV = convertView.findViewById(R.id.downloadVideoIV);
+//            viewHolder.downloadVideoIV.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.download_button));
             viewHolder.likeImageView = convertView.findViewById(R.id.likeImageView);
             viewHolder.likeImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.like_button));
             viewHolder.shareImageView = convertView.findViewById(R.id.shareImageView);
@@ -121,9 +121,9 @@ public class VideoListAdapter extends BaseAdapter {
                 viewHolder.videoChannelTV = convertView.findViewById(R.id.videoChannelTV);
                 viewHolder.likeCountTV = convertView.findViewById(R.id.likeCountTV);
                 viewHolder.shareCountTV = convertView.findViewById(R.id.shareCountTV);
-                viewHolder.downloadCoinsTV = convertView.findViewById(R.id.downloadCoinsTV);
-                viewHolder.downloadVideoIV = convertView.findViewById(R.id.downloadVideoIV);
-                viewHolder.downloadVideoIV.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.download_button));
+//                viewHolder.downloadCoinsTV = convertView.findViewById(R.id.downloadCoinsTV);
+//                viewHolder.downloadVideoIV = convertView.findViewById(R.id.downloadVideoIV);
+//                viewHolder.downloadVideoIV.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.download_button));
                 viewHolder.likeImageView = convertView.findViewById(R.id.likeImageView);
                 viewHolder.likeImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.like_button));
                 viewHolder.shareImageView = convertView.findViewById(R.id.shareImageView);
@@ -136,13 +136,12 @@ public class VideoListAdapter extends BaseAdapter {
                 listView.mTotalItemViews.add(viewHolder);
             }
         } else {
-            // 通过ViewHolder对象找到对应控件
-//            if (listView.mTotalItemViews.get(0).tinerInteView.customPosition > position) {
-//                viewHolder = listView.mTotalItemViews.get(listView.mTotalItemViews.size() - 1);
-//            } else {
-//                viewHolder = listView.mTotalItemViews.get(0);
-//            }
             viewHolder = (ViewHolder) convertView.getTag();
+        }
+        if (position > mList.size() * 3 / 4) {
+            if (FormatUtil.homeFragment.isRefreshing == false) {
+                FormatUtil.homeFragment.sendRequestWithHttpURLConnection(FormatUtil.mainContext, true);
+            }
         }
         final Context context = convertView.getContext();
         final VideoModel bean = mList.get(position);
@@ -224,8 +223,8 @@ public class VideoListAdapter extends BaseAdapter {
         public TextView videoChannelTV;
         public TextView likeCountTV;
         public TextView shareCountTV;
-        public TextView downloadCoinsTV;
-        public ImageView downloadVideoIV;
+//        public TextView downloadCoinsTV;
+//        public ImageView downloadVideoIV;
         public ImageView likeImageView;
         public ImageView shareImageView;
         public TinerVideoView tinerInteView;

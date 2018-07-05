@@ -51,7 +51,7 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     private List<VideoModel> oldVideoModelList = new LinkedList<>();
-    private Boolean isRefreshing = false;
+    public Boolean isRefreshing = false;
 
     private XListView pullToRefreshLayout;
     private ImageView loadVideoIV;
@@ -138,7 +138,7 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void sendRequestWithHttpURLConnection(final Context context, final Boolean isLoadMore) {
+    public void sendRequestWithHttpURLConnection(final Context context, final Boolean isLoadMore) {
         //开启线程来发起网络请求
         if (isLoadMore == false) {
             oldVideoModelList = new LinkedList<>();

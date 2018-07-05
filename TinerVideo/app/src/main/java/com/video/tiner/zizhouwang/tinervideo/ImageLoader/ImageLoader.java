@@ -69,17 +69,23 @@ public class ImageLoader {
 
     public void loadImageViewWithTagAndVideoPath(final ImageView mImageView, final String videoURL, final int tag, final int videoWidth, final int videoHeight, final ImageView centerCropImageView) {
         reducThumbImageView(mImageView, centerCropImageView);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int loadLocalImageResult = noNetworkLoadImage(mImageView, videoURL, tag, videoWidth, videoHeight, centerCropImageView);
-                //网络缓存
-                if (loadLocalImageResult == noLocalImage) {
-                    Log.d("", "尝试从网络获取图片...");
-                    mNetCacheUtils.getBitmapFromNetWithTagWithIden(mImageView, videoURL, tag, FormatUtil.getThumbImg, videoWidth, videoHeight, centerCropImageView);
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                int loadLocalImageResult = noNetworkLoadImage(mImageView, videoURL, tag, videoWidth, videoHeight, centerCropImageView);
+//                //网络缓存
+//                if (loadLocalImageResult == noLocalImage) {
+//                    Log.d("", "尝试从网络获取图片...");
+//                    mNetCacheUtils.getBitmapFromNetWithTagWithIden(mImageView, videoURL, tag, FormatUtil.getThumbImg, videoWidth, videoHeight, centerCropImageView);
+//                }
+//            }
+//        }).start();
+        int loadLocalImageResult = noNetworkLoadImage(mImageView, videoURL, tag, videoWidth, videoHeight, centerCropImageView);
+        //网络缓存
+        if (loadLocalImageResult == noLocalImage) {
+            Log.d("", "尝试从网络获取图片...");
+            mNetCacheUtils.getBitmapFromNetWithTagWithIden(mImageView, videoURL, tag, FormatUtil.getThumbImg, videoWidth, videoHeight, centerCropImageView);
+        }
     }
 
     private void reducThumbImageView(ImageView mImageView, ImageView centerCropImageView) {

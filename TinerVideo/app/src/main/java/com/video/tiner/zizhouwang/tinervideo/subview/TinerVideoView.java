@@ -176,11 +176,13 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     public boolean moveVideoFLWithGlide(View v, MotionEvent event, boolean isClickedView) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition && FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition != 0) {
-                    FormatUtil.homeListView.smoothScrollToPositionFromTop(customPosition + 1, 100, 0);
-                }
-                if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition) {
-                    FormatUtil.homeListView.smoothScrollToPositionFromTop(customPosition + 1, 100, 0);
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition && FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition != 0) {
+                        FormatUtil.homeListView.smoothScrollToPositionFromTop(customPosition + 1, 100, 0);
+                    }
+                    if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition) {
+                        FormatUtil.homeListView.smoothScrollToPositionFromTop(customPosition + 1, 100, 0);
+                    }
                 }
                 Log.v("moveVideoFLChange", "" + customPosition + " isFullScreen:" + isFullScreen);
                 isNeedUpdateLayout = true;
@@ -212,12 +214,13 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 mCurPosX = event.getRawX();
                 mCurPosY = event.getRawY();
                 if (mPosX == -1) {
-//                    mPosX = mCurPosX;
                     mPosX = FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.mPosX;
                 }
                 if (mPosY == -1) {
-//                    mPosY = mCurPosY;
                     mPosY = FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.mPosY;
+                }
+                if ((FormatUtil.homeListView.currentFullScreenTag == 0 && (mPosY - mCurPosY) < 0) || (FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.videoListAdapter.mList.size() - 1 && (mPosY - mCurPosY) > 0)) {
+                    mCurPosY = mPosY;
                 }
 //                videoFLLayout.topMargin = (int) (videoFLTopMargin - (mPosY - mCurPosY));
 //                videoFLLayout.bottomMargin = (int) (videoFLBottomMargin + (mPosY - mCurPosY));
@@ -250,12 +253,15 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 for (int i = 0; i < curPoss.size(); i++) {
                     velocityY += curPoss.get(i);
                 }
-                int changeCurrentFullScreenTagNumber = 100;
+                int changeCurrentFullScreenTagNumber = 50 * FormatUtil.getScreenHeight(FormatUtil.mainContext) / 1280;
+//                if (Build.VERSION.SDK_INT < 21) {
+//                    changeCurrentFullScreenTagNumber = 50;
+//                }
                 if (isClickedView == true) {
-                    if (velocityY > changeCurrentFullScreenTagNumber) {
+                    if (velocityY > changeCurrentFullScreenTagNumber && (FormatUtil.homeListView.currentFullScreenTag > 0)) {
                         FormatUtil.homeListView.currentFullScreenTag--;
                     }
-                    if (velocityY < -changeCurrentFullScreenTagNumber) {
+                    if (velocityY < -changeCurrentFullScreenTagNumber && (FormatUtil.homeListView.currentFullScreenTag < FormatUtil.homeListView.videoListAdapter.mList.size() - 1)) {
                         FormatUtil.homeListView.currentFullScreenTag++;
                     }
                 }
@@ -269,7 +275,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 }
                 fullScreenCorrectedTopMargin = layoutDataList.get(0);
                 fullScreenCorrectedBottomMargin = layoutDataList.get(1);
-                FormatUtil.moveViewByMargin(videoFL, ((FrameLayout.LayoutParams) videoFL.getLayoutParams()).leftMargin, layoutDataList.get(0), ((FrameLayout.LayoutParams) videoFL.getLayoutParams()).rightMargin, layoutDataList.get(1), 200);
+                new FormatUtil().moveViewByMargin(videoFL, ((FrameLayout.LayoutParams) videoFL.getLayoutParams()).leftMargin, layoutDataList.get(0), ((FrameLayout.LayoutParams) videoFL.getLayoutParams()).rightMargin, layoutDataList.get(1), 100, isClickedView);
                 videoFLLayout = null;
                 break;
         }
@@ -304,13 +310,13 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 convertViewLayoutParams.gravity = Gravity.BOTTOM;
                 videoProgressFL = convertView.findViewById(R.id.videoProgressFL);
                 videoProgressFL.setLayoutParams(convertViewLayoutParams);
-                initControlFrameLayout.sendEmptyMessage(0);
+                initControlFrameLayoutHandler.sendEmptyMessage(0);
                 videoStartHandlerr.sendEmptyMessage(0);
             }
         }).start();
     }
 
-    private Handler initControlFrameLayout = new Handler(Looper.getMainLooper()) {
+    private Handler initControlFrameLayoutHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -368,7 +374,10 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 @Override
                 public void onClick(View v) {
                     Window window = ((AppCompatActivity) FormatUtil.mainContext).getWindow();
+                    boolean isNeedSmooth = false;
                     if (isFullScreen == false) {
+                        videoTitleTV.setVisibility(View.VISIBLE);
+                        isNeedSmooth = true;
                         ViewGroup vg = FormatUtil.getWindow(((AppCompatActivity) FormatUtil.mainContext));
                         if (Build.VERSION.SDK_INT >= 21) {
                             window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -379,6 +388,9 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                             vg.setSystemUiVisibility(systemUiVIsi);
                         }
                     } else {
+                        if (isNeedPlay == true) {
+                            videoTitleTV.setVisibility(View.INVISIBLE);
+                        }
                         ViewGroup vg = FormatUtil.getWindow(((AppCompatActivity) FormatUtil.mainContext));
                         if (Build.VERSION.SDK_INT >= 21) {
                             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -389,11 +401,14 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                             vg.setSystemUiVisibility(systemUiVIsi);
                         }
                     }
-                    FormatUtil.homeListView.currentFullScreenTag = (int) customPosition;
+                    FormatUtil.homeListView.currentFullScreenTag = customPosition;
                     for (int i = 0; i < FormatUtil.homeListView.mTotalItemViews.size(); i++) {
                         FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView.changeFullScreenViewLevel();
-                        if ((int) FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView.customPosition == FormatUtil.homeListView.currentFullScreenTag) {
+                        if (FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView.customPosition == FormatUtil.homeListView.currentFullScreenTag) {
                         }
+                    }
+                    if (isNeedSmooth == true) {
+                        FormatUtil.smoothScrollListView(true);
                     }
                 }
             });
@@ -538,7 +553,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 float screenWidth = totalTimeTV.getContext().getResources().getDisplayMetrics().widthPixels;
                 float screenHeight = FormatUtil.getScreenHeight(getContext());
                 FrameLayout.LayoutParams currentTimeSBLayoutParams = (FrameLayout.LayoutParams) currentTimeSB.getLayoutParams();
-                if (isFullScreen == true) {
+                if (isFullScreen == true && videoFL.getRotation() == 90) {
                     currentTimeSBLayoutParams.setMargins((int) (currentTimeTVX + currentTimeTVWidth + 0.0f), 0, (int) (screenHeight - totalTimeTVX + 0.0f), 0);
                 } else {
                     currentTimeSBLayoutParams.setMargins((int) (currentTimeTVX + currentTimeTVWidth + 0.0f), 0, (int) (screenWidth - totalTimeTVX + 0.0f), 0);
@@ -930,7 +945,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         }
         videoControlFL.setVisibility(View.INVISIBLE);
         videoControlFL.setBackgroundResource(R.color.clearColor);
-        if (isHideTitle == true) {
+        if (isHideTitle == true && isFullScreen == false) {
             videoTitleTV.setVisibility(View.INVISIBLE);
         }
     }

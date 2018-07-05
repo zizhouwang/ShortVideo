@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.facebook.share.widget.ShareDialog;
+import com.video.tiner.zizhouwang.tinervideo.CustomFragment.HomeFragment;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.TwitterShareFragment;
 import com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaImageView;
 import com.video.tiner.zizhouwang.tinervideo.MainActivity;
@@ -86,6 +87,7 @@ public class FormatUtil {
     public static Context mainContext;
     private static HttpProxyCacheServer proxy;
     public static Scroller mScroller;
+    public static HomeFragment homeFragment;
 
     public static XListView homeListView;
 
@@ -442,7 +444,7 @@ public class FormatUtil {
         return BitmapFactory.decodeStream(is, null, opt);
     }
 
-    public static Bitmap zoomImg(Bitmap bm, int newWidth ,int newHeight){
+    public static Bitmap zoomImg(Bitmap bm, int newWidth, int newHeight) {
         // 获得图片的宽高
         int width = bm.getWidth();
         int height = bm.getHeight();
@@ -511,9 +513,9 @@ public class FormatUtil {
         return 0;
     }
 
-    private static int moveCount = 0;
+    private int moveCount = 0;
 
-    public static void moveViewByMargin(final FrameLayout frameLayout, final int leftMargin, final int topMargin, final int rightMargin, final int bottomMargin, int duration) {
+    public void moveViewByMargin(final FrameLayout frameLayout, final int leftMargin, final int topMargin, final int rightMargin, final int bottomMargin, int duration, final boolean isClickedView) {
         final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) frameLayout.getLayoutParams();
         final int startLeftMargin = layoutParams.leftMargin;
         final int startTopMargin = layoutParams.topMargin;
@@ -542,11 +544,31 @@ public class FormatUtil {
                     } else {
                         layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
                         frameLayout.setLayoutParams(layoutParams);
+                        if (isClickedView == true) {
+                            for (int i = 0; i < FormatUtil.homeListView.mTotalItemViews.size(); i++) {
+                                TinerVideoView tinerVideoView = FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView;
+                                if (tinerVideoView.customPosition == FormatUtil.homeListView.currentFullScreenTag) {
+                                    tinerVideoView.videoStart();
+                                }
+                            }
+                        }
+                        smoothScrollListView(isClickedView);
                     }
                 }
             };
 
             handler.postDelayed(runnable, frameNumber);
+        }
+    }
+
+    public static void smoothScrollListView(boolean isClickedView) {
+        if (Build.VERSION.SDK_INT < 23) {
+            if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition && FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition != 0) {
+                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition + 1, 100, 0);
+            }
+            if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition) {
+                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition + 1, 100, 0);
+            }
         }
     }
 }
