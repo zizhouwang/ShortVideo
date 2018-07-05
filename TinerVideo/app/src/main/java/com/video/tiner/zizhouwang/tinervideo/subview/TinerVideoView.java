@@ -99,6 +99,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
 
     private VelocityTracker mVelocityTracker;
     private int mPointerId;
+    private FormatUtil formatUtil = new FormatUtil();
 
     Scroller mScroller = new Scroller(FormatUtil.mainContext);
 
@@ -174,9 +175,12 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     }
 
     public boolean moveVideoFLWithGlide(View v, MotionEvent event, boolean isClickedView) {
+        if (formatUtil.isCorrecting == true) {
+            return true;
+        }
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (Build.VERSION.SDK_INT >= 23) {
+                if (Build.VERSION.SDK_INT >= 230) {
                     if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition && FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition != 0) {
                         FormatUtil.homeListView.smoothScrollToPositionFromTop(customPosition + 1, 100, 0);
                     }
@@ -275,7 +279,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 }
                 fullScreenCorrectedTopMargin = layoutDataList.get(0);
                 fullScreenCorrectedBottomMargin = layoutDataList.get(1);
-                new FormatUtil().moveViewByMargin(videoFL, ((FrameLayout.LayoutParams) videoFL.getLayoutParams()).leftMargin, layoutDataList.get(0), ((FrameLayout.LayoutParams) videoFL.getLayoutParams()).rightMargin, layoutDataList.get(1), 100, isClickedView);
+                formatUtil.moveViewByMargin(videoFL, ((FrameLayout.LayoutParams) videoFL.getLayoutParams()).leftMargin, layoutDataList.get(0), ((FrameLayout.LayoutParams) videoFL.getLayoutParams()).rightMargin, layoutDataList.get(1), 100, isClickedView);
                 videoFLLayout = null;
                 break;
         }

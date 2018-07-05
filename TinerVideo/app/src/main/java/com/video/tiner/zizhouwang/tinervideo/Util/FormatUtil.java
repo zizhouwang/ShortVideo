@@ -514,6 +514,7 @@ public class FormatUtil {
     }
 
     private int moveCount = 0;
+    public boolean isCorrecting = false;
 
     public void moveViewByMargin(final FrameLayout frameLayout, final int leftMargin, final int topMargin, final int rightMargin, final int bottomMargin, int duration, final boolean isClickedView) {
         final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) frameLayout.getLayoutParams();
@@ -525,10 +526,17 @@ public class FormatUtil {
             layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
             frameLayout.setLayoutParams(layoutParams);
         } else {
+            isCorrecting = true;
             moveCount = 0;
             final int frameNumber = 10;
             final int times = duration / frameNumber;
             final Handler handler = new Handler(Looper.getMainLooper());
+            final Runnable changeCorrectRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    isCorrecting = false;
+                }
+            };
             final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -553,6 +561,7 @@ public class FormatUtil {
                             }
                         }
                         smoothScrollListView(isClickedView);
+                        handler.postDelayed(changeCorrectRunnable, 1000);
                     }
                 }
             };
@@ -562,7 +571,7 @@ public class FormatUtil {
     }
 
     public static void smoothScrollListView(boolean isClickedView) {
-        if (Build.VERSION.SDK_INT < 23) {
+        if (Build.VERSION.SDK_INT < 230) {
             if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition && FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition != 0) {
                 FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition + 1, 100, 0);
             }
