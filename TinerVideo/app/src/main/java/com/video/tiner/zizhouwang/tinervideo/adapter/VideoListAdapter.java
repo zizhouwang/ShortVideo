@@ -138,6 +138,15 @@ public class VideoListAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        viewHolder.position = position;
+        Collections.sort(listView.mTotalItemViews, new Comparator<ViewHolder>() {
+            @Override
+            public int compare(ViewHolder o1, ViewHolder o2) {
+                Integer tag1 = (int) (o1.position);
+                Integer tag2 = (int) (o2.position);
+                return tag1.compareTo(tag2);
+            }
+        });
         if (position > mList.size() * 3 / 4) {
             if (FormatUtil.homeFragment.isRefreshing == false) {
                 FormatUtil.homeFragment.sendRequestWithHttpURLConnection(FormatUtil.mainContext, true);
@@ -165,14 +174,6 @@ public class VideoListAdapter extends BaseAdapter {
             height = screenHeight / 3;
         }
         viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, httpGetProxyHashMap, videoProxyPort + position);
-        Collections.sort(listView.mTotalItemViews, new Comparator<ViewHolder>() {
-            @Override
-            public int compare(ViewHolder o1, ViewHolder o2) {
-                Integer tag1 = (int) (o1.tinerInteView.videoThumbnailIV.getTag());
-                Integer tag2 = (int) (o2.tinerInteView.videoThumbnailIV.getTag());
-                return tag1.compareTo(tag2);
-            }
-        });
         for (int i = 0; i < listView.mTotalItemViews.size(); i++) {
             Log.v("getViewThumbnailIVTag", "" + listView.mTotalItemViews.get(i).tinerInteView.videoThumbnailIV.getTag());
         }
@@ -228,5 +229,7 @@ public class VideoListAdapter extends BaseAdapter {
         public ImageView likeImageView;
         public ImageView shareImageView;
         public TinerVideoView tinerInteView;
+
+        public int position;
     }
 }

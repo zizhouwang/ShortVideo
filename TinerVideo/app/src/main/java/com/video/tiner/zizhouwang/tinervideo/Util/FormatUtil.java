@@ -1,10 +1,8 @@
 package com.video.tiner.zizhouwang.tinervideo.Util;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,29 +13,23 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Scroller;
-import android.widget.Toast;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.facebook.share.widget.ShareDialog;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.HomeFragment;
-import com.video.tiner.zizhouwang.tinervideo.CustomFragment.TwitterShareFragment;
 import com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaImageView;
-import com.video.tiner.zizhouwang.tinervideo.MainActivity;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.model.XmlAttrModel;
 import com.video.tiner.zizhouwang.tinervideo.subview.TinerNavView;
@@ -45,13 +37,6 @@ import com.video.tiner.zizhouwang.tinervideo.subview.TinerShareView;
 import com.video.tiner.zizhouwang.tinervideo.subview.TinerVideoView;
 import com.video.tiner.zizhouwang.tinervideo.xListView.XListView;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -60,25 +45,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Dictionary;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 /**
  * Created by zizhouwang on 2018/5/31.
  */
 
 public class FormatUtil {
 
-    public static TinerVideoView waitPlayingVideoView;
-    public static TinerVideoView isPlayingVideoView;
     public static Boolean isUserSliding = false;
     public static final String getThumbImg = "getThumbImg";
     private static TinerShareView shareView = null;
@@ -90,6 +62,28 @@ public class FormatUtil {
     public static HomeFragment homeFragment;
 
     public static XListView homeListView;
+    public static TinerVideoView waitPlayingVideoView;
+    public static TinerVideoView isPlayingVideoView;
+    public static TinerVideoView currentItemView = null;
+
+    public static int getCurrentItemIndex() {
+        return getCurrentItemIndex(currentItemView);
+//        for (int i = 0; i < homeListView.mTotalItemViews.size(); i++) {
+//            if (homeListView.mTotalItemViews.get(i).tinerInteView == currentItemView) {
+//                return i;
+//            }
+//        }
+//        return -1;
+    }
+
+    public static int getCurrentItemIndex(TinerVideoView tinerVideoView) {
+        for (int i = 0; i < homeListView.mTotalItemViews.size(); i++) {
+            if (homeListView.mTotalItemViews.get(i).tinerInteView == tinerVideoView) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public static String md5(String string) {
         if (TextUtils.isEmpty(string)) {
@@ -526,7 +520,6 @@ public class FormatUtil {
             layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
             frameLayout.setLayoutParams(layoutParams);
         } else {
-            isCorrecting = true;
             moveCount = 0;
             final int frameNumber = 10;
             final int times = duration / frameNumber;
@@ -553,15 +546,16 @@ public class FormatUtil {
                         layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
                         frameLayout.setLayoutParams(layoutParams);
                         if (isClickedView == true) {
-                            for (int i = 0; i < FormatUtil.homeListView.mTotalItemViews.size(); i++) {
-                                TinerVideoView tinerVideoView = FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView;
-                                if (tinerVideoView.customPosition == FormatUtil.homeListView.currentFullScreenTag) {
-                                    tinerVideoView.videoStart();
-                                }
-                            }
+//                            for (int i = 0; i < FormatUtil.homeListView.mTotalItemViews.size(); i++) {
+//                                TinerVideoView tinerVideoView = FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView;
+//                                if (tinerVideoView.customPosition == FormatUtil.homeListView.currentFullScreenTag) {
+//                                    tinerVideoView.videoStart();
+//                                }
+//                            }
+                            currentItemView.videoStart();
                         }
                         smoothScrollListView(isClickedView);
-                        handler.postDelayed(changeCorrectRunnable, 1000);
+                        handler.postDelayed(changeCorrectRunnable, 100);
                     }
                 }
             };
@@ -570,14 +564,24 @@ public class FormatUtil {
         }
     }
 
+    public static boolean isCouldSlideVideoListView() {
+        for (int i = 0; i < homeListView.mTotalItemViews.size(); i++) {
+            if (homeListView.mTotalItemViews.get(i).tinerInteView.formatUtil.isCorrecting == true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void smoothScrollListView(boolean isClickedView) {
         if (Build.VERSION.SDK_INT < 230) {
-            if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition && FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition != 0) {
-                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition + 1, 100, 0);
-            }
-            if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition) {
-                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition + 1, 100, 0);
-            }
+//            if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition && FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition != 0) {
+//                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition + 1, 100, 0);
+//            }
+//            if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition) {
+//                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition + 1, 100, 0);
+//            }
+            FormatUtil.homeListView.smoothScrollToPositionFromTop(currentItemView.customPosition + 1, 100, 0);
         }
     }
 }
