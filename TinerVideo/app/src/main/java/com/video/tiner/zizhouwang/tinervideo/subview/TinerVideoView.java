@@ -506,7 +506,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 layoutParams.leftMargin = -(screenHeight - screenWidth) / 2;
                 videoFL.setRotation(90);
                 videoTextureLayoutParams.width = videoWidth * screenWidth / height;
-                videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+//                videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 videoTextureLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
             } else if (videoXY > screenXY) {
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;

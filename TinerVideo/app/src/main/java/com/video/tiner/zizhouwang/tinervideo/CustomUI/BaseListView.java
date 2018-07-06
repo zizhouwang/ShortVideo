@@ -2,13 +2,16 @@ package com.video.tiner.zizhouwang.tinervideo.CustomUI;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.video.tiner.zizhouwang.tinervideo.adapter.VideoListAdapter;
 import com.video.tiner.zizhouwang.tinervideo.model.VideoModel;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -16,9 +19,14 @@ import java.util.List;
  */
 
 public class BaseListView extends ListView {
+    public List<VideoModel> oldVideoModelList = new LinkedList<>();
+    public Boolean isRefreshing = false;
     public int currentFullScreenTag = 0;
     public List<VideoListAdapter.ViewHolder> mTotalItemViews = new ArrayList<>();
     public VideoListAdapter videoListAdapter;
+    public ImageView loadVideoIV;
+    public ProgressBar loadVideoPB;
+    public String tagStr;
 
     public BaseListView(Context context) {
         super(context);

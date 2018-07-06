@@ -148,8 +148,8 @@ public class VideoListAdapter extends BaseAdapter {
             }
         });
         if (position > mList.size() * 3 / 4) {
-            if (FormatUtil.homeFragment.isRefreshing == false) {
-                FormatUtil.homeFragment.sendRequestWithHttpURLConnection(FormatUtil.mainContext, true);
+            if (FormatUtil.homeListView.isRefreshing == false) {
+                FormatUtil.homeFragment.sendRequestWithHttpURLConnection(FormatUtil.mainContext, listView, true);
             }
         }
         final Context context = convertView.getContext();

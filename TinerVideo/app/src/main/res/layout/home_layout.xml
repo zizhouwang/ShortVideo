@@ -4,18 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.video.tiner.zizhouwang.tinervideo.xListView.XListView
-        android:id="@+id/videoListView"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/videoViewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.video.tiner.zizhouwang.tinervideo.xListView.XListView>
+        android:layout_height="match_parent"></android.support.v4.view.ViewPager>
 
-    <!--<com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView-->
-        <!--android:id="@+id/videoListView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"></com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView>-->
-
-    <include
-        android:id="@+id/emptyview"
-        layout="@layout/empty_view" />
+    <!--<include-->
+        <!--android:id="@+id/emptyview"-->
+        <!--layout="@layout/empty_view" />-->
 </FrameLayout>
