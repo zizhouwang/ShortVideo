@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TinerVideo</string>
+    <string name="app_name">PopTiner</string>
     <string name="textview">TextView</string>
 
     <string name="hello">Hello World, XListViewActivity!</string>

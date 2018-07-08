@@ -24,6 +24,7 @@ import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -32,6 +33,7 @@ import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
 import com.video.tiner.zizhouwang.tinervideo.adapter.VideoListAdapter;
 import com.video.tiner.zizhouwang.tinervideo.model.VideoModel;
 import com.video.tiner.zizhouwang.tinervideo.subview.TinerNavView;
+import com.video.tiner.zizhouwang.tinervideo.subview.TinerTabView;
 import com.video.tiner.zizhouwang.tinervideo.xListView.XListView;
 
 import org.json.JSONArray;
@@ -58,6 +60,7 @@ public class HomeFragment extends Fragment {
 
     private FrameLayout homeFL;
     private ViewPager videoViewPager;
+    List<XListView> xListViews;
     private XListView verticalVideoListView;
     private XListView horizontalVideoListView;
     private View savedView = null;
@@ -88,13 +91,12 @@ public class HomeFragment extends Fragment {
         videoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (positionOffset > 0.4f && horizontalVideoListView.isRefreshing == false && horizontalVideoListView.getAdapter() == null) {
 
-                }
             }
 
             @Override
             public void onPageSelected(int position) {
+
             }
 
             @Override
@@ -105,29 +107,31 @@ public class HomeFragment extends Fragment {
                         break;
                     case ViewPager.SCROLL_STATE_SETTLING:
                         Log.v("SCROLL_STATE_SETTLING" ,"getCurrentItem:" + videoViewPager.getCurrentItem());
-                        if (videoViewPager.getCurrentItem() == 0) {
-                            FormatUtil.homeListView = verticalVideoListView;
-                        } else if (videoViewPager.getCurrentItem() == 1) {
-                            FormatUtil.homeListView = horizontalVideoListView;
-                        }
+//                        if (videoViewPager.getCurrentItem() == 0) {
+//                            FormatUtil.homeListView = verticalVideoListView;
+//                        } else if (videoViewPager.getCurrentItem() == 1) {
+//                            FormatUtil.homeListView = horizontalVideoListView;
+//                        }
+                        FormatUtil.homeListView = xListViews.get(videoViewPager.getCurrentItem());
                         break;
                     case ViewPager.SCROLL_STATE_IDLE:
                         Log.v("SCROLL_STATE_IDLE" ,"getCurrentItem:" + videoViewPager.getCurrentItem());
-                        if (videoViewPager.getCurrentItem() == 1 && horizontalVideoListView.isRefreshing == false && horizontalVideoListView.getAdapter() == null) {
+                        XListView xListView = xListViews.get(videoViewPager.getCurrentItem());
+                        if (videoViewPager.getCurrentItem() >= 1 && xListView.isRefreshing == false && xListView.getAdapter() == null) {
                             SharedPreferences sp = view.getContext().getSharedPreferences("SP_VIDEO_LIST", Activity.MODE_PRIVATE);
-                            String videoListJson = sp.getString(horizontalVideoListView.tagStr, "");
+                            String videoListJson = sp.getString(xListView.tagStr, "");
                             if (videoListJson != "") {
                                 Gson gson = new Gson();
                                 List<VideoModel> videoModelList = gson.fromJson(videoListJson, new TypeToken<LinkedList<VideoModel>>() {
                                 }.getType());
                                 if (videoModelList.size() == 0) {
-                                    sendRequestWithHttpURLConnection(view.getContext(), horizontalVideoListView, false);
+                                    sendRequestWithHttpURLConnection(view.getContext(), xListView, false);
                                 } else {
-                                    VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, horizontalVideoListView);
-                                    horizontalVideoListView.setAdapter(videoListAdapter);
+                                    VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, xListView);
+                                    xListView.setAdapter(videoListAdapter);
                                 }
                             } else {
-                                sendRequestWithHttpURLConnection(view.getContext(), horizontalVideoListView, false);
+                                sendRequestWithHttpURLConnection(view.getContext(), xListView, false);
                             }
                         }
                         break;
@@ -136,9 +140,9 @@ public class HomeFragment extends Fragment {
         });
         verticalVideoListView = new XListView(FormatUtil.mainContext);
         horizontalVideoListView = new XListView(FormatUtil.mainContext);
-        final List<XListView> xListViews = new ArrayList<>();
-        xListViews.add(verticalVideoListView);
+        xListViews = new ArrayList<>();
         xListViews.add(horizontalVideoListView);
+        xListViews.add(verticalVideoListView);
         videoViewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -161,7 +165,15 @@ public class HomeFragment extends Fragment {
                 return frameLayout;
             }
         });
-//        homeFL.addView(verticalVideoListView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        TinerTabView tinerTabView = new TinerTabView(FormatUtil.mainContext);
+        tinerTabView.setOnTabClickListener(new TinerTabView.OnTabClickListener() {
+            @Override
+            public void tabClicked(TextView tab, int index) {
+                videoViewPager.setCurrentItem(index, true);
+            }
+        });
+        tinerTabView.addTab("horizontal");
+        tinerTabView.addTab("vertical");
 
         TinerNavView tinerNavView = FormatUtil.getTinerNavView((AppCompatActivity) view.getContext(), homeFL, videoViewPager, true);
         tinerNavView.bringToFront();
@@ -170,36 +182,44 @@ public class HomeFragment extends Fragment {
         tinerNavView.navTextView.setGravity(Gravity.CENTER);
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
 
-        FormatUtil.homeListView = verticalVideoListView;
+        int tabHeight = 120 * FormatUtil.getScreenHeight(FormatUtil.mainContext) / 1280;
+        FrameLayout.LayoutParams videoViewPagerLayout = (FrameLayout.LayoutParams) videoViewPager.getLayoutParams();
+        FrameLayout.LayoutParams tinerTabViewLayout = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, tabHeight);
+        tinerTabViewLayout.topMargin = videoViewPagerLayout.topMargin;
+        homeFL.addView(tinerTabView, tinerTabViewLayout);
+        videoViewPagerLayout.topMargin += tabHeight - 3;
+        videoViewPager.setLayoutParams(videoViewPagerLayout);
+
+        FormatUtil.homeListView = xListViews.get(0);
         initXListView(inflater, verticalVideoListView);
         verticalVideoListView.tagStr = "VIDEO_LIST";
         initXListView(inflater, horizontalVideoListView);
         horizontalVideoListView.tagStr = "HORIZONTAL_VIDEO_LIST";
 
         SharedPreferences sp = view.getContext().getSharedPreferences("SP_VIDEO_LIST", Activity.MODE_PRIVATE);//创建sp对象,如果有key为"SP_PEOPLE"的sp就取出
-        String videoListJson = sp.getString(verticalVideoListView.tagStr, "");
+        String videoListJson = sp.getString(FormatUtil.homeListView.tagStr, "");
         if (videoListJson != "") {
             Gson gson = new Gson();
             List<VideoModel> videoModelList = gson.fromJson(videoListJson, new TypeToken<LinkedList<VideoModel>>() {
             }.getType());
             if (videoModelList.size() == 0) {
-                sendRequestWithHttpURLConnection(view.getContext(), verticalVideoListView, false);
+                sendRequestWithHttpURLConnection(view.getContext(), FormatUtil.homeListView, false);
             } else {
-                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, verticalVideoListView);
-                verticalVideoListView.setAdapter(videoListAdapter);
+                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, FormatUtil.homeListView);
+                FormatUtil.homeListView.setAdapter(videoListAdapter);
             }
         } else {
-            sendRequestWithHttpURLConnection(view.getContext(), verticalVideoListView, false);
+            sendRequestWithHttpURLConnection(view.getContext(), FormatUtil.homeListView, false);
         }
 
-        videoListJson = sp.getString(horizontalVideoListView.tagStr, "");
+        videoListJson = sp.getString(xListViews.get(1).tagStr, "");
         if (videoListJson != "") {
             Gson gson = new Gson();
             List<VideoModel> videoModelList = gson.fromJson(videoListJson, new TypeToken<LinkedList<VideoModel>>() {
             }.getType());
             if (videoModelList.size() > 0) {
-                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, horizontalVideoListView);
-                horizontalVideoListView.setAdapter(videoListAdapter);
+                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, xListViews.get(1));
+                xListViews.get(1).setAdapter(videoListAdapter);
             }
         }
 
