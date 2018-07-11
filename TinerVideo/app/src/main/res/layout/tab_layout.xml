@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="120px"
+    android:layout_height="100px"
     android:background="@color/tabBackgroundColor"
     android:layout_gravity="bottom">
 
@@ -14,17 +14,17 @@
         <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaImageView
             android:id="@+id/bottomHomeIV"
             android:layout_width="match_parent"
-            android:layout_height="50px"
-            android:layout_marginBottom="70px"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60px"
             android:layout_marginTop="18px"
             android:src="@drawable/home_click" />
 
         <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
             android:id="@+id/bottomHomeTV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="100px"
-            android:gravity="center"
+            android:layout_height="60px"
+            android:gravity="center_horizontal"
+            android:layout_gravity="bottom"
             android:text="Home"
             android:textColor="@color/tabClickColor"/>
     </FrameLayout>
@@ -38,17 +38,17 @@
         <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaImageView
             android:id="@+id/bottomMeIV"
             android:layout_width="match_parent"
-            android:layout_height="50px"
-            android:layout_marginBottom="70px"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60px"
             android:layout_marginTop="18px"
             android:src="@drawable/me_button" />
 
         <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
             android:id="@+id/bottomMeTV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="100px"
-            android:gravity="center"
+            android:layout_height="60px"
+            android:gravity="center_horizontal"
+            android:layout_gravity="bottom"
             android:text="Me"
             android:textColor="@color/tabNotClickColor" />
     </FrameLayout>

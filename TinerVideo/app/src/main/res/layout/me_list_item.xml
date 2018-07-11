@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100px">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/clearColor"
+        android:layout_marginLeft="40px">
+        <ImageView
+            android:id="@+id/itemTitleIV"
+            android:layout_width="80px"
+            android:layout_height="match_parent"
+            android:src="@drawable/store"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/itemTitleTV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8px"
+            android:text="Downloaded Video"
+            android:gravity="center_vertical"
+            android:textSize="20sp"
+            android:textColor="@color/itemTitleColor"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/itemRightIV"
+        android:layout_width="100px"
+        android:layout_height="64px"
+        android:layout_gravity="right|center_vertical"
+        android:src="@drawable/right_arrow"/>
+
+</FrameLayout>

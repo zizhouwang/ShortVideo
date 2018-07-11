@@ -21,4 +21,5 @@
     <color name="tabNotClickColor">#aaaaaa</color>
     <color name="testColor">#d4665b</color>
     <color name="tabBottomLineColor">#fcb254</color>
+    <color name="itemTitleColor">#333333</color>
 </resources>

@@ -182,7 +182,7 @@ public class HomeFragment extends Fragment {
         tinerNavView.navTextView.setGravity(Gravity.CENTER);
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
 
-        int tabHeight = 120 * FormatUtil.getScreenHeight(FormatUtil.mainContext) / 1280;
+        int tabHeight = 100 * FormatUtil.getScreenHeight(FormatUtil.mainContext) / 1280;
         FrameLayout.LayoutParams videoViewPagerLayout = (FrameLayout.LayoutParams) videoViewPager.getLayoutParams();
         FrameLayout.LayoutParams tinerTabViewLayout = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, tabHeight);
         tinerTabViewLayout.topMargin = videoViewPagerLayout.topMargin;
