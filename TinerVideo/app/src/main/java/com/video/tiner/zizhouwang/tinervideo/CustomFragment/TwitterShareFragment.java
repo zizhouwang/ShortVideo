@@ -41,15 +41,19 @@ import java.util.ArrayList;
  * Created by Administrator on 2018/6/10.
  */
 
-public class TwitterShareFragment extends Fragment {
+public class TwitterShareFragment extends SubFragment {
 
-    private AnimatorSet slideInSet;
-    private AnimatorSet slideOutSet;
+//    private AnimatorSet slideInSet;
+//    private AnimatorSet slideOutSet;
 
     public String url;
     public FrameLayout twitterShareFL;
     public WebView twitterShareWV;
     public ProgressBar twitterSharePB;
+
+    public TwitterShareFragment() {
+
+    }
 
     @Nullable
     @Override
@@ -58,16 +62,6 @@ public class TwitterShareFragment extends Fragment {
         twitterShareFL = view.findViewById(R.id.twitterShareFL);
         twitterShareWV = view.findViewById(R.id.twitterShareWV);
         twitterSharePB = view.findViewById(R.id.twitterSharePB);
-        TinerNavView tinerNavView = FormatUtil.getTinerNavView((AppCompatActivity) view.getContext(), view, twitterShareFL, false);
-        tinerNavView.navTextView.setText("");
-        tinerNavView.navTextView.setBackgroundColor(Color.argb(0xff, 0xfa, 0xfa, 0xfa));
-        tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0x00, 0x00, 0x00));
-        tinerNavView.backImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                slideOutSet.start();
-            }
-        });
         final WebChromeClient webChromeClient = new WebChromeClient() {
             //获取网页标题
             @Override
@@ -100,18 +94,11 @@ public class TwitterShareFragment extends Fragment {
 
         };
         final TwitterShareFragment thiss = this;
-        slideInSet = (AnimatorSet) AnimatorInflater.loadAnimator(container.getContext(), R.animator.slide_in_left);
-        slideOutSet = (AnimatorSet) AnimatorInflater.loadAnimator(container.getContext(), R.animator.slide_out_right);
-        ArrayList<Animator> animators = slideInSet.getChildAnimations();
-        ObjectAnimator slideInAnim = (ObjectAnimator) animators.get(0);
-        slideInAnim.setFloatValues(FormatUtil.getScreenWidth(container.getContext()), 0.0f);
-        slideInAnim.setDuration(400);
-        slideInSet.setTarget(view);
-        animators = slideOutSet.getChildAnimations();
-        ObjectAnimator slideOurAnim = (ObjectAnimator) animators.get(0);
-        slideOurAnim.setFloatValues(0.0f, FormatUtil.getScreenWidth(container.getContext()));
-        slideOurAnim.setDuration(300);
-        slideOutSet.setTarget(view);
+        TinerNavView tinerNavView = FormatUtil.getTinerNavView((AppCompatActivity) view.getContext(), view, twitterShareFL, false);
+        tinerNavView.navTextView.setText("");
+        tinerNavView.navTextView.setBackgroundColor(Color.argb(0xff, 0xfa, 0xfa, 0xfa));
+        tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0x00, 0x00, 0x00));
+        super.onCreateView(inflater, container, savedInstanceState, view, tinerNavView);
         slideInSet.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -149,72 +136,6 @@ public class TwitterShareFragment extends Fragment {
 
             }
         });
-        slideOutSet.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                FragmentManager fm = thiss.getFragmentManager();
-                FragmentTransaction beginTransaction = fm.beginTransaction();
-                beginTransaction.remove(thiss);
-                beginTransaction.commit();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        getView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        slideInSet.start();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //得到Fragment的根布局并使该布局可以获得焦点
-        getView().setFocusableInTouchMode(true);
-        //得到Fragment的根布局并且使其获得焦点
-        getView().requestFocus();
-        //对该根布局View注册KeyListener的监听
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    slideOutSet.start();
-                    return true;
-                } else if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.v("pause", "pause");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.v("stop", "stop");
     }
 }

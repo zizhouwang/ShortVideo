@@ -4,8 +4,9 @@
     android:layout_height="100px">
 
     <LinearLayout
+        android:id="@+id/backgroundMeItem"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="100px"
         android:background="@color/clearColor"
         android:layout_marginLeft="40px">
         <ImageView
@@ -28,7 +29,7 @@
     <ImageView
         android:id="@+id/itemRightIV"
         android:layout_width="100px"
-        android:layout_height="64px"
+        android:layout_height="80px"
         android:layout_gravity="right|center_vertical"
         android:src="@drawable/right_arrow"/>
 

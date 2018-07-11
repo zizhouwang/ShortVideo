@@ -188,13 +188,13 @@ public class FormatUtil {
 
     public static void changeViewTopMargin(View view) {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) view.getLayoutParams();
-        lp.topMargin = FormatUtil.getNavHeight((AppCompatActivity) view.getContext()) + 50 - 4;
+        lp.topMargin = FormatUtil.getNavHeight((AppCompatActivity) view.getContext()) + FormatUtil.getStatusBarHeight(view.getContext());
         view.setLayoutParams(lp);
     }
 
     public static int getNavHeight(final AppCompatActivity context) {
         int width = context.getResources().getDisplayMetrics().widthPixels;
-        int height = width * 44 / 320;
+        int height = 100 * width / 720;
         return height;
     }
 

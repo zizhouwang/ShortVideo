@@ -98,9 +98,9 @@ public class TinerShareView extends FrameLayout {
             public void onClick(View v) {
                 FrameLayout windowFL = (FrameLayout) thiss.getParent();
                 windowFL.removeView(thiss);
-                FragmentManager fm = context.getFragmentManager();
                 TwitterShareFragment twitterShareFragment = new TwitterShareFragment();
                 twitterShareFragment.url = "https://twitter.com/intent/tweet?text=&url=" + FormatUtil.toURLEncoded(shareURL);
+                FragmentManager fm = context.getFragmentManager();
                 FragmentTransaction beginTransaction = fm.beginTransaction();
                 beginTransaction.replace(windowFL.getId(), twitterShareFragment).addToBackStack(null).commit();
             }
