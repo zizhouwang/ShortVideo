@@ -7,6 +7,15 @@
         android:id="@+id/downloadedVideoFL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/whiteColor"></FrameLayout>
+        android:background="@color/whiteColor">
+
+        <com.video.tiner.zizhouwang.tinervideo.xListView.XListView
+            android:id="@+id/downloadedVideoListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </com.video.tiner.zizhouwang.tinervideo.xListView.XListView>
+
+    </FrameLayout>
 
 </FrameLayout>

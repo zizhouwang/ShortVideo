@@ -39,7 +39,7 @@ public class XListView extends BaseListView implements OnScrollListener {
 	private IXListViewListener mListViewListener;
 
 	// -- header view
-	private XListViewHeader mHeaderView;
+	public XListViewHeader mHeaderView;
 	// header view content, use it to calculate the Header's height. And hide it
 	// when disable pull refresh.
 	private RelativeLayout mHeaderViewContent;

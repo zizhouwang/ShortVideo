@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
 //        new File(C.getBufferDir()).mkdirs();//创建预加载文件的文件夹
         tabContentFL = findViewById(R.id.tabContentFL);
         windowFL = (FrameLayout) tabContentFL.getParent();
+        FormatUtil.mainContext = this;
+        VideoDownloadManager.startDownloadVideo(this);
         homeFragment = new HomeFragment();
         FormatUtil.homeFragment = homeFragment;
 
@@ -145,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        FormatUtil.mainContext = this;
-        VideoDownloadManager.startDownloadVideo(this);
         LinearLayout tabBottomView = findViewById(R.id.tabFL);
         FrameLayout.LayoutParams tabBottomViewLayout = (FrameLayout.LayoutParams) tabBottomView.getLayoutParams();
         tabBottomViewLayout.height = tabBottomViewLayout.height * FormatUtil.getScreenHeight(this) / 1280;

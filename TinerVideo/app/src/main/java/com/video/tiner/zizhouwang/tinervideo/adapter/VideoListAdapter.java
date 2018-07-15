@@ -19,10 +19,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.video.tiner.zizhouwang.tinervideo.CustomFragment.HomeFragment;
 import com.video.tiner.zizhouwang.tinervideo.ImageLoader.ImageLoader;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
@@ -48,15 +50,17 @@ import wseemann.media.FFmpegMediaMetadataRetriever;
 public class VideoListAdapter extends BaseAdapter {
     public XListView listView;
     public List<VideoModel> mList;
-    private LayoutInflater mInflater;
+    protected LayoutInflater mInflater;
     private int videoProxyPort = 9180;
-    private List<View> convertViews = new ArrayList<>();
+    protected List<View> convertViews = new ArrayList<>();
     private int leastItemCount = 4;
+    protected String tagStr;
 
     private HashMap<String, HttpGetProxy> httpGetProxyHashMap = new HashMap<>();
 
     // 通过构造器关联数据源与数据适配器
-    public VideoListAdapter(Context context, List<VideoModel> list, XListView listView) {
+    public VideoListAdapter(Context context, List<VideoModel> list, XListView listView, String tagStr) {
+        this.tagStr = tagStr;
         mList = list;
         // 使用当前要使用的界面对象context去初始化布局装载器对象mInflater
         mInflater = LayoutInflater.from(context);
@@ -64,28 +68,36 @@ public class VideoListAdapter extends BaseAdapter {
         listView.mTotalItemViews = new ArrayList<>();
 
         for (int i = 0; i < leastItemCount; i++) {
-            final ViewHolder viewHolder;
-            viewHolder = new ViewHolder();
+            ViewHolder viewHolder;
             View convertView = mInflater.inflate(R.layout.video_list_item, null);
-            viewHolder.videoListVerticalLL = convertView.findViewById(R.id.videoListVerticalLL);
-            viewHolder.shareLayout = convertView.findViewById(R.id.shareLayout);
-            viewHolder.likeLayout = convertView.findViewById(R.id.likeLayout);
-            viewHolder.videoChannelTV = convertView.findViewById(R.id.videoChannelTV);
-            viewHolder.likeCountTV = convertView.findViewById(R.id.likeCountTV);
-            viewHolder.shareCountTV = convertView.findViewById(R.id.shareCountTV);
-//            viewHolder.downloadCoinsTV = convertView.findViewById(R.id.downloadCoinsTV);
-//            viewHolder.downloadVideoIV = convertView.findViewById(R.id.downloadVideoIV);
-//            viewHolder.downloadVideoIV.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.download_button));
-            viewHolder.likeImageView = convertView.findViewById(R.id.likeImageView);
-            viewHolder.likeImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.like_button));
-            viewHolder.shareImageView = convertView.findViewById(R.id.shareImageView);
-            viewHolder.shareImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.share_button));
-            viewHolder.tinerInteView = convertView.findViewById(R.id.tinerVV);
+            viewHolder = loadViewHolder(convertView, tagStr);
 
-            // 通过setTag将ViewHolder与convertView绑定
             convertView.setTag(viewHolder);
             convertViews.add(convertView);
         }
+    }
+
+    protected ViewHolder loadViewHolder(View convertView, String tagStr) {
+        ViewHolder viewHolder;
+        viewHolder = new ViewHolder();
+        viewHolder.videoListVerticalLL = convertView.findViewById(R.id.videoListVerticalLL);
+        viewHolder.shareLayout = convertView.findViewById(R.id.shareLayout);
+        viewHolder.vLBottomItemLL = convertView.findViewById(R.id.vLBottomItemLL);
+        viewHolder.videoBottomLinearLayout = convertView.findViewById(R.id.videoBottomLinearLayout);
+        viewHolder.likeLayout = convertView.findViewById(R.id.likeLayout);
+        viewHolder.videoChannelTV = convertView.findViewById(R.id.videoChannelTV);
+        viewHolder.likeCountTV = convertView.findViewById(R.id.likeCountTV);
+        viewHolder.shareCountTV = convertView.findViewById(R.id.shareCountTV);
+//            viewHolder.downloadCoinsTV = convertView.findViewById(R.id.downloadCoinsTV);
+//            viewHolder.downloadVideoIV = convertView.findViewById(R.id.downloadVideoIV);
+//            viewHolder.downloadVideoIV.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.download_button));
+        viewHolder.likeImageView = convertView.findViewById(R.id.likeImageView);
+        viewHolder.likeImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.like_button));
+        viewHolder.shareImageView = convertView.findViewById(R.id.shareImageView);
+        viewHolder.shareImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.share_button));
+        viewHolder.tinerInteView = convertView.findViewById(R.id.tinerVV);
+
+        return viewHolder;
     }
 
     @Override
@@ -113,23 +125,8 @@ public class VideoListAdapter extends BaseAdapter {
                 convertView = convertViews.remove(0);
                 viewHolder = (ViewHolder) convertView.getTag();
             } else {
-                viewHolder = new ViewHolder();
                 convertView = mInflater.inflate(R.layout.video_list_item, null);
-                viewHolder.videoListVerticalLL = convertView.findViewById(R.id.videoListVerticalLL);
-                viewHolder.shareLayout = convertView.findViewById(R.id.shareLayout);
-                viewHolder.likeLayout = convertView.findViewById(R.id.likeLayout);
-                viewHolder.videoChannelTV = convertView.findViewById(R.id.videoChannelTV);
-                viewHolder.likeCountTV = convertView.findViewById(R.id.likeCountTV);
-                viewHolder.shareCountTV = convertView.findViewById(R.id.shareCountTV);
-//                viewHolder.downloadCoinsTV = convertView.findViewById(R.id.downloadCoinsTV);
-//                viewHolder.downloadVideoIV = convertView.findViewById(R.id.downloadVideoIV);
-//                viewHolder.downloadVideoIV.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.download_button));
-                viewHolder.likeImageView = convertView.findViewById(R.id.likeImageView);
-                viewHolder.likeImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.like_button));
-                viewHolder.shareImageView = convertView.findViewById(R.id.shareImageView);
-                viewHolder.shareImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.share_button));
-                viewHolder.tinerInteView = convertView.findViewById(R.id.tinerVV);
-                // 通过setTag将ViewHolder与convertView绑定
+                viewHolder = loadViewHolder(convertView, tagStr);
                 convertView.setTag(viewHolder);
             }
             if (listView.mTotalItemViews.contains(viewHolder) == false) {
@@ -148,8 +145,8 @@ public class VideoListAdapter extends BaseAdapter {
             }
         });
         if (position > mList.size() * 3 / 4) {
-            if (FormatUtil.homeListView.isRefreshing == false) {
-                FormatUtil.homeFragment.sendRequestWithHttpURLConnection(FormatUtil.mainContext, listView, true);
+            if (tagStr == "home" && FormatUtil.homeListView.isRefreshing == false) {
+                HomeFragment.sendRequestWithHttpURLConnection(FormatUtil.mainContext, listView, true);
             }
         }
         final Context context = convertView.getContext();
@@ -173,7 +170,7 @@ public class VideoListAdapter extends BaseAdapter {
             videoWidth = screenHeight / 3;
             height = screenHeight / 3;
         }
-        viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, httpGetProxyHashMap, videoProxyPort + position);
+        viewHolder.tinerInteView.updateUIAndData(position, height, videoWidth, bean, tagStr, listView);
         for (int i = 0; i < listView.mTotalItemViews.size(); i++) {
             Log.v("getViewThumbnailIVTag", "" + listView.mTotalItemViews.get(i).tinerInteView.videoThumbnailIV.getTag());
         }
@@ -220,6 +217,8 @@ public class VideoListAdapter extends BaseAdapter {
     public class ViewHolder {
         public LinearLayout videoListVerticalLL;
         public LinearLayout shareLayout;
+        public LinearLayout vLBottomItemLL;
+        public LinearLayout videoBottomLinearLayout;
         public LinearLayout likeLayout;
         public TextView videoChannelTV;
         public TextView likeCountTV;

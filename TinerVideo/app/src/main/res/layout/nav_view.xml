@@ -24,6 +24,7 @@
             android:id="@+id/backButton"
             android:layout_width="120px"
             android:layout_height="match_parent"
-            android:src="@drawable/back_button" />
+            android:padding="16px"
+            android:src="@drawable/white_back_button" />
     </FrameLayout>
 </FrameLayout>

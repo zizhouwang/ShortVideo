@@ -20,6 +20,7 @@
         </com.video.tiner.zizhouwang.tinervideo.subview.TinerVideoView>
 
         <LinearLayout
+            android:id="@+id/videoBottomLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">

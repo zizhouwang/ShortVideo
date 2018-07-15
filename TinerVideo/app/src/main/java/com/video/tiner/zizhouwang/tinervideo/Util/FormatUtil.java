@@ -44,6 +44,7 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Dictionary;
+import java.util.Locale;
 
 /**
  * Created by zizhouwang on 2018/5/31.
@@ -582,6 +583,24 @@ public class FormatUtil {
 //                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition + 1, 100, 0);
 //            }
             FormatUtil.homeListView.smoothScrollToPositionFromTop(currentItemView.customPosition + 1, 100, 0);
+        }
+    }
+
+    public static String conversionNumber(float number, boolean isNeedInt) {
+        String unit = "";
+        if (number < 1000000 && number > 1000) {
+            unit = "KB";
+            number = number / 1000.0f;
+        } else if (number >= 1000000) {
+            unit = "MB";
+            number = number / 1000000.0f;
+        } else {
+            unit = "B";
+        }
+        if (isNeedInt) {
+            return String.format(Locale.US, "%d%s", (int)number, unit);
+        } else {
+            return String.format(Locale.US, "%.1f%s", number, unit);
         }
     }
 }

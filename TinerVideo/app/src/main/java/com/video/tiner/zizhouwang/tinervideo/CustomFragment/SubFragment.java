@@ -43,7 +43,7 @@ public class SubFragment extends BaseFragment {
         ArrayList<Animator> animators = slideInSet.getChildAnimations();
         ObjectAnimator slideInAnim = (ObjectAnimator) animators.get(0);
         slideInAnim.setFloatValues(FormatUtil.getScreenWidth(container.getContext()), 0.0f);
-        slideInAnim.setDuration(400);
+        slideInAnim.setDuration(300);
         slideInSet.setTarget(view);
         animators = slideOutSet.getChildAnimations();
         ObjectAnimator slideOurAnim = (ObjectAnimator) animators.get(0);
@@ -78,6 +78,12 @@ public class SubFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 slideOutSet.start();
+            }
+        });
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
         return view;

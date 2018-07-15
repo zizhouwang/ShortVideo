@@ -127,7 +127,7 @@ public class HomeFragment extends Fragment {
                                 if (videoModelList.size() == 0) {
                                     sendRequestWithHttpURLConnection(view.getContext(), xListView, false);
                                 } else {
-                                    VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, xListView);
+                                    VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, xListView, "home");
                                     xListView.setAdapter(videoListAdapter);
                                 }
                             } else {
@@ -205,7 +205,7 @@ public class HomeFragment extends Fragment {
             if (videoModelList.size() == 0) {
                 sendRequestWithHttpURLConnection(view.getContext(), FormatUtil.homeListView, false);
             } else {
-                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, FormatUtil.homeListView);
+                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, FormatUtil.homeListView, "home");
                 FormatUtil.homeListView.setAdapter(videoListAdapter);
             }
         } else {
@@ -218,7 +218,7 @@ public class HomeFragment extends Fragment {
             List<VideoModel> videoModelList = gson.fromJson(videoListJson, new TypeToken<LinkedList<VideoModel>>() {
             }.getType());
             if (videoModelList.size() > 0) {
-                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, xListViews.get(1));
+                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, xListViews.get(1), "home");
                 xListViews.get(1).setAdapter(videoListAdapter);
             }
         }
@@ -261,7 +261,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void sendRequestWithHttpURLConnection(final Context context, final XListView xListView, final Boolean isLoadMore) {
+    public static void sendRequestWithHttpURLConnection(final Context context, final XListView xListView, final Boolean isLoadMore) {
         //开启线程来发起网络请求
         if (isLoadMore == false) {
             xListView.oldVideoModelList = new LinkedList<>();
@@ -320,7 +320,7 @@ public class HomeFragment extends Fragment {
                                     videoListAdapter.notifyDataSetChanged();
                                 } else {
                                     Log.v("videoListSize", "" + videoModelList.size());
-                                    VideoListAdapter videoListAdapter = new VideoListAdapter(context, videoModelList, xListView);
+                                    VideoListAdapter videoListAdapter = new VideoListAdapter(context, videoModelList, xListView, "home");
                                     xListView.setAdapter(videoListAdapter);
                                 }
                             }
