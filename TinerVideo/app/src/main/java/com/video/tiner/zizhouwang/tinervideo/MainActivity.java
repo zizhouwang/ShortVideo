@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
         FormatUtil.setStatusBarUpper(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        new File(C.getBufferDir()).mkdirs();//创建预加载文件的文件夹
         tabContentFL = findViewById(R.id.tabContentFL);
         windowFL = (FrameLayout) tabContentFL.getParent();
         FormatUtil.mainContext = this;
@@ -165,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     bottomMeIV.setImageBitmap(FormatUtil.readBitMap(thiss, R.drawable.me_button));
                     bottomMeTV.setTextColor(getResources().getColor(R.color.tabNotClickColor));
                     tabContentFL.removeView(meFragment.getSavedView());
-                    tabContentFL.addView(homeFragment.getSavedView());
+                    homeFragment.getSavedView().setVisibility(View.VISIBLE);
 //                    getFragmentManager().beginTransaction().replace(R.id.tabContentFL, homeFragment).commit();
                     currentPage = 0;
                 }
@@ -183,8 +182,8 @@ public class MainActivity extends AppCompatActivity {
                     if (meFragment == null) {
                         meFragment = new MeFragment();
                     }
-                    tabContentFL.removeView(homeFragment.getSavedView());
                     tabContentFL.addView(meFragment.getSavedView());
+                    homeFragment.getSavedView().setVisibility(View.INVISIBLE);
 //                    getFragmentManager().beginTransaction().replace(R.id.tabContentFL, meFragment).commit();
                     currentPage = 1;
                 }

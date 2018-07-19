@@ -1,5 +1,7 @@
 package com.video.tiner.zizhouwang.tinervideo.CustomFragment;
 
+import android.animation.Animator;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,6 +9,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,27 +43,53 @@ public class DownloadedVideoFragment extends SubFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         final FrameLayout view = (FrameLayout) inflater.inflate(R.layout.downloaded_video_layout, null);
         downloadedVideoFL = view.findViewById(R.id.downloadedVideoFL);
-        downloadedVideoListView = view.findViewById(R.id.downloadedVideoListView);
-        downloadedVideoListView.setPullLoadEnable(false);
-        downloadedVideoListView.setPullRefreshEnable(false);
-        View emptyView = inflater.inflate(R.layout.empty_view, null);
-        downloadedVideoListView .setEmptyView(emptyView);
-        downloadedVideoListView.removeHeaderView(downloadedVideoListView.mHeaderView);
         TinerNavView tinerNavView = FormatUtil.getTinerNavView((AppCompatActivity) view.getContext(), view, downloadedVideoFL, false);
         tinerNavView.navTextView.setText("Download Video");
         tinerNavView.navTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         tinerNavView.navTextView.setGravity(Gravity.CENTER);
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
         super.onCreateView(inflater, container, savedInstanceState, view, tinerNavView);
-        new Thread(new Runnable() {
+
+        downloadedVideoListView = view.findViewById(R.id.downloadedVideoListView);
+        downloadedVideoListView.setPullLoadEnable(false);
+        downloadedVideoListView.setPullRefreshEnable(false);
+        View emptyView = inflater.inflate(R.layout.empty_view, null);
+        downloadedVideoListView.setEmptyView(emptyView);
+        downloadedVideoFL.addView(downloadedVideoListView.getEmptyView());
+        downloadedVideoListView.bringToFront();
+        FrameLayout.LayoutParams downloadedVideoListViewLayout = (FrameLayout.LayoutParams) downloadedVideoListView.getLayoutParams();
+        downloadedVideoListViewLayout.topMargin -= 3;
+        downloadedVideoListView.setLayoutParams(downloadedVideoListViewLayout);
+        downloadedVideoListView.setVisibility(View.VISIBLE);
+        slideInSet.addListener(new Animator.AnimatorListener() {
             @Override
-            public void run() {
-                Message msg = new Message();
-                LinkedList<VideoModel> videoModels = new LinkedList<>();
-                msg.obj = VideoDownloadManager.getVideoDownloadModels();
-                handler.sendMessage(msg);
+            public void onAnimationStart(Animator animation) {
+
             }
-        }).start();
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Message msg = new Message();
+                        DownloadedVideoListAdapter videoListAdapter = new DownloadedVideoListAdapter(FormatUtil.mainContext, VideoDownloadManager.getVideoDownloadModels(), downloadedVideoListView, "downloadedVideo");
+                        msg.obj = videoListAdapter;
+                        handler.sendMessage(msg);
+                    }
+                }).start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
         return view;
     }
 
@@ -69,8 +98,7 @@ public class DownloadedVideoFragment extends SubFragment {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            DownloadedVideoListAdapter videoListAdapter = new DownloadedVideoListAdapter(FormatUtil.mainContext, (LinkedList<VideoModel>)msg.obj, downloadedVideoListView, "downloadedVideo");
-            downloadedVideoListView.setAdapter(videoListAdapter);
+            downloadedVideoListView.setAdapter((DownloadedVideoListAdapter) msg.obj);
         }
     };
 }

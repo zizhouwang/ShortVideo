@@ -311,25 +311,23 @@ public class VideoDownloadManager {
     }
 
     private static void loadVideoInfoJsons(Context context, String key) {
-        if (videoDownloadingModels == null) {
+        if (videoDownloadingModels == null || videoDownloadedModels == null) {
             videoDownloadingModels = new LinkedList<>();
-        }
-        if (videoDownloadedModels == null) {
             videoDownloadedModels = new LinkedList<>();
-        }
-        Gson gson = new Gson();
-        SharedPreferences sp = context.getSharedPreferences("videoDownload", Context.MODE_PRIVATE);
-        try {
-            JSONArray videoJsons = new JSONArray(sp.getString(key, "[]"));
-            for (int i = 0; i < videoJsons.length(); i++) {
-                videoDownloadingModels.add(gson.fromJson(videoJsons.getString(i), VideoModel.class));
+            Gson gson = new Gson();
+            SharedPreferences sp = context.getSharedPreferences("videoDownload", Context.MODE_PRIVATE);
+            try {
+                JSONArray videoJsons = new JSONArray(sp.getString(key, "[]"));
+                for (int i = 0; i < videoJsons.length(); i++) {
+                    videoDownloadingModels.add(gson.fromJson(videoJsons.getString(i), VideoModel.class));
+                }
+                JSONArray videoDownloadedJsons = new JSONArray(sp.getString("downloadedVideos", "[]"));
+                for (int i = 0; i < videoDownloadedJsons.length(); i++) {
+                    videoDownloadedModels.add(gson.fromJson(videoDownloadedJsons.getString(i), VideoModel.class));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            JSONArray videoDownloadedJsons = new JSONArray(sp.getString("downloadedVideos", "[]"));
-            for (int i = 0; i < videoDownloadedJsons.length(); i++) {
-                videoDownloadedModels.add(gson.fromJson(videoDownloadedJsons.getString(i), VideoModel.class));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

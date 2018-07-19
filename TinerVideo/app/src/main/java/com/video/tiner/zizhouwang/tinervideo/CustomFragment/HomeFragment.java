@@ -53,7 +53,7 @@ import java.util.List;
  * Created by zizhouwang on 2018/6/19.
  */
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends BaseFragment {
 
 //    public List<VideoModel> oldVideoModelList = new LinkedList<>();
 //    public Boolean isRefreshing = false;
@@ -68,11 +68,14 @@ public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View view;
         if (savedView == null) {
-            return createNewView(inflater);
+            view = createNewView(inflater);
         } else {
-            return savedView;
+            view = savedView;
         }
+        view.setBackgroundResource(R.color.whiteColor);
+        return view;
     }
 
     public View getSavedView() {
@@ -106,12 +109,6 @@ public class HomeFragment extends Fragment {
                         Log.v("SCROLL_STATE_DRAGGING" ,"SCROLL_STATE_DRAGGING");
                         break;
                     case ViewPager.SCROLL_STATE_SETTLING:
-                        Log.v("SCROLL_STATE_SETTLING" ,"getCurrentItem:" + videoViewPager.getCurrentItem());
-//                        if (videoViewPager.getCurrentItem() == 0) {
-//                            FormatUtil.homeListView = verticalVideoListView;
-//                        } else if (videoViewPager.getCurrentItem() == 1) {
-//                            FormatUtil.homeListView = horizontalVideoListView;
-//                        }
                         FormatUtil.homeListView = xListViews.get(videoViewPager.getCurrentItem());
                         break;
                     case ViewPager.SCROLL_STATE_IDLE:

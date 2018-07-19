@@ -26,7 +26,7 @@ import java.util.List;
  * Created by zizhouwang on 2018/6/19.
  */
 
-public class MeFragment extends Fragment {
+public class MeFragment extends BaseFragment {
 
     private View savedView = null;
     private FrameLayout meFL;
@@ -35,7 +35,9 @@ public class MeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return createNewView(inflater);
+        View view = createNewView(inflater);
+        view.setBackgroundResource(R.color.whiteColor);
+        return view;
     }
 
     public View getSavedView() {
