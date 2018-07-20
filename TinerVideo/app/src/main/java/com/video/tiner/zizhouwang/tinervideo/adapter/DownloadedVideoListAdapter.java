@@ -35,7 +35,37 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                thiss.notifyDataSetChanged();
+                for (View convertView : convertViews) {
+                    DownloadViewHolder downloadViewHolder = (DownloadViewHolder) convertView.getTag();
+                    VideoModel bean = mList.get(downloadViewHolder.position);
+                    if (VideoDownloadManager.isDownloadedVideo(bean)) {
+                        downloadViewHolder.tinerInteView.videoThumbnailIV.setEnabled(true);
+                        downloadViewHolder.vLBottomItemLL.setVisibility(View.VISIBLE);
+                        downloadViewHolder.downloadInfoView.setVisibility(View.GONE);
+                    } else {
+                        downloadViewHolder.tinerInteView.videoThumbnailIV.setEnabled(false);
+                        downloadViewHolder.downloadProgressBar.setMax(100);
+                        downloadViewHolder.downloadProgressBar.setProgress(0);
+                        downloadViewHolder.speedTextView.setText("");
+                        downloadViewHolder.downloadInfoTextView.setText("");
+                        String localFilePath = VideoDownloadManager.getSavedVideoFilePath(bean.getVideo_id());
+                        File localFile = new File(localFilePath);
+                        if (localFile.exists()) {
+                            long downloadingFileSize = VideoDownloadManager.fileSize;
+                            long fileLength = localFile.length();
+                            downloadViewHolder.downloadProgressBar.setMax((int) downloadingFileSize);
+                            downloadViewHolder.downloadProgressBar.setProgress((int) fileLength);
+                            downloadViewHolder.speedTextView.setText(FormatUtil.conversionNumber(VideoDownloadManager.currentSpeed, false));
+                            downloadViewHolder.downloadInfoTextView.setText(String.format("%s/%s", FormatUtil.conversionNumber(fileLength, false), FormatUtil.conversionNumber(downloadingFileSize, false)));
+                        } else {
+                            downloadViewHolder.downloadProgressBar.setMax(100);
+                            downloadViewHolder.downloadProgressBar.setProgress(0);
+                            downloadViewHolder.speedTextView.setText("");
+                        }
+                        downloadViewHolder.vLBottomItemLL.setVisibility(View.GONE);
+                        downloadViewHolder.downloadInfoView.setVisibility(View.VISIBLE);
+                    }
+                }
             }
         };
         VideoDownloadManager.setOnVideoDownloadListener(new VideoDownloadManager.OnVideoDownloadListener() {
@@ -98,10 +128,14 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
             if (localFile.exists()) {
                 long downloadingFileSize = VideoDownloadManager.fileSize;
                 long fileLength = localFile.length();
-                downloadViewHolder.downloadProgressBar.setMax(100);
-                downloadViewHolder.downloadProgressBar.setProgress(0);
+                downloadViewHolder.downloadProgressBar.setMax((int) downloadingFileSize);
+                downloadViewHolder.downloadProgressBar.setProgress((int) fileLength);
                 downloadViewHolder.speedTextView.setText(FormatUtil.conversionNumber(VideoDownloadManager.currentSpeed, false));
                 downloadViewHolder.downloadInfoTextView.setText(String.format("%s/%s", FormatUtil.conversionNumber(fileLength, false), FormatUtil.conversionNumber(downloadingFileSize, false)));
+            } else {
+                downloadViewHolder.downloadProgressBar.setMax(100);
+                downloadViewHolder.downloadProgressBar.setProgress(0);
+                downloadViewHolder.speedTextView.setText("");
             }
             downloadViewHolder.vLBottomItemLL.setVisibility(View.GONE);
             downloadViewHolder.downloadInfoView.setVisibility(View.VISIBLE);
