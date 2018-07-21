@@ -598,7 +598,7 @@ public class FormatUtil {
             unit = "B";
         }
         if (isNeedInt) {
-            return String.format(Locale.US, "%d%s", (int)number, unit);
+            return String.format(Locale.US, "%d%s/s", (int)number, unit);
         } else {
             return String.format(Locale.US, "%.1f%s", number, unit);
         }

@@ -29,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginRight="40px"
                 android:gravity="center_vertical|right"
-                android:text="waiting..."
+                android:text="100.5KB/200.4MB"
                 android:textSize="18sp" />
         </LinearLayout>
 

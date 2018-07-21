@@ -84,7 +84,7 @@ public class MeListAdapter extends BaseAdapter {
             }
         });
         FrameLayout.LayoutParams backgroundMeItemLayout = (FrameLayout.LayoutParams) viewHolder.backgroundMeItem.getLayoutParams();
-        backgroundMeItemLayout.height = 200;
+        backgroundMeItemLayout.height = 200 * FormatUtil.getScreenHeight(FormatUtil.mainContext) / 1920;
         viewHolder.backgroundMeItem.setLayoutParams(backgroundMeItemLayout);
         MeModel bean = mList.get(position);
         if (bean.itemIconId == -1) {

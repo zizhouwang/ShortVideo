@@ -20,7 +20,10 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zizhouwang on 2018/6/14.
@@ -44,15 +47,19 @@ public class VideoDownloadManager {
     public static float currentSpeed;
 
     public static void addNeedDownloadVideo(VideoModel videoModel) {
-        if (videoDownloadingModels.contains(videoModel)) {
-            Toast.makeText(FormatUtil.mainContext, "文件正在下载", Toast.LENGTH_LONG).show();
+        if (isContainsVideoModel(videoDownloadingModels, videoModel.getVideo_id())) {
+            Toast.makeText(FormatUtil.mainContext, "视频正在下载", Toast.LENGTH_LONG).show();
             return;
         }
         String currentFileAbsolutePath = getSavedVideoFilePath(videoModel.getVideo_id());
         File file = new File(currentFileAbsolutePath);
         if (file.exists()) {
-            Toast.makeText(FormatUtil.mainContext, "文件已存在", Toast.LENGTH_LONG).show();
-            return;
+            if (!isContainsVideoModel(videoDownloadedModels, videoModel.getVideo_id())) {
+                file.delete();
+            } else {
+                Toast.makeText(FormatUtil.mainContext, "该视频已下载", Toast.LENGTH_LONG).show();
+                return;
+            }
         }
         videoDownloadingModels.add(videoModel);
         saveVideoInfoJsons(FormatUtil.mainContext, "videoJsons");
@@ -94,7 +101,10 @@ public class VideoDownloadManager {
                 currentFileAbsolutePath = downloadDir + "/" + currentVideoId + ".mp4";
                 File file = new File(currentFileAbsolutePath);
                 if (file.exists() && fileSize == 0) {
-                    videoDownloadedModels.add(videoDownloadingModels.remove(0));
+                    VideoModel downloadedVideoModel = videoDownloadingModels.remove(0);
+                    if (!isContainsVideoModel(videoDownloadedModels, downloadedVideoModel.getVideo_id())) {
+                        videoDownloadedModels.add(downloadedVideoModel);
+                    }
                     saveVideoInfoJsons(context, "videoJsons");
                     continue;
                 }
@@ -225,7 +235,9 @@ public class VideoDownloadManager {
     private static boolean videoDownloadComplete() {
         Context context = FormatUtil.mainContext;
         VideoModel downloadedVideoModel = videoDownloadingModels.remove(0);
-        videoDownloadedModels.add(downloadedVideoModel);
+        if (!isContainsVideoModel(videoDownloadingModels, downloadedVideoModel.getVideo_id())) {
+            videoDownloadingModels.add(downloadedVideoModel);
+        }
         saveFileTotalLength(context, (long) 0, "File_Length" + currentVideoId);
         saveFileLength(context, (long) 0, "File_startOffset" + currentVideoId);
         saveVideoInfoJsons(context, "videoJsons");
@@ -335,8 +347,18 @@ public class VideoDownloadManager {
 
     public static LinkedList<VideoModel> getVideoDownloadModels() {
         LinkedList<VideoModel> videoDownloadModels = new LinkedList<>();
-        videoDownloadModels.addAll(videoDownloadedModels);
-        videoDownloadModels.addAll(videoDownloadingModels);
+        for (VideoModel videoModel : videoDownloadedModels) {
+            if (!isContainsVideoModel(videoDownloadModels, videoModel.getVideo_id())) {
+                videoDownloadModels.add(videoModel);
+            }
+        }
+        for (VideoModel videoModel : videoDownloadingModels) {
+            if (!isContainsVideoModel(videoDownloadModels, videoModel.getVideo_id())) {
+                videoDownloadModels.add(videoModel);
+            }
+        }
+//        videoDownloadModels.addAll(videoDownloadedModels);
+//        videoDownloadModels.addAll(videoDownloadingModels);
         return videoDownloadModels;
     }
 
@@ -356,5 +378,14 @@ public class VideoDownloadManager {
         } else {
             return false;
         }
+    }
+
+    public static boolean isContainsVideoModel(LinkedList<VideoModel> lists, int videoId) {
+        for (VideoModel videoModel : lists) {
+            if (videoModel.getVideo_id() == videoId) {
+                return true;
+            }
+        }
+        return false;
     }
 }

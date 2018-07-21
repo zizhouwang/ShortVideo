@@ -50,18 +50,15 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
                         downloadViewHolder.downloadInfoTextView.setText("");
                         String localFilePath = VideoDownloadManager.getSavedVideoFilePath(bean.getVideo_id());
                         File localFile = new File(localFilePath);
+                        long localFileLength = 0;
                         if (localFile.exists()) {
-                            long downloadingFileSize = VideoDownloadManager.fileSize;
-                            long fileLength = localFile.length();
-                            downloadViewHolder.downloadProgressBar.setMax((int) downloadingFileSize);
-                            downloadViewHolder.downloadProgressBar.setProgress((int) fileLength);
-                            downloadViewHolder.speedTextView.setText(FormatUtil.conversionNumber(VideoDownloadManager.currentSpeed, false));
-                            downloadViewHolder.downloadInfoTextView.setText(String.format("%s/%s", FormatUtil.conversionNumber(fileLength, false), FormatUtil.conversionNumber(downloadingFileSize, false)));
-                        } else {
-                            downloadViewHolder.downloadProgressBar.setMax(100);
-                            downloadViewHolder.downloadProgressBar.setProgress(0);
-                            downloadViewHolder.speedTextView.setText("");
+                            localFileLength = localFile.length();
                         }
+                        long downloadingFileSize = VideoDownloadManager.fileSize;
+                        downloadViewHolder.downloadProgressBar.setMax((int) downloadingFileSize);
+                        downloadViewHolder.downloadProgressBar.setProgress((int) localFileLength);
+                        downloadViewHolder.speedTextView.setText(FormatUtil.conversionNumber(VideoDownloadManager.currentSpeed, true));
+                        downloadViewHolder.downloadInfoTextView.setText(String.format("%s/%s", FormatUtil.conversionNumber(localFileLength, false), FormatUtil.conversionNumber(downloadingFileSize, false)));
                         downloadViewHolder.vLBottomItemLL.setVisibility(View.GONE);
                         downloadViewHolder.downloadInfoView.setVisibility(View.VISIBLE);
                     }
@@ -125,18 +122,15 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
             downloadViewHolder.downloadInfoTextView.setText("");
             String localFilePath = VideoDownloadManager.getSavedVideoFilePath(bean.getVideo_id());
             File localFile = new File(localFilePath);
+            long localFileLength = 0;
             if (localFile.exists()) {
-                long downloadingFileSize = VideoDownloadManager.fileSize;
-                long fileLength = localFile.length();
-                downloadViewHolder.downloadProgressBar.setMax((int) downloadingFileSize);
-                downloadViewHolder.downloadProgressBar.setProgress((int) fileLength);
-                downloadViewHolder.speedTextView.setText(FormatUtil.conversionNumber(VideoDownloadManager.currentSpeed, false));
-                downloadViewHolder.downloadInfoTextView.setText(String.format("%s/%s", FormatUtil.conversionNumber(fileLength, false), FormatUtil.conversionNumber(downloadingFileSize, false)));
-            } else {
-                downloadViewHolder.downloadProgressBar.setMax(100);
-                downloadViewHolder.downloadProgressBar.setProgress(0);
-                downloadViewHolder.speedTextView.setText("");
+                localFileLength = localFile.length();
             }
+            long downloadingFileSize = VideoDownloadManager.fileSize;
+            downloadViewHolder.downloadProgressBar.setMax((int) downloadingFileSize);
+            downloadViewHolder.downloadProgressBar.setProgress((int) localFileLength);
+            downloadViewHolder.speedTextView.setText(FormatUtil.conversionNumber(VideoDownloadManager.currentSpeed, true));
+            downloadViewHolder.downloadInfoTextView.setText(String.format("%s/%s", FormatUtil.conversionNumber(localFileLength, false), FormatUtil.conversionNumber(downloadingFileSize, false)));
             downloadViewHolder.vLBottomItemLL.setVisibility(View.GONE);
             downloadViewHolder.downloadInfoView.setVisibility(View.VISIBLE);
         }
