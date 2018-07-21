@@ -35,8 +35,8 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                for (View convertView : convertViews) {
-                    DownloadViewHolder downloadViewHolder = (DownloadViewHolder) convertView.getTag();
+                for (int i = 0; i < thiss.listView.mTotalItemViews.size(); i++) {
+                    DownloadViewHolder downloadViewHolder = (DownloadViewHolder) thiss.listView.mTotalItemViews.get(i);
                     VideoModel bean = mList.get(downloadViewHolder.position);
                     if (VideoDownloadManager.isDownloadedVideo(bean)) {
                         downloadViewHolder.tinerInteView.videoThumbnailIV.setEnabled(true);

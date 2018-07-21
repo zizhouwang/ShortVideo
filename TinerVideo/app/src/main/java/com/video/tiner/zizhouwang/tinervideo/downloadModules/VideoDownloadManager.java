@@ -224,7 +224,8 @@ public class VideoDownloadManager {
 
     private static boolean videoDownloadComplete() {
         Context context = FormatUtil.mainContext;
-        videoDownloadedModels.add(videoDownloadingModels.remove(0));
+        VideoModel downloadedVideoModel = videoDownloadingModels.remove(0);
+        videoDownloadedModels.add(downloadedVideoModel);
         saveFileTotalLength(context, (long) 0, "File_Length" + currentVideoId);
         saveFileLength(context, (long) 0, "File_startOffset" + currentVideoId);
         saveVideoInfoJsons(context, "videoJsons");
@@ -242,6 +243,7 @@ public class VideoDownloadManager {
         }
         currentFileAbsolutePath = downloadDir + "/" + currentVideoId + ".mp4";
         Log.v("one download complete", "one download complete");
+        onVideoDownloadListener.videoDownloadComplete(downloadedVideoModel.getVideo_id());
 //        continue;
         return true;
     }
