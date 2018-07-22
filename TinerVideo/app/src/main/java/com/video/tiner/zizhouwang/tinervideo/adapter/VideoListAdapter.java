@@ -52,7 +52,7 @@ public class VideoListAdapter extends BaseAdapter {
     public List<VideoModel> mList;
     protected LayoutInflater mInflater;
     private int videoProxyPort = 9180;
-    protected List<View> convertViews = new ArrayList<>();
+    public List<View> convertViews = new ArrayList<>();
     private int leastItemCount = 4;
     protected String tagStr;
 
@@ -129,7 +129,7 @@ public class VideoListAdapter extends BaseAdapter {
                 viewHolder = loadViewHolder(convertView, tagStr);
                 convertView.setTag(viewHolder);
             }
-            if (listView.mTotalItemViews.contains(viewHolder) == false) {
+            if (!listView.mTotalItemViews.contains(viewHolder)) {
                 listView.mTotalItemViews.add(viewHolder);
             }
         } else {
@@ -195,6 +195,8 @@ public class VideoListAdapter extends BaseAdapter {
             public void onClick(View v) {
                 AppCompatActivity appContext = (AppCompatActivity) FormatUtil.mainContext;
                 TinerShareView shareView = FormatUtil.getShareView(appContext);
+                shareView.downloadFL.setVisibility(View.VISIBLE);
+                shareView.deleteFL.setVisibility(View.INVISIBLE);
                 shareView.bean = bean;
                 shareView.shareURL = bean.getVideo_cdn_url();
                 FrameLayout tabContentFL = appContext.findViewById(R.id.tabContentFL);

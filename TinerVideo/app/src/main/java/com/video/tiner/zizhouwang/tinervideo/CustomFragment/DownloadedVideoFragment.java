@@ -101,4 +101,9 @@ public class DownloadedVideoFragment extends SubFragment {
             downloadedVideoListView.setAdapter((DownloadedVideoListAdapter) msg.obj);
         }
     };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }

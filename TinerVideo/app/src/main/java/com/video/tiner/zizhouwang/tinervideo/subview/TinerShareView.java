@@ -11,12 +11,15 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.TwitterShareFragment;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
+import com.video.tiner.zizhouwang.tinervideo.adapter.DownloadedVideoListAdapter;
 import com.video.tiner.zizhouwang.tinervideo.downloadModules.VideoDownloadManager;
 import com.video.tiner.zizhouwang.tinervideo.model.VideoModel;
 
@@ -31,11 +34,13 @@ public class TinerShareView extends FrameLayout {
     private FrameLayout facebookShareFL;
     private FrameLayout twitterShareFL;
     private FrameLayout messageShareFL;
-    private FrameLayout downloadFL;
+    public FrameLayout downloadFL;
+    public FrameLayout deleteFL;
     private FrameLayout saveFL;
     public VideoModel bean;
     public String shareText;
     public String shareURL;
+    public DownloadedVideoListAdapter downloadedVideoListAdapter;
 
     public TinerShareView(final AppCompatActivity context) {
         super(context);
@@ -126,12 +131,33 @@ public class TinerShareView extends FrameLayout {
                 VideoDownloadManager.addNeedDownloadVideo(bean);
             }
         });
-        saveFL = findViewById(R.id.saveFL);
-        saveFL.setOnClickListener(new OnClickListener() {
+//        saveFL = findViewById(R.id.saveFL);
+//        saveFL.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FrameLayout windowFL = (FrameLayout) thiss.getParent();
+//                windowFL.removeView(thiss);
+//            }
+//        });
+        deleteFL = findViewById(R.id.deleteFL);
+        deleteFL.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 FrameLayout windowFL = (FrameLayout) thiss.getParent();
                 windowFL.removeView(thiss);
+                VideoDownloadManager.removeDownloadedVideo(bean);
+                int videoIndex = -1;
+                if (downloadedVideoListAdapter != null) {
+                    for (int i = 0; i < downloadedVideoListAdapter.mList.size(); i++) {
+                        if (bean.getVideo_id() == downloadedVideoListAdapter.mList.get(i).getVideo_id()) {
+                            videoIndex = i;
+                        }
+                    }
+                    if (videoIndex > -1) {
+                        downloadedVideoListAdapter.mList.remove(videoIndex);
+                    }
+                    downloadedVideoListAdapter.notifyDataSetChanged();
+                }
             }
         });
     }

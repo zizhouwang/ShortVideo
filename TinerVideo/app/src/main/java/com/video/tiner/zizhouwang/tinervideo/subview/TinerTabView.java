@@ -27,7 +27,7 @@ public class TinerTabView extends FrameLayout {
     private HorizontalScrollView scrollView;
     private FrameLayout scrollChildView;
     private int currentIndex = 0;
-    private View yellowLine;
+    public View yellowLine;
 
     private OnTabClickListener onTabClickListener = null;
 

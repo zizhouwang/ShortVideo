@@ -91,6 +91,15 @@ public class HomeFragment extends BaseFragment {
 
         homeFL = view.findViewById(R.id.homeFL);
         videoViewPager = view.findViewById(R.id.videoViewPager);
+        final TinerTabView tinerTabView = new TinerTabView(FormatUtil.mainContext);
+        tinerTabView.setOnTabClickListener(new TinerTabView.OnTabClickListener() {
+            @Override
+            public void tabClicked(TextView tab, int index) {
+                videoViewPager.setCurrentItem(index, true);
+            }
+        });
+        tinerTabView.addTab("horizontal");
+        tinerTabView.addTab("vertical");
         videoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -131,6 +140,10 @@ public class HomeFragment extends BaseFragment {
                                 sendRequestWithHttpURLConnection(view.getContext(), xListView, false);
                             }
                         }
+                        FrameLayout.LayoutParams yellowLineLayout = (FrameLayout.LayoutParams) tinerTabView.yellowLine.getLayoutParams();
+                        yellowLineLayout.gravity = Gravity.BOTTOM;
+                        yellowLineLayout.leftMargin = videoViewPager.getCurrentItem() * yellowLineLayout.width;
+                        tinerTabView.yellowLine.setLayoutParams(yellowLineLayout);
                         break;
                 }
             }
@@ -162,15 +175,6 @@ public class HomeFragment extends BaseFragment {
                 return frameLayout;
             }
         });
-        TinerTabView tinerTabView = new TinerTabView(FormatUtil.mainContext);
-        tinerTabView.setOnTabClickListener(new TinerTabView.OnTabClickListener() {
-            @Override
-            public void tabClicked(TextView tab, int index) {
-                videoViewPager.setCurrentItem(index, true);
-            }
-        });
-        tinerTabView.addTab("horizontal");
-        tinerTabView.addTab("vertical");
 
         TinerNavView tinerNavView = FormatUtil.getTinerNavView((AppCompatActivity) view.getContext(), homeFL, videoViewPager, true);
         tinerNavView.bringToFront();

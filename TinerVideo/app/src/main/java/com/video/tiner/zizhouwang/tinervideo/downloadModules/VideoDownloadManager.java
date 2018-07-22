@@ -31,20 +31,25 @@ import java.util.Set;
 
 public class VideoDownloadManager {
 
-    public static Boolean isStop = false;
     public static long fileSize;
     private static final String downloadDir = FormatUtil.mainContext.getCacheDir() + "/TinerVideoCache";
-    public static LinkedList<VideoModel> videoDownloadingModels = null;
-    public static LinkedList<VideoModel> videoDownloadedModels = null;
+    private static LinkedList<VideoModel> videoDownloadingModels = null;
+    private static LinkedList<VideoModel> videoDownloadedModels = null;
     private static Handler handler = new Handler();
     private static Boolean isRunning = false;
     private static OnVideoDownloadListener onVideoDownloadListener;
+    private static Thread downloadThread;
 
     private static String currentUrlPath;
     private static String currentFileAbsolutePath;
     private static VideoModel currentVideoModel;
-    public static int currentVideoId;
+    public static VideoModel newVideoModel; //如果要增加下载界面的暂停功能 下载切换功能 一定要用这个变量 因为它是在UI线程中更新的！不会有界面错乱的问题！
+    private static int currentVideoId;
+
     public static float currentSpeed;
+
+    final private static Object removeDownloadedVideo = new Object();
+    final private static Object downloadLock = new Object();
 
     public static void addNeedDownloadVideo(VideoModel videoModel) {
         if (isContainsVideoModel(videoDownloadingModels, videoModel.getVideo_id())) {
@@ -54,16 +59,64 @@ public class VideoDownloadManager {
         String currentFileAbsolutePath = getSavedVideoFilePath(videoModel.getVideo_id());
         File file = new File(currentFileAbsolutePath);
         if (file.exists()) {
-            if (!isContainsVideoModel(videoDownloadedModels, videoModel.getVideo_id())) {
-                file.delete();
-            } else {
+            if (isContainsVideoModel(videoDownloadedModels, videoModel.getVideo_id())) {
                 Toast.makeText(FormatUtil.mainContext, "该视频已下载", Toast.LENGTH_LONG).show();
                 return;
+            } else {
+                file.delete();
             }
         }
         videoDownloadingModels.add(videoModel);
         saveVideoInfoJsons(FormatUtil.mainContext, "videoJsons");
         startDownloadVideo(FormatUtil.mainContext);
+    }
+
+    public static void removeDownloadedVideo(VideoModel videoModel) {
+        synchronized (removeDownloadedVideo) {
+            try {
+                downloadLock.wait();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (isContainsVideoModel(videoDownloadedModels, videoModel.getVideo_id())) {
+                int videoIndex = -1;
+                for (int i = 0; i < videoDownloadedModels.size(); i++) {
+                    if (videoModel.getVideo_id() == videoDownloadedModels.get(i).getVideo_id()) {
+                        videoIndex = i;
+                    }
+                }
+                if (videoIndex > -1) {
+                    videoDownloadedModels.remove(videoIndex);
+                }
+            } else if (isContainsVideoModel(videoDownloadingModels, videoModel.getVideo_id())) {
+                int videoIndex = -1;
+                for (int i = 0; i < videoDownloadingModels.size(); i++) {
+                    if (videoModel.getVideo_id() == videoDownloadingModels.get(i).getVideo_id()) {
+                        videoIndex = i;
+                    }
+                }
+                if (videoIndex > -1) {
+                    videoDownloadingModels.remove(videoIndex);
+                }
+            } else {
+
+            }
+            if (currentVideoModel != null) {
+                if (currentVideoModel.getVideo_id() == videoModel.getVideo_id() && videoDownloadingModels.size() > 0) {
+                    newVideoModel = videoDownloadingModels.get(0);
+                }
+            }
+            String currentFileAbsolutePath = getSavedVideoFilePath(videoModel.getVideo_id());
+            File file = new File(currentFileAbsolutePath);
+            if (file.exists()) {
+                file.delete();
+            }
+            saveVideoInfoJsons(FormatUtil.mainContext, "videoJsons");
+            try {
+                downloadLock.notify();
+            } catch (Exception e) {
+            }
+        }
     }
 
     public static String getSavedVideoFilePath(int videoId) {
@@ -74,7 +127,8 @@ public class VideoDownloadManager {
         loadVideoInfoJsons(context, "videoJsons");
         if (isRunning == false) {
             try {
-                new Thread(new DownloadVideoRunnable()).start();
+                downloadThread = new Thread(new DownloadVideoRunnable());
+                downloadThread.start();
                 isRunning = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -92,7 +146,9 @@ public class VideoDownloadManager {
             }
             while (true) {
                 currentVideoModel = videoDownloadingModels.get(0);
-//                videoModel = gson.fromJson(videoInfoJson, VideoModel.class);
+                if (newVideoModel == null) {
+                    newVideoModel = currentVideoModel;
+                }
                 currentVideoId = currentVideoModel.getVideo_id();
                 currentUrlPath = currentVideoModel.getVideo_cdn_url();
                 if (fileSize == 0) {
@@ -101,7 +157,8 @@ public class VideoDownloadManager {
                 currentFileAbsolutePath = downloadDir + "/" + currentVideoId + ".mp4";
                 File file = new File(currentFileAbsolutePath);
                 if (file.exists() && fileSize == 0) {
-                    VideoModel downloadedVideoModel = videoDownloadingModels.remove(0);
+//                    VideoModel downloadedVideoModel = videoDownloadingModels.remove(0);
+                    VideoModel downloadedVideoModel = videoDownloadingModels.remove(videoDownloadingModels.indexOf(currentVideoModel));
                     if (!isContainsVideoModel(videoDownloadedModels, downloadedVideoModel.getVideo_id())) {
                         videoDownloadedModels.add(downloadedVideoModel);
                     }
@@ -186,8 +243,7 @@ public class VideoDownloadManager {
                         randomAccessFile.seek(startOffset);
                         byte[] buffer = new byte[2048];
                         int len;
-                        //isStop可以用来实现暂停功能
-                        while ((len = bin.read(buffer)) != -1 && !isStop) {
+                        while ((len = bin.read(buffer)) != -1) {
                             randomAccessFile.write(buffer, 0, len);
                             startOffset += len;
                             //刷新下载进度
@@ -197,6 +253,10 @@ public class VideoDownloadManager {
                             handler.sendMessage(msg);
                             //保存下载的位置到SharedPreferences,下次下载的时候拿值写入设置字符编码
                             saveFileLength(context, startOffset, "File_startOffset" + currentVideoId);
+                        }
+                        boolean isNewVideoModel = isNewVideoModel();
+                        if (isNewVideoModel) {
+                            continue;
                         }
                         if (onVideoDownloadListener != null) {
                             onVideoDownloadListener.videoDownloadProcessUpdate();
@@ -233,31 +293,66 @@ public class VideoDownloadManager {
     }
 
     private static boolean videoDownloadComplete() {
-        Context context = FormatUtil.mainContext;
-        VideoModel downloadedVideoModel = videoDownloadingModels.remove(0);
-        if (!isContainsVideoModel(videoDownloadingModels, downloadedVideoModel.getVideo_id())) {
-            videoDownloadingModels.add(downloadedVideoModel);
+        synchronized (downloadLock) {
+            try {
+                removeDownloadedVideo.wait();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Context context = FormatUtil.mainContext;
+            VideoModel downloadedVideoModel = videoDownloadingModels.remove(videoDownloadingModels.indexOf(currentVideoModel));
+            if (!isContainsVideoModel(videoDownloadedModels, downloadedVideoModel.getVideo_id())) {
+                videoDownloadedModels.add(downloadedVideoModel);
+            }
+            saveFileTotalLength(context, (long) 0, "File_Length" + currentVideoId);
+            saveFileLength(context, (long) 0, "File_startOffset" + currentVideoId);
+            saveVideoInfoJsons(context, "videoJsons");
+            if (onVideoDownloadListener != null) {
+                onVideoDownloadListener.videoDownloadComplete(downloadedVideoModel.getVideo_id());
+            }
+            if (videoDownloadingModels.isEmpty()) {
+                Log.v("all download complete", "all download complete");
+                try {
+                    removeDownloadedVideo.notify();
+                } catch (Exception e) {
+                }
+                return false;
+            }
+            fileSize = 0;
+            currentVideoModel = videoDownloadingModels.get(0);
+            newVideoModel = currentVideoModel;
+            currentVideoId = currentVideoModel.getVideo_id();
+            currentUrlPath = currentVideoModel.getVideo_cdn_url();
+            if (fileSize == 0) {
+                fileSize = getFileTotalLength(context, "File_Length" + currentVideoId);
+            }
+            currentFileAbsolutePath = downloadDir + "/" + currentVideoId + ".mp4";
+            Log.v("one download complete", "one download complete");
+            try {
+                removeDownloadedVideo.notify();
+            } catch (Exception e) {
+            }
+            return true;
         }
-        saveFileTotalLength(context, (long) 0, "File_Length" + currentVideoId);
-        saveFileLength(context, (long) 0, "File_startOffset" + currentVideoId);
-        saveVideoInfoJsons(context, "videoJsons");
-        if (videoDownloadingModels.isEmpty()) {
-            Log.v("all download complete", "all download complete");
-//            break;
+    }
+
+    public static boolean isNewVideoModel() {
+        if (newVideoModel == currentVideoModel) {
             return false;
+        } else {
+            fileSize = 0;
+            currentVideoModel = newVideoModel;
+            if (newVideoModel == null) {
+                newVideoModel = currentVideoModel;
+            }
+            currentVideoId = currentVideoModel.getVideo_id();
+            currentUrlPath = currentVideoModel.getVideo_cdn_url();
+            if (fileSize == 0) {
+                fileSize = getFileTotalLength(FormatUtil.mainContext, "File_Length" + currentVideoId);
+            }
+            currentFileAbsolutePath = downloadDir + "/" + currentVideoId + ".mp4";
+            return true;
         }
-        fileSize = 0;
-        currentVideoModel = videoDownloadingModels.get(0);
-        currentVideoId = currentVideoModel.getVideo_id();
-        currentUrlPath = currentVideoModel.getVideo_cdn_url();
-        if (fileSize == 0) {
-            fileSize = getFileTotalLength(context, "File_Length" + currentVideoId);
-        }
-        currentFileAbsolutePath = downloadDir + "/" + currentVideoId + ".mp4";
-        Log.v("one download complete", "one download complete");
-        onVideoDownloadListener.videoDownloadComplete(downloadedVideoModel.getVideo_id());
-//        continue;
-        return true;
     }
 
     /**
@@ -295,17 +390,6 @@ public class VideoDownloadManager {
         SharedPreferences sp = context.getSharedPreferences("videoDownload", Context.MODE_PRIVATE);
         return sp.getLong(key, 0);
     }
-
-//    private static void saveVideoInfoJsons(Context context, String key) {
-//        SharedPreferences sp = context.getSharedPreferences("videoDownload", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sp.edit();
-//        JSONArray videoJsons = new JSONArray();
-//        for (int i = 0; i < videoInfoJsons.size(); i++) {
-//            videoJsons.put(videoInfoJsons.get(i));
-//        }
-//        editor.putString(key, videoJsons.toString());
-//        editor.commit();
-//    }
 
     private static void saveVideoInfoJsons(Context context, String key) {
         Gson gson = new Gson();

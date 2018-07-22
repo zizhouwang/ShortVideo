@@ -129,35 +129,68 @@
         </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
 
         <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout
-            android:id="@+id/saveFL"
+            android:id="@+id/deleteFL"
+            android:visibility="invisible"
             android:layout_width="270px"
             android:layout_height="432px"
             android:layout_marginTop="432px"
-            android:layout_marginLeft="270px">
+            android:layout_marginLeft="0px">
 
             <com.video.tiner.zizhouwang.tinervideo.CustomUI.OvalImageView
                 android:layout_width="200px"
                 android:layout_height="200px"
-                android:src="@drawable/save_button"
+                android:src="@drawable/delete_button"
                 android:layout_marginLeft="40px"
                 android:layout_marginTop="80px"
                 android:paddingLeft="60px"
                 android:paddingRight="60px"
-                android:paddingTop="55px"
-                android:paddingBottom="65px"
+                android:paddingTop="40px"
+                android:paddingBottom="60px"
                 android:background="@drawable/oval_background"
-                customView:imageViewResource="@drawable/save_button"/>
+                customView:imageViewResource="@drawable/delete_button"/>
 
             <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
-                android:layout_width="200px"
+                android:layout_width="270px"
                 android:layout_height="wrap_content"
-                android:text="save"
+                android:text="delete"
                 android:gravity="center"
-                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="300px"
+                android:paddingLeft="10dp"
+                android:paddingRight="6dp"
                 android:textColor="@color/textColor"/>
 
         </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
+
+        <!--<com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout-->
+            <!--android:id="@+id/saveFL"-->
+            <!--android:layout_width="270px"-->
+            <!--android:layout_height="432px"-->
+            <!--android:layout_marginTop="432px"-->
+            <!--android:layout_marginLeft="270px">-->
+
+            <!--<com.video.tiner.zizhouwang.tinervideo.CustomUI.OvalImageView-->
+                <!--android:layout_width="200px"-->
+                <!--android:layout_height="200px"-->
+                <!--android:src="@drawable/save_button"-->
+                <!--android:layout_marginLeft="40px"-->
+                <!--android:layout_marginTop="80px"-->
+                <!--android:paddingLeft="60px"-->
+                <!--android:paddingRight="60px"-->
+                <!--android:paddingTop="55px"-->
+                <!--android:paddingBottom="65px"-->
+                <!--android:background="@drawable/oval_background"-->
+                <!--customView:imageViewResource="@drawable/save_button"/>-->
+
+            <!--<com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView-->
+                <!--android:layout_width="200px"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="save"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_gravity="center_horizontal"-->
+                <!--android:layout_marginTop="300px"-->
+                <!--android:textColor="@color/textColor"/>-->
+
+        <!--</com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>-->
 
     </com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaFrameLayout>
 
