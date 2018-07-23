@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.video.tiner.zizhouwang.tinervideo.R;
@@ -48,6 +49,24 @@ public class DownloadedVideoFragment extends SubFragment {
         tinerNavView.navTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         tinerNavView.navTextView.setGravity(Gravity.CENTER);
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
+        TextView editTextView = new TextView(FormatUtil.mainContext);
+        editTextView.setGravity(Gravity.CENTER);
+        editTextView.setText("编辑");
+        editTextView.setTextColor(getResources().getColor(R.color.whiteColor));
+        editTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+        editTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        tinerNavView.addView(editTextView);
+        FrameLayout.LayoutParams editTextLayout = (FrameLayout.LayoutParams) editTextView.getLayoutParams();
+        editTextLayout.gravity = Gravity.CENTER_HORIZONTAL;
+        editTextLayout.width = FrameLayout.LayoutParams.WRAP_CONTENT;
+        editTextLayout.height = FrameLayout.LayoutParams.WRAP_CONTENT;
+        editTextView.setLayoutParams(editTextLayout);
+
         super.onCreateView(inflater, container, savedInstanceState, view, tinerNavView);
 
         downloadedVideoListView = view.findViewById(R.id.downloadedVideoListView);
