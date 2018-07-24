@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -97,7 +98,7 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
         downloadViewHolder.downloadProgressBar = downloadInfoView.findViewById(R.id.downloadProgressBar);
         downloadViewHolder.speedTextView = downloadInfoView.findViewById(R.id.speedTextView);
         downloadViewHolder.downloadInfoTextView = downloadInfoView.findViewById(R.id.downloadInfoTextView);
-        viewHolder.videoBottomLinearLayout.addView(downloadInfoView);
+        viewHolder.videoBottomLinearLayout.addView(downloadInfoView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 184));
         return downloadViewHolder;
     }
 
@@ -167,6 +168,15 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
                 removeOneItem(bean.getVideo_id());
             }
         });
+        FrameLayout.LayoutParams videoParentLayout = (FrameLayout.LayoutParams) downloadViewHolder.videoListVerticalLL.getLayoutParams();
+        if (listView.isEditing) {
+            videoParentLayout.leftMargin = FormatUtil.dpToPx(-100);
+            videoParentLayout.rightMargin = FormatUtil.dpToPx(100);
+        } else {
+            videoParentLayout.leftMargin = 0;
+            videoParentLayout.rightMargin = 0;
+        }
+        downloadViewHolder.videoListVerticalLL.setLayoutParams(videoParentLayout);
         return view;
     }
 
@@ -206,6 +216,11 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
             mList.remove(videoIndex);
         }
         notifyDataSetChanged();
+        if (mList.size() == 0) {
+            View emptyView = listView.getEmptyView();
+            ImageView noDataImageView = emptyView.findViewById(R.id.noDataImageView);
+            noDataImageView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void changeEditView(boolean isEditing) {

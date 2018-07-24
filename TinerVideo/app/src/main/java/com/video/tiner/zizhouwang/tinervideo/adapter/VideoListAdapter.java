@@ -147,7 +147,7 @@ public class VideoListAdapter extends BaseAdapter {
             }
         });
         if (position > mList.size() * 3 / 4) {
-            if (tagStr == "home" && FormatUtil.homeListView.isRefreshing == false) {
+            if (tagStr.equals("home") && !FormatUtil.homeListView.isRefreshing) {
                 HomeFragment.sendRequestWithHttpURLConnection(FormatUtil.mainContext, listView, true);
             }
         }

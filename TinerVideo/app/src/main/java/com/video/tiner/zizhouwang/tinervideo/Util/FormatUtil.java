@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -66,6 +67,8 @@ public class FormatUtil {
     public static TinerVideoView waitPlayingVideoView;
     public static TinerVideoView isPlayingVideoView;
     public static TinerVideoView currentItemView = null;
+
+    private static FrameLayout videoGuideFrameLayout = null;
 
     public static int getCurrentItemIndex() {
         return getCurrentItemIndex(currentItemView);
@@ -598,9 +601,26 @@ public class FormatUtil {
             unit = "B";
         }
         if (isNeedInt) {
-            return String.format(Locale.US, "%d%s/s", (int)number, unit);
+            return String.format(Locale.US, "%d%s/s", (int) number, unit);
         } else {
             return String.format(Locale.US, "%.1f%s", number, unit);
+        }
+    }
+
+    public static void showVideoGuide() {
+        if (videoGuideFrameLayout == null) {
+            FrameLayout tabContentFL = ((AppCompatActivity) FormatUtil.mainContext).findViewById(R.id.tabContentFL);
+            final FrameLayout windowFL = (FrameLayout) tabContentFL.getParent();
+            LayoutInflater mInflater = LayoutInflater.from(FormatUtil.mainContext);
+            videoGuideFrameLayout = (FrameLayout) mInflater.inflate(R.layout.video_guide_layout, null);
+            windowFL.addView(videoGuideFrameLayout, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            videoGuideFrameLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    windowFL.removeView(videoGuideFrameLayout);
+                    videoGuideFrameLayout = null;
+                }
+            });
         }
     }
 }

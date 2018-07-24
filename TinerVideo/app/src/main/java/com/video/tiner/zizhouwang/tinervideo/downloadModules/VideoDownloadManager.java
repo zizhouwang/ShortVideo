@@ -63,9 +63,16 @@ public class VideoDownloadManager {
                 Toast.makeText(FormatUtil.mainContext, "该视频已下载", Toast.LENGTH_LONG).show();
                 return;
             } else {
-                file.delete();
+                boolean deleteResult = file.delete();
+                if (deleteResult) {
+                    Log.v("删除不必要的文件", "删除成功");
+                } else {
+                    Log.v("删除不必要的文件", "删除失败");
+                }
             }
         }
+        saveFileTotalLength(FormatUtil.mainContext, (long) 0, "File_Length" + videoModel.getVideo_id());
+        saveFileLength(FormatUtil.mainContext, (long) 0, "File_startOffset" + videoModel.getVideo_id());
         videoDownloadingModels.add(videoModel);
         saveVideoInfoJsons(FormatUtil.mainContext, "videoJsons");
         startDownloadVideo(FormatUtil.mainContext);
@@ -76,7 +83,6 @@ public class VideoDownloadManager {
             try {
                 downloadLock.wait();
             } catch (Exception e) {
-                e.printStackTrace();
             }
             if (isContainsVideoModel(videoDownloadedModels, videoModel.getVideo_id())) {
                 int videoIndex = -1;
@@ -102,14 +108,26 @@ public class VideoDownloadManager {
 
             }
             if (currentVideoModel != null) {
-                if (currentVideoModel.getVideo_id() == videoModel.getVideo_id() && videoDownloadingModels.size() > 0) {
-                    newVideoModel = videoDownloadingModels.get(0);
+                if (currentVideoModel.getVideo_id() == videoModel.getVideo_id()) {
+                    if (videoDownloadingModels.size() > 0) {
+                        newVideoModel = videoDownloadingModels.get(0);
+                    } else {
+                        downloadThread.interrupt();
+                        currentVideoModel = null;
+                    }
                 }
             }
             String currentFileAbsolutePath = getSavedVideoFilePath(videoModel.getVideo_id());
             File file = new File(currentFileAbsolutePath);
             if (file.exists()) {
-                file.delete();
+                boolean deleteResult = file.delete();
+                if (deleteResult) {
+                    Log.v("删除不必要的文件", "删除成功");
+                } else {
+                    Log.v("删除不必要的文件", "删除失败");
+                }
+                saveFileTotalLength(FormatUtil.mainContext, (long) 0, "File_Length" + videoModel.getVideo_id());
+                saveFileLength(FormatUtil.mainContext, (long) 0, "File_startOffset" + videoModel.getVideo_id());
             }
             saveVideoInfoJsons(FormatUtil.mainContext, "videoJsons");
             try {
@@ -146,9 +164,7 @@ public class VideoDownloadManager {
             }
             while (true) {
                 currentVideoModel = videoDownloadingModels.get(0);
-                if (newVideoModel == null) {
-                    newVideoModel = currentVideoModel;
-                }
+                newVideoModel = currentVideoModel;
                 currentVideoId = currentVideoModel.getVideo_id();
                 currentUrlPath = currentVideoModel.getVideo_cdn_url();
                 if (fileSize == 0) {
@@ -220,6 +236,9 @@ public class VideoDownloadManager {
                     long startHttpTime = System.currentTimeMillis();
                     httpURLConnection.connect();
                     Log.v("receive http", "receive http fileSize:" + fileSize + " startOffset:" + startOffset);
+                    if (videoDownloadingModels.size() == 0) {
+                        break;
+                    }
                     if (httpURLConnection.getResponseCode() == 206) {
                         long endHttpTime = System.currentTimeMillis();
                         float spendTime = (float) (endHttpTime - startHttpTime) / 1000.0f;
@@ -243,6 +262,9 @@ public class VideoDownloadManager {
                         randomAccessFile.seek(startOffset);
                         byte[] buffer = new byte[2048];
                         int len;
+                        if (videoDownloadingModels.size() == 0) {
+                            break;
+                        }
                         while ((len = bin.read(buffer)) != -1) {
                             randomAccessFile.write(buffer, 0, len);
                             startOffset += len;
@@ -285,7 +307,6 @@ public class VideoDownloadManager {
                     if (httpURLConnection != null) {
                         httpURLConnection.disconnect();
                     }
-
                 }
             }
             isRunning = false;
@@ -297,12 +318,17 @@ public class VideoDownloadManager {
             try {
                 removeDownloadedVideo.wait();
             } catch (Exception e) {
-                e.printStackTrace();
             }
             Context context = FormatUtil.mainContext;
-            VideoModel downloadedVideoModel = videoDownloadingModels.remove(videoDownloadingModels.indexOf(currentVideoModel));
-            if (!isContainsVideoModel(videoDownloadedModels, downloadedVideoModel.getVideo_id())) {
-                videoDownloadedModels.add(downloadedVideoModel);
+            VideoModel downloadedVideoModel = null;
+            for (VideoModel videoModel : videoDownloadingModels) {
+                if (videoModel.getVideo_id() == currentVideoModel.getVideo_id()) {
+                    downloadedVideoModel = videoDownloadingModels.remove(videoDownloadingModels.indexOf(videoModel));
+                    if (!isContainsVideoModel(videoDownloadedModels, downloadedVideoModel.getVideo_id())) {
+                        videoDownloadedModels.add(downloadedVideoModel);
+                    }
+                    break;
+                }
             }
             saveFileTotalLength(context, (long) 0, "File_Length" + currentVideoId);
             saveFileLength(context, (long) 0, "File_startOffset" + currentVideoId);

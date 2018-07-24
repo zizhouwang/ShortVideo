@@ -39,6 +39,8 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 import com.twitter.sdk.android.tweetui.TweetUi;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.commonsdk.UMConfigure;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.HomeFragment;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.MeFragment;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
@@ -81,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         FormatUtil.setStatusBarUpper(this);
         super.onCreate(savedInstanceState);
+        UMConfigure.init(getApplicationContext(), "5b56a706a40fa34b8100014f", "GOOGLE_PLAY", UMConfigure.DEVICE_TYPE_PHONE, null);
+        UMConfigure.setLogEnabled(true);
+        MobclickAgent.setScenarioType(getApplicationContext(), MobclickAgent.EScenarioType.E_UM_NORMAL);
         setContentView(R.layout.activity_main);
         tabContentFL = findViewById(R.id.tabContentFL);
         windowFL = (FrameLayout) tabContentFL.getParent();
@@ -167,6 +172,9 @@ public class MainActivity extends AppCompatActivity {
                     homeFragment.getSavedView().setVisibility(View.VISIBLE);
 //                    getFragmentManager().beginTransaction().replace(R.id.tabContentFL, homeFragment).commit();
                     currentPage = 0;
+                } else {
+//                    homeFragment.xListViews.get(homeFragment.videoViewPager.getCurrentItem()).setSelection(0);
+                    homeFragment.xListViews.get(homeFragment.videoViewPager.getCurrentItem()).smoothScrollToPosition(0);
                 }
             }
         });
@@ -201,6 +209,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override

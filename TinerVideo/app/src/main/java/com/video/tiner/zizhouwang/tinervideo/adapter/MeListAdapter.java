@@ -73,16 +73,22 @@ public class MeListAdapter extends BaseAdapter {
         } else {
             viewHolder = (MeListAdapter.ViewHolder) convertView.getTag();
         }
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DownloadedVideoFragment downloadedVideoFragment = new DownloadedVideoFragment();
-                FragmentManager fm = ((AppCompatActivity) FormatUtil.mainContext).getFragmentManager();
-                FragmentTransaction beginTransaction = fm.beginTransaction();
-                FrameLayout tabContentFL = ((AppCompatActivity) FormatUtil.mainContext).findViewById(R.id.tabContentFL);
-                beginTransaction.replace(((FrameLayout) tabContentFL.getParent()).getId(), downloadedVideoFragment).addToBackStack(null).commit();
-            }
-        });
+        if (position == 0) {
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DownloadedVideoFragment downloadedVideoFragment = new DownloadedVideoFragment();
+                    FragmentManager fm = ((AppCompatActivity) FormatUtil.mainContext).getFragmentManager();
+                    FragmentTransaction beginTransaction = fm.beginTransaction();
+                    FrameLayout tabContentFL = ((AppCompatActivity) FormatUtil.mainContext).findViewById(R.id.tabContentFL);
+                    beginTransaction.replace(((FrameLayout) tabContentFL.getParent()).getId(), downloadedVideoFragment).addToBackStack(null).commit();
+                }
+            });
+            viewHolder.itemRightIV.setImageBitmap(FormatUtil.readBitMap(FormatUtil.mainContext, R.drawable.right_arrow));
+        } else {
+            convertView.setOnClickListener(null);
+            viewHolder.itemRightIV.setImageBitmap(null);
+        }
         FrameLayout.LayoutParams backgroundMeItemLayout = (FrameLayout.LayoutParams) viewHolder.backgroundMeItem.getLayoutParams();
         backgroundMeItemLayout.height = 200 * FormatUtil.getScreenHeight(FormatUtil.mainContext) / 1920;
         viewHolder.backgroundMeItem.setLayoutParams(backgroundMeItemLayout);

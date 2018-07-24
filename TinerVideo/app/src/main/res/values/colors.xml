@@ -22,4 +22,5 @@
     <color name="testColor">#d4665b</color>
     <color name="tabBottomLineColor">#fcb254</color>
     <color name="itemTitleColor">#333333</color>
+    <color name="videoGuideBackground">#50000000</color>
 </resources>

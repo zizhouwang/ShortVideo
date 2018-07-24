@@ -22,9 +22,12 @@
 
         <ImageView
             android:id="@+id/backButton"
-            android:layout_width="120px"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:padding="16px"
+            android:paddingRight="28dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="8dp"
             android:src="@drawable/white_back_button" />
     </FrameLayout>
 </FrameLayout>

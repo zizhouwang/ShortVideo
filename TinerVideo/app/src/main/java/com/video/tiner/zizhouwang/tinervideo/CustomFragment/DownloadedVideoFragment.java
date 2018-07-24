@@ -17,10 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.HeaderViewListAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
 import com.video.tiner.zizhouwang.tinervideo.adapter.DownloadedVideoListAdapter;
@@ -52,15 +54,15 @@ public class DownloadedVideoFragment extends SubFragment {
         tinerNavView.navTextView.setGravity(Gravity.CENTER);
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
         editTextView = new TextView(FormatUtil.mainContext);
-        editTextView.setGravity(Gravity.CENTER);
+        editTextView.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
         editTextView.setText("edit");
         editTextView.setTextColor(getResources().getColor(R.color.whiteColor));
         editTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
         tinerNavView.navContentFL.addView(editTextView);
         FrameLayout.LayoutParams editTextLayout = (FrameLayout.LayoutParams) editTextView.getLayoutParams();
         editTextLayout.gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;
-        editTextLayout.width = FrameLayout.LayoutParams.WRAP_CONTENT;
-        editTextLayout.height = FrameLayout.LayoutParams.WRAP_CONTENT;
+        editTextLayout.width = 200 * FormatUtil.getScreenWidth(FormatUtil.mainContext) / 1080;
+        editTextLayout.height = FrameLayout.LayoutParams.MATCH_PARENT;
         editTextLayout.rightMargin = 30;
         editTextView.setLayoutParams(editTextLayout);
 
@@ -103,8 +105,7 @@ public class DownloadedVideoFragment extends SubFragment {
                     @Override
                     public void run() {
                         Message msg = new Message();
-                        DownloadedVideoListAdapter videoListAdapter = new DownloadedVideoListAdapter(FormatUtil.mainContext, VideoDownloadManager.getVideoDownloadModels(), downloadedVideoListView, "downloadedVideo");
-                        msg.obj = videoListAdapter;
+                        msg.obj = new DownloadedVideoListAdapter(FormatUtil.mainContext, VideoDownloadManager.getVideoDownloadModels(), downloadedVideoListView, "downloadedVideo");
                         handler.sendMessage(msg);
                     }
                 }).start();
@@ -123,12 +124,31 @@ public class DownloadedVideoFragment extends SubFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("downloadPage");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("downloadPage");
+    }
+
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @SuppressWarnings("unchecked")
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            downloadedVideoListView.setAdapter((DownloadedVideoListAdapter) msg.obj);
+            DownloadedVideoListAdapter downloadedVideoListAdapter = (DownloadedVideoListAdapter) msg.obj;
+            if (downloadedVideoListAdapter.mList.size() > 0) {
+                downloadedVideoListView.setAdapter((DownloadedVideoListAdapter) msg.obj);
+            } else {
+                View emptyView = downloadedVideoListView.getEmptyView();
+                ImageView noDataImageView = emptyView.findViewById(R.id.noDataImageView);
+                noDataImageView.setVisibility(View.VISIBLE);
+            }
         }
     };
 

@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.umeng.analytics.MobclickAgent;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
 import com.video.tiner.zizhouwang.tinervideo.adapter.VideoListAdapter;
@@ -59,8 +60,8 @@ public class HomeFragment extends BaseFragment {
 //    public Boolean isRefreshing = false;
 
     private FrameLayout homeFL;
-    private ViewPager videoViewPager;
-    List<XListView> xListViews;
+    public ViewPager videoViewPager;
+    public List<XListView> xListViews;
     private XListView verticalVideoListView;
     private XListView horizontalVideoListView;
     private View savedView = null;
@@ -229,6 +230,18 @@ public class HomeFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("homePage");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("homePage");
+    }
+
     public void initXListView(LayoutInflater inflater, final XListView xListView) {
         View emptyView = inflater.inflate(R.layout.empty_view, null);
         xListView.setEmptyView(emptyView);
@@ -236,14 +249,14 @@ public class HomeFragment extends BaseFragment {
         xListView.setXListViewListener(new XListView.IXListViewListener() {
             @Override
             public void onRefresh() {
-                if (xListView.isRefreshing == false) {
+                if (!xListView.isRefreshing) {
                     sendRequestWithHttpURLConnection(FormatUtil.mainContext, xListView, false);
                 }
             }
 
             @Override
             public void onLoadMore() {
-                if (xListView.isRefreshing == false) {
+                if (!xListView.isRefreshing) {
                     sendRequestWithHttpURLConnection(FormatUtil.mainContext, xListView, true);
                 }
             }
@@ -306,7 +319,9 @@ public class HomeFragment extends BaseFragment {
                         for (int i = 0; i < videoArray.length(); i++) {
                             JSONObject videoObject = videoArray.getJSONObject(i);
                             VideoModel videoModel = gson.fromJson(videoObject.toString(), VideoModel.class);
-                            xListView.oldVideoModelList.add(videoModel);
+                            if (videoModel.getVideo_cdn_url().endsWith(".mp4")) {
+                                xListView.oldVideoModelList.add(videoModel);
+                            }
                         }
                         final List<VideoModel> videoModelList = new LinkedList<>();
                         videoModelList.addAll(xListView.oldVideoModelList);

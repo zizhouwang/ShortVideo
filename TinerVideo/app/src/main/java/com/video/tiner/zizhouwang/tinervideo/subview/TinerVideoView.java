@@ -153,7 +153,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             public boolean onTouch(View v, MotionEvent event) {
 //                acquireVelocityTracker(event);
 //                final VelocityTracker verTracker = mVelocityTracker;
-                if (isFullScreen == false) {
+                if (!isFullScreen) {
                     if (event.getAction() == MotionEvent.ACTION_UP) {
                         v.performClick();
                     }
@@ -178,7 +178,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     }
 
     public boolean moveVideoFLWithGlide(View v, MotionEvent event, boolean isClickedView, TinerVideoView oldCurrentItemView) {
-        if (FormatUtil.isCouldSlideVideoListView() == true) {
+        if (FormatUtil.isCouldSlideVideoListView()) {
             return true;
         }
         switch (event.getAction()) {
@@ -424,7 +424,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 public void onClick(View v) {
                     Window window = ((AppCompatActivity) FormatUtil.mainContext).getWindow();
                     boolean isNeedSmooth = false;
-                    if (isFullScreen == false) {
+                    if (!isFullScreen) {
                         videoTitleTV.setVisibility(View.VISIBLE);
                         isNeedSmooth = true;
                         ViewGroup vg = FormatUtil.getWindow(((AppCompatActivity) FormatUtil.mainContext));
@@ -437,7 +437,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                             vg.setSystemUiVisibility(systemUiVIsi);
                         }
                     } else {
-                        if (isNeedPlay == true) {
+                        if (isNeedPlay) {
                             videoTitleTV.setVisibility(View.INVISIBLE);
                         }
                         ViewGroup vg = FormatUtil.getWindow(((AppCompatActivity) FormatUtil.mainContext));
@@ -469,7 +469,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     public void changeFullScreenViewLevel() {
         Log.v("changeFullScreenView", "" + customPosition);
         ((ViewGroup) videoFL.getParent()).removeView(videoFL);
-        if (isFullScreen == false) {
+        if (!isFullScreen) {
             ViewGroup vg = FormatUtil.getWindow(((AppCompatActivity) FormatUtil.mainContext));
             vg.addView(videoFL);
         } else {
@@ -483,7 +483,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         Log.v("changeFullScreenLayout", "" + customPosition);
         int screenHeight = FormatUtil.getScreenHeight(FormatUtil.mainContext);
         int screenWidth = FormatUtil.getScreenWidth(FormatUtil.mainContext);
-        if (isFullScreen == false) {
+        if (!isFullScreen) {
             if (fullScreenIV != null) {
                 fullScreenIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.shrink_screen));
             }
@@ -500,6 +500,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 videoFL.setRotation(90);
                 videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 videoTextureLayoutParams.height = height * screenHeight / videoWidth;
+                FormatUtil.showVideoGuide();
             } else if (videoXY > 1) {
                 layoutParams.width = screenHeight;
                 layoutParams.height = screenWidth;
@@ -509,6 +510,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 videoTextureLayoutParams.width = videoWidth * screenWidth / height;
 //                videoTextureLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 videoTextureLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                FormatUtil.showVideoGuide();
             } else if (videoXY > screenXY) {
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;

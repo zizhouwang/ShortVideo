@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import com.umeng.analytics.MobclickAgent;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
 import com.video.tiner.zizhouwang.tinervideo.adapter.MeListAdapter;
@@ -40,6 +41,18 @@ public class MeFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("mePage");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("mePage");
+    }
+
     public View getSavedView() {
         if (savedView == null) {
             LayoutInflater inflater = LayoutInflater.from(FormatUtil.mainContext);
@@ -57,6 +70,9 @@ public class MeFragment extends BaseFragment {
             List<MeModel> meModelList = new ArrayList<>();
             MeModel downloadItem = new MeModel();
             downloadItem.itemTitle = "Downloaded Video";
+            meModelList.add(downloadItem);
+            downloadItem = new MeModel();
+            downloadItem.itemTitle = "feedback: zxzasa1995@gmail.com";
             meModelList.add(downloadItem);
             meListView.setAdapter(new MeListAdapter(savedView.getContext(), meModelList, meListView));
         }
