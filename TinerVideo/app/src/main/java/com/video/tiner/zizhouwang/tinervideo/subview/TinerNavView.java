@@ -23,6 +23,7 @@ public class TinerNavView extends FrameLayout {
     public int height;
     private View contentView;
 
+    public FrameLayout navContentFL;
     public ImageView backImageView;
     public TextView navTextView;
 
@@ -49,6 +50,7 @@ public class TinerNavView extends FrameLayout {
         }
         LayoutInflater mInflatet = LayoutInflater.from(context);
         contentView = mInflatet.inflate(R.layout.nav_view, null);
+        navContentFL = contentView.findViewById(R.id.navContentFL);
         backImageView = contentView.findViewById(R.id.backButton);
         navTextView = contentView.findViewById(R.id.navTextView);
         navTextView.setBackgroundColor(Color.argb(0xff, 0x38, 0x38, 0x38));

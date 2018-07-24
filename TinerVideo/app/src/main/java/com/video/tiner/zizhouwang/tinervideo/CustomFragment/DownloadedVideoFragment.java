@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public class DownloadedVideoFragment extends SubFragment {
 
     private FrameLayout downloadedVideoFL;
     private XListView downloadedVideoListView;
+    private TextView editTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -49,27 +51,36 @@ public class DownloadedVideoFragment extends SubFragment {
         tinerNavView.navTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         tinerNavView.navTextView.setGravity(Gravity.CENTER);
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
-        TextView editTextView = new TextView(FormatUtil.mainContext);
+        editTextView = new TextView(FormatUtil.mainContext);
         editTextView.setGravity(Gravity.CENTER);
-        editTextView.setText("编辑");
+        editTextView.setText("edit");
         editTextView.setTextColor(getResources().getColor(R.color.whiteColor));
         editTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
-        editTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        tinerNavView.addView(editTextView);
+        tinerNavView.navContentFL.addView(editTextView);
         FrameLayout.LayoutParams editTextLayout = (FrameLayout.LayoutParams) editTextView.getLayoutParams();
-        editTextLayout.gravity = Gravity.CENTER_HORIZONTAL;
+        editTextLayout.gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;
         editTextLayout.width = FrameLayout.LayoutParams.WRAP_CONTENT;
         editTextLayout.height = FrameLayout.LayoutParams.WRAP_CONTENT;
+        editTextLayout.rightMargin = 30;
         editTextView.setLayoutParams(editTextLayout);
 
         super.onCreateView(inflater, container, savedInstanceState, view, tinerNavView);
 
         downloadedVideoListView = view.findViewById(R.id.downloadedVideoListView);
+        editTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadedVideoListView.isEditing = !(downloadedVideoListView.isEditing);
+                HeaderViewListAdapter hAdapter = (HeaderViewListAdapter) downloadedVideoListView.getAdapter();
+                DownloadedVideoListAdapter downloadedVideoListAdapter = (DownloadedVideoListAdapter) hAdapter.getWrappedAdapter();
+                if (downloadedVideoListView.isEditing) {
+                    editTextView.setText("cancel");
+                } else {
+                    editTextView.setText("edit");
+                }
+                downloadedVideoListAdapter.changeEditView(downloadedVideoListView.isEditing);
+            }
+        });
         downloadedVideoListView.setPullLoadEnable(false);
         downloadedVideoListView.setPullRefreshEnable(false);
         View emptyView = inflater.inflate(R.layout.empty_view, null);
@@ -120,6 +131,19 @@ public class DownloadedVideoFragment extends SubFragment {
             downloadedVideoListView.setAdapter((DownloadedVideoListAdapter) msg.obj);
         }
     };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        downloadedVideoListView.isEditing = false;
+        editTextView.setText("edit");
+    }
 
     @Override
     public void onDestroy() {

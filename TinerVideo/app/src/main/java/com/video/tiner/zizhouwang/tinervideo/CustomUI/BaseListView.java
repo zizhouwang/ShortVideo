@@ -27,6 +27,7 @@ public class BaseListView extends ListView {
     public ImageView loadVideoIV;
     public ProgressBar loadVideoPB;
     public String tagStr;
+    public boolean isEditing = false;
 
     public BaseListView(Context context) {
         super(context);

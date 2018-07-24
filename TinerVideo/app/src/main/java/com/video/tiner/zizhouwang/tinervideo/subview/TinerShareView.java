@@ -146,17 +146,8 @@ public class TinerShareView extends FrameLayout {
                 FrameLayout windowFL = (FrameLayout) thiss.getParent();
                 windowFL.removeView(thiss);
                 VideoDownloadManager.removeDownloadedVideo(bean);
-                int videoIndex = -1;
                 if (downloadedVideoListAdapter != null) {
-                    for (int i = 0; i < downloadedVideoListAdapter.mList.size(); i++) {
-                        if (bean.getVideo_id() == downloadedVideoListAdapter.mList.get(i).getVideo_id()) {
-                            videoIndex = i;
-                        }
-                    }
-                    if (videoIndex > -1) {
-                        downloadedVideoListAdapter.mList.remove(videoIndex);
-                    }
-                    downloadedVideoListAdapter.notifyDataSetChanged();
+                    downloadedVideoListAdapter.removeOneItem(bean.getVideo_id());
                 }
             }
         });

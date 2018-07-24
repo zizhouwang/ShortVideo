@@ -81,6 +81,7 @@ public class VideoListAdapter extends BaseAdapter {
         ViewHolder viewHolder;
         viewHolder = new ViewHolder();
         viewHolder.videoListVerticalLL = convertView.findViewById(R.id.videoListVerticalLL);
+        viewHolder.videoLL = convertView.findViewById(R.id.videoLL);
         viewHolder.shareLayout = convertView.findViewById(R.id.shareLayout);
         viewHolder.vLBottomItemLL = convertView.findViewById(R.id.vLBottomItemLL);
         viewHolder.videoBottomLinearLayout = convertView.findViewById(R.id.videoBottomLinearLayout);
@@ -96,6 +97,7 @@ public class VideoListAdapter extends BaseAdapter {
         viewHolder.shareImageView = convertView.findViewById(R.id.shareImageView);
         viewHolder.shareImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.share_button));
         viewHolder.tinerInteView = convertView.findViewById(R.id.tinerVV);
+        viewHolder.deleteVideoImageView = convertView.findViewById(R.id.deleteVideoImageView);
 
         return viewHolder;
     }
@@ -218,6 +220,7 @@ public class VideoListAdapter extends BaseAdapter {
     // 避免重复的findViewById的操作
     public class ViewHolder {
         public LinearLayout videoListVerticalLL;
+        public LinearLayout videoLL;
         public LinearLayout shareLayout;
         public LinearLayout vLBottomItemLL;
         public LinearLayout videoBottomLinearLayout;
@@ -230,6 +233,7 @@ public class VideoListAdapter extends BaseAdapter {
         public ImageView likeImageView;
         public ImageView shareImageView;
         public TinerVideoView tinerInteView;
+        public ImageView deleteVideoImageView;
 
         public int position;
     }

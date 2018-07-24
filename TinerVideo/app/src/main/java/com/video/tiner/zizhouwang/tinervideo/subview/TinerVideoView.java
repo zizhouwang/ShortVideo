@@ -760,7 +760,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             tinerTextureView.setSurfaceTextureListener(this);
             videoFL.addView(tinerTextureView, 2, new FrameLayout.LayoutParams(videoWidth, ViewGroup.LayoutParams.MATCH_PARENT));
         }
-        if (isFullScreen == false) {
+        if (!isFullScreen) {
             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) tinerTextureView.getLayoutParams();
             layoutParams.width = videoWidth;
             layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;

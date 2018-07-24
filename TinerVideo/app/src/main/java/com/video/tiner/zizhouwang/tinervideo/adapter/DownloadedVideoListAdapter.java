@@ -88,8 +88,6 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
         });
     }
 
-
-
     @Override
     protected DownloadViewHolder loadViewHolder(View convertView, String tagStr) {
         ViewHolder viewHolder = super.loadViewHolder(convertView, tagStr);
@@ -162,6 +160,13 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
                 windowFL.addView(shareView);
             }
         });
+        downloadViewHolder.deleteVideoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VideoDownloadManager.removeDownloadedVideo(bean);
+                removeOneItem(bean.getVideo_id());
+            }
+        });
         return view;
     }
 
@@ -173,6 +178,7 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
 
         public DownloadViewHolder(ViewHolder viewHolder) {
             videoListVerticalLL = viewHolder.videoListVerticalLL;
+            videoLL = viewHolder.videoLL;
             shareLayout = viewHolder.shareLayout;
             vLBottomItemLL = viewHolder.vLBottomItemLL;
             videoBottomLinearLayout = viewHolder.videoBottomLinearLayout;
@@ -185,6 +191,40 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
             likeImageView = viewHolder.likeImageView;
             shareImageView = viewHolder.shareImageView;
             tinerInteView = viewHolder.tinerInteView;
+            deleteVideoImageView = viewHolder.deleteVideoImageView;
+        }
+    }
+
+    public void removeOneItem(int videoId) {
+        int videoIndex = -1;
+        for (int i = 0; i < mList.size(); i++) {
+            if (videoId == mList.get(i).getVideo_id()) {
+                videoIndex = i;
+            }
+        }
+        if (videoIndex > -1) {
+            mList.remove(videoIndex);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void changeEditView(boolean isEditing) {
+        if (isEditing) {
+            for (int i = 0; i < listView.mTotalItemViews.size(); i++) {
+                ViewHolder viewHolder = listView.mTotalItemViews.get(i);
+                FrameLayout.LayoutParams videoParentLayout = (FrameLayout.LayoutParams) viewHolder.videoListVerticalLL.getLayoutParams();
+                videoParentLayout.leftMargin = FormatUtil.dpToPx(-100);
+                videoParentLayout.rightMargin = FormatUtil.dpToPx(100);
+                viewHolder.videoListVerticalLL.setLayoutParams(videoParentLayout);
+            }
+        } else {
+            for (int i = 0; i < listView.mTotalItemViews.size(); i++) {
+                ViewHolder viewHolder = listView.mTotalItemViews.get(i);
+                FrameLayout.LayoutParams videoParentLayout = (FrameLayout.LayoutParams) viewHolder.videoListVerticalLL.getLayoutParams();
+                videoParentLayout.leftMargin = 0;
+                videoParentLayout.rightMargin = 0;
+                viewHolder.videoListVerticalLL.setLayoutParams(videoParentLayout);
+            }
         }
     }
 }
