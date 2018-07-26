@@ -313,7 +313,7 @@ public class HomeFragment extends BaseFragment {
                             SharedPreferences sp = context.getSharedPreferences("SP_VIDEO_LIST", Activity.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sp.edit();
                             editor.putString(xListView.tagStr, videoArray.toString());
-                            editor.commit();
+                            editor.apply();
                         }
                         Gson gson = new Gson();
                         for (int i = 0; i < videoArray.length(); i++) {

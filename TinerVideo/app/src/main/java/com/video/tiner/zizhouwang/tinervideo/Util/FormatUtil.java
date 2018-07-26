@@ -3,6 +3,7 @@ package com.video.tiner.zizhouwang.tinervideo.Util;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -30,8 +31,11 @@ import android.widget.Scroller;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.facebook.share.widget.ShareDialog;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.HomeFragment;
+import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseFrameLayout;
+import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView;
 import com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaImageView;
 import com.video.tiner.zizhouwang.tinervideo.R;
+import com.video.tiner.zizhouwang.tinervideo.adapter.VideoListAdapter;
 import com.video.tiner.zizhouwang.tinervideo.model.XmlAttrModel;
 import com.video.tiner.zizhouwang.tinervideo.subview.TinerNavView;
 import com.video.tiner.zizhouwang.tinervideo.subview.TinerShareView;
@@ -64,6 +68,7 @@ public class FormatUtil {
     public static HomeFragment homeFragment;
 
     public static XListView homeListView;
+    public static BaseListView currentListView;
     public static TinerVideoView waitPlayingVideoView;
     public static TinerVideoView isPlayingVideoView;
     public static TinerVideoView currentItemView = null;
@@ -524,6 +529,9 @@ public class FormatUtil {
             layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
             frameLayout.setLayoutParams(layoutParams);
         } else {
+//            if (isClickedView) {
+//                adjustVideoListViews(duration, isClickedView);
+//            }
             moveCount = 0;
             final int frameNumber = 10;
             final int times = duration / frameNumber;
@@ -549,13 +557,7 @@ public class FormatUtil {
                     } else {
                         layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
                         frameLayout.setLayoutParams(layoutParams);
-                        if (isClickedView == true) {
-//                            for (int i = 0; i < FormatUtil.homeListView.mTotalItemViews.size(); i++) {
-//                                TinerVideoView tinerVideoView = FormatUtil.homeListView.mTotalItemViews.get(i).tinerInteView;
-//                                if (tinerVideoView.customPosition == FormatUtil.homeListView.currentFullScreenTag) {
-//                                    tinerVideoView.videoStart();
-//                                }
-//                            }
+                        if (isClickedView) {
                             currentItemView.videoStart();
                         }
                         smoothScrollListView(isClickedView);
@@ -563,14 +565,61 @@ public class FormatUtil {
                     }
                 }
             };
-
             handler.postDelayed(runnable, frameNumber);
         }
     }
 
+    private static int staticMoveCount = 0;
+
+    public static void adjustVideoListViews(int duration, final boolean isClickedView) {
+        for (VideoListAdapter.ViewHolder videoModel :
+                currentListView.mTotalItemViews) {
+            BaseFrameLayout videoFL = videoModel.tinerInteView.videoFL;
+            final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoFL.getLayoutParams();
+            videoModel.startLeftMargin = layoutParams.leftMargin;
+            videoModel.startTopMargin = layoutParams.topMargin;
+            videoModel.startRightMargin = layoutParams.rightMargin;
+            videoModel.startBottomMargin = layoutParams.bottomMargin;
+        }
+        staticMoveCount = 0;
+        final int frameNumber = 10;
+        final int times = duration / frameNumber;
+        final Handler handler = new Handler(Looper.getMainLooper());
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                for (VideoListAdapter.ViewHolder videoModel :
+                        currentListView.mTotalItemViews) {
+                    BaseFrameLayout videoFL = videoModel.tinerInteView.videoFL;
+                    final FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoFL.getLayoutParams();
+                    staticMoveCount++;
+//                    int leftMargenResult = videoModel.startLeftMargin + (videoModel.startLeftMargin - videoModel.startLeftMargin) * staticMoveCount / times;
+                    int topMargenResult = videoModel.startTopMargin + (videoModel.tinerInteView.fullScreenCorrectedTopMargin - videoModel.startTopMargin) * staticMoveCount / times;
+//                    int rightMargenResult = videoModel.startRightMargin + (videoModel.startRightMargin - videoModel.startRightMargin) * staticMoveCount / times;
+                    int bottomMargenResult = videoModel.startBottomMargin + (videoModel.tinerInteView.fullScreenCorrectedBottomMargin - videoModel.startBottomMargin) * staticMoveCount / times;
+                    layoutParams.setMargins(videoModel.startLeftMargin, topMargenResult, videoModel.startRightMargin, bottomMargenResult);
+                    videoFL.setLayoutParams(layoutParams);
+                    if (staticMoveCount < times) {
+                        handler.postDelayed(this, frameNumber);
+                    } else {
+                        layoutParams.setMargins(videoModel.startLeftMargin, videoModel.tinerInteView.fullScreenCorrectedTopMargin, videoModel.startRightMargin, videoModel.tinerInteView.fullScreenCorrectedBottomMargin);
+                        videoFL.setLayoutParams(layoutParams);
+                        if (currentItemView == videoModel.tinerInteView) {
+                            currentItemView.videoStart();
+                        }
+                        smoothScrollListView(isClickedView);
+                        handler.postDelayed(videoModel.tinerInteView.changeCorrectRunnable, 100);
+                    }
+                }
+            }
+        };
+
+        handler.postDelayed(runnable, frameNumber);
+    }
+
     public static boolean isCouldSlideVideoListView() {
         for (int i = 0; i < homeListView.mTotalItemViews.size(); i++) {
-            if (homeListView.mTotalItemViews.get(i).tinerInteView.formatUtil.isCorrecting == true) {
+            if (homeListView.mTotalItemViews.get(i).tinerInteView.formatUtil.isCorrecting) {
                 return true;
             }
         }
@@ -608,10 +657,12 @@ public class FormatUtil {
     }
 
     public static void showVideoGuide() {
-        if (videoGuideFrameLayout == null) {
-            FrameLayout tabContentFL = ((AppCompatActivity) FormatUtil.mainContext).findViewById(R.id.tabContentFL);
+        SharedPreferences sp = mainContext.getSharedPreferences("isShowVideoGuide", Context.MODE_PRIVATE);
+        boolean isShowVideoGuide = sp.getBoolean("isShowVideoGuide", false);
+        if (!isShowVideoGuide && videoGuideFrameLayout == null) {
+            FrameLayout tabContentFL = ((AppCompatActivity) mainContext).findViewById(R.id.tabContentFL);
             final FrameLayout windowFL = (FrameLayout) tabContentFL.getParent();
-            LayoutInflater mInflater = LayoutInflater.from(FormatUtil.mainContext);
+            LayoutInflater mInflater = LayoutInflater.from(mainContext);
             videoGuideFrameLayout = (FrameLayout) mInflater.inflate(R.layout.video_guide_layout, null);
             windowFL.addView(videoGuideFrameLayout, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             videoGuideFrameLayout.setOnClickListener(new View.OnClickListener() {
@@ -621,6 +672,9 @@ public class FormatUtil {
                     videoGuideFrameLayout = null;
                 }
             });
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("isShowVideoGuide", true);
+            editor.apply();
         }
     }
 }

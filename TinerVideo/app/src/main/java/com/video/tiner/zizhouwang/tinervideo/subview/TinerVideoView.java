@@ -67,8 +67,8 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     public int videoWidth;
     private int fullScreenBaseTopMargin = -1;
     private int fullScreenBaseBottomMargin = -1;
-    private int fullScreenCorrectedTopMargin = -1;
-    private int fullScreenCorrectedBottomMargin = -1;
+    public int fullScreenCorrectedTopMargin = -1;
+    public int fullScreenCorrectedBottomMargin = -1;
     public String videoPath;
     public SurfaceTexture savedSurfaceTexture;
     public Surface savedSurface;
@@ -293,8 +293,8 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
 
     public void dealActionUp(View v, MotionEvent event, boolean isClickedView) {
         formatUtil.isCorrecting = true;
-        if (isFullScreen == false || (mCurPosX == -1 && mCurPosY == -1) || (mPosY == mCurPosY)) {
-            if (isClickedView == true) {
+        if (!isFullScreen || (mCurPosX == -1 && mCurPosY == -1) || (mPosY == mCurPosY)) {
+            if (isClickedView) {
                 v.performClick();
             }
             formatUtil.isCorrecting = false;
@@ -308,7 +308,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
 //                if (Build.VERSION.SDK_INT < 21) {
 //                    changeCurrentFullScreenTagNumber = 50;
 //                }
-        if (isClickedView == true) {
+        if (isClickedView) {
             if (velocityY > changeCurrentFullScreenTagNumber && (listView.currentFullScreenTag > 0)) {
                 listView.currentFullScreenTag--;
                 FormatUtil.currentItemView = listView.mTotalItemViews.get(FormatUtil.getCurrentItemIndex() - 1).tinerInteView;
@@ -375,7 +375,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             totalTimeTV = videoProgressFL.findViewById(R.id.totalTimeTV);
             fullScreenIV = videoProgressFL.findViewById(R.id.fullScreenIV);
             fullScreenView = videoProgressFL.findViewById(R.id.fullScreenView);
-            if (isFullScreen == false) {
+            if (!isFullScreen) {
                 fullScreenIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.full_screen));
             } else {
                 fullScreenIV.setImageBitmap(FormatUtil.readBitMap(getContext(), R.drawable.shrink_screen));
@@ -422,6 +422,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             fullScreenView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    FormatUtil.currentListView = thiss.listView;
                     Window window = ((AppCompatActivity) FormatUtil.mainContext).getWindow();
                     boolean isNeedSmooth = false;
                     if (!isFullScreen) {
@@ -680,11 +681,11 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                         if (extra == -2147483648 || extra == -107) {
                             return true;
                         }
-                        if (playVideoIV.isEnabled() == false) {
+                        if (!playVideoIV.isEnabled()) {
                             return true;
                         }
                         videoPause();
-                        videoThumbnailIV.setEnabled(false);
+//                        videoThumbnailIV.setEnabled(false);
                         tinerTextureView.setVisibility(View.INVISIBLE);
                         Log.v("playError", "what:" + what + " extra:" + extra);
                         playVideoIV.setEnabled(false);
@@ -928,7 +929,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 isLoading = false;
             }
             FormatUtil.isPlayingVideoView = FormatUtil.waitPlayingVideoView;
-            if (isSetVideoPath == false) {
+            if (!isSetVideoPath) {
                 try {
                     try {
                         tinerMediaPlayer.reset();
@@ -941,7 +942,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                     e.printStackTrace();
                 }
             } else {
-                if (isPrepare == true) {
+                if (isPrepare) {
                     videoPlay();
                 }
             }
@@ -969,7 +970,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         loadVideoPB.setVisibility(View.INVISIBLE);
         playVideoIV.setVisibility(View.VISIBLE);
         playVideoIV.setImageBitmap(FormatUtil.readBitMap(this.getContext(), R.drawable.play50_50));
-        if (isPrepare == true) {
+        if (isPrepare) {
             tinerMediaPlayer.pause();
         }
         FormatUtil.isPlayingVideoView = null;
@@ -980,7 +981,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         videoControlShow();
         loadVideoPB.setVisibility(View.INVISIBLE);
         playVideoIV.setImageBitmap(FormatUtil.readBitMap(this.getContext(), R.drawable.play50_50));
-        if (tinerMediaPlayer != null && isPrepare == true) {
+        if (tinerMediaPlayer != null && isPrepare) {
             tinerMediaPlayer.pause();
         }
     }
@@ -1027,4 +1028,13 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
 
         }
     }
+
+    public Runnable changeCorrectRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (formatUtil != null) {
+                formatUtil.isCorrecting = false;
+            }
+        }
+    };
 }

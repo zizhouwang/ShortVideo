@@ -219,6 +219,11 @@ public class VideoListAdapter extends BaseAdapter {
 
     // 避免重复的findViewById的操作
     public class ViewHolder {
+        public int startLeftMargin;
+        public int startTopMargin;
+        public int startRightMargin;
+        public int startBottomMargin;
+
         public LinearLayout videoListVerticalLL;
         public LinearLayout videoLL;
         public LinearLayout shareLayout;

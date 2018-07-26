@@ -391,7 +391,7 @@ public class VideoDownloadManager {
         SharedPreferences sp = context.getSharedPreferences("videoDownload", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putLong(key, fileLength);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -409,7 +409,7 @@ public class VideoDownloadManager {
         SharedPreferences sp = context.getSharedPreferences("videoDownload", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putLong(key, fileTotalLength);
-        editor.commit();
+        editor.apply();
     }
 
     private static Long getFileTotalLength(Context context, String key) {
@@ -431,7 +431,7 @@ public class VideoDownloadManager {
         }
         editor.putString(key, videoJsons.toString());
         editor.putString("downloadedVideos", videoDownloadedJsons.toString());
-        editor.commit();
+        editor.apply();
     }
 
     private static void loadVideoInfoJsons(Context context, String key) {
@@ -467,8 +467,6 @@ public class VideoDownloadManager {
                 videoDownloadModels.add(videoModel);
             }
         }
-//        videoDownloadModels.addAll(videoDownloadedModels);
-//        videoDownloadModels.addAll(videoDownloadingModels);
         return videoDownloadModels;
     }
 

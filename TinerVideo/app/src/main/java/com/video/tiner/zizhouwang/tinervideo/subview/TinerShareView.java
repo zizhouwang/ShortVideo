@@ -91,10 +91,12 @@ public class TinerShareView extends FrameLayout {
 //                            .build();
 //                    FormatUtil.shareDialog.show(content);
 //                }
+
                 ShareLinkContent content = new ShareLinkContent.Builder()
                         .setContentUrl(Uri.parse(shareURL))
                         .build();
                 FormatUtil.shareDialog.show(content);
+
             }
         });
         twitterShareFL = findViewById(R.id.shareTwitterFL);
@@ -104,7 +106,7 @@ public class TinerShareView extends FrameLayout {
                 FrameLayout windowFL = (FrameLayout) thiss.getParent();
                 windowFL.removeView(thiss);
                 TwitterShareFragment twitterShareFragment = new TwitterShareFragment();
-                twitterShareFragment.url = "https://twitter.com/intent/tweet?text=&url=" + FormatUtil.toURLEncoded(shareURL);
+                twitterShareFragment.url = "https://twitter.com/intent/tweet?text=Multi-platform+video:+https://play.google.com/store/apps/details?id=com.poptiner.zizhouwang+&url=" + FormatUtil.toURLEncoded(shareURL);
                 FragmentManager fm = context.getFragmentManager();
                 FragmentTransaction beginTransaction = fm.beginTransaction();
                 beginTransaction.replace(windowFL.getId(), twitterShareFragment).addToBackStack(null).commit();
@@ -118,7 +120,7 @@ public class TinerShareView extends FrameLayout {
                 windowFL.removeView(thiss);
                 Uri smsToUri = Uri.parse("smsto:");
                 Intent mIntent = new Intent(Intent.ACTION_SENDTO, smsToUri);
-                mIntent.putExtra("sms_body", shareURL);
+                mIntent.putExtra("sms_body", "Multi-platform video: https://play.google.com/store/apps/details?id=com.poptiner.zizhouwang\n" + shareURL);
                 context.startActivity(mIntent);
             }
         });
