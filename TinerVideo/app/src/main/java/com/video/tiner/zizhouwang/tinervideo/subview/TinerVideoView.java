@@ -62,6 +62,9 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     private int videoFLBottomMargin = -1;
     private boolean isNeedUpdateLayout = false;
     public int customPosition = -1;
+    private int mPointerId;
+    public boolean isArrangement;
+    private String tagStr;
 
     public int height;
     public int videoWidth;
@@ -102,13 +105,11 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
     public ProgressBar loadVideoPB;
 
     private VelocityTracker mVelocityTracker;
-    private int mPointerId;
     public FormatUtil formatUtil = new FormatUtil();
     public VideoModel bean;
 
     Scroller mScroller = new Scroller(FormatUtil.mainContext);
 
-    private String tagStr;
     private HashMap<String, HttpGetProxy> httpGetProxyHashMap;
     private String proxyURL = null;
     private String localFilePath;
