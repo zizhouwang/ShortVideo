@@ -155,7 +155,6 @@ public class DownloadedVideoFragment extends SubFragment {
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -163,6 +162,7 @@ public class DownloadedVideoFragment extends SubFragment {
         super.onStop();
         downloadedVideoListView.isEditing = false;
         editTextView.setText("edit");
+        FormatUtil.pauseCurrentVideo();
     }
 
     @Override

@@ -30,6 +30,7 @@ import android.widget.Scroller;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.facebook.share.widget.ShareDialog;
+import com.google.android.gms.ads.InterstitialAd;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.HomeFragment;
 import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseFrameLayout;
 import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView;
@@ -75,14 +76,13 @@ public class FormatUtil {
 
     private static FrameLayout videoGuideFrameLayout = null;
 
+    final public static int waitAdCount = 5;
+    public static int adCount = waitAdCount;
+    public static InterstitialAd mInterstitialAd;
+    public static boolean isVideoPlayerAd = false;
+
     public static int getCurrentItemIndex() {
         return getCurrentItemIndex(currentItemView);
-//        for (int i = 0; i < homeListView.mTotalItemViews.size(); i++) {
-//            if (homeListView.mTotalItemViews.get(i).tinerInteView == currentItemView) {
-//                return i;
-//            }
-//        }
-//        return -1;
     }
 
     public static int getCurrentItemIndex(TinerVideoView tinerVideoView) {
@@ -675,6 +675,12 @@ public class FormatUtil {
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("isShowVideoGuide", true);
             editor.apply();
+        }
+    }
+
+    public static void pauseCurrentVideo() {
+        if (FormatUtil.isPlayingVideoView != null) {
+            FormatUtil.isPlayingVideoView.videoPause();
         }
     }
 }

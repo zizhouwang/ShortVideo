@@ -14,8 +14,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.facebook.share.model.ShareLinkContent;
+import com.google.android.gms.ads.AdRequest;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.TwitterShareFragment;
 import com.video.tiner.zizhouwang.tinervideo.R;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
@@ -131,6 +133,7 @@ public class TinerShareView extends FrameLayout {
                 FrameLayout windowFL = (FrameLayout) thiss.getParent();
                 windowFL.removeView(thiss);
                 VideoDownloadManager.addNeedDownloadVideo(bean);
+                Toast.makeText(FormatUtil.mainContext, "视频开始下载", Toast.LENGTH_LONG).show();
             }
         });
 //        saveFL = findViewById(R.id.saveFL);

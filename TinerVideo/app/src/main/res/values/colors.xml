@@ -16,6 +16,7 @@
     <color name="clearColor">#00000000</color>
     <color name="blackColor">#000000</color>
     <color name="tabTextColor">#333333</color>
+    <color name="videoInfoTextColor">#666666</color>
     <color name="thumbBackgroundColor">#333333</color>
     <color name="tabClickColor">#343434</color>
     <color name="tabNotClickColor">#aaaaaa</color>

@@ -7,6 +7,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.gson.Gson;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
 import com.video.tiner.zizhouwang.tinervideo.model.VideoModel;
@@ -56,6 +57,11 @@ public class VideoDownloadManager {
             Toast.makeText(FormatUtil.mainContext, "视频正在下载", Toast.LENGTH_LONG).show();
             return;
         }
+        if (FormatUtil.mInterstitialAd.isLoaded()) {
+            FormatUtil.mInterstitialAd.show();
+            FormatUtil.isVideoPlayerAd = false;
+        }
+        FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().build());
         String currentFileAbsolutePath = getSavedVideoFilePath(videoModel.getVideo_id());
         File file = new File(currentFileAbsolutePath);
         if (file.exists()) {

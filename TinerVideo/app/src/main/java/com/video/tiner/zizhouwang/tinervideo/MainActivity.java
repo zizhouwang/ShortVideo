@@ -1,29 +1,16 @@
 package com.video.tiner.zizhouwang.tinervideo;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
@@ -33,8 +20,10 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.share.Sharer;
 import com.facebook.share.widget.ShareDialog;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
@@ -48,19 +37,6 @@ import com.video.tiner.zizhouwang.tinervideo.checkUICaton.LooperPrinter;
 import com.video.tiner.zizhouwang.tinervideo.downloadModules.VideoDownloadManager;
 
 import io.fabric.sdk.android.Fabric;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,9 +56,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getSupportActionBar().hide();
         FormatUtil.setStatusBarUpper(this);
         super.onCreate(savedInstanceState);
+//        MobileAds.initialize(this, "ca-app-pub-2413503271886460~2547561895");
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        FormatUtil.mInterstitialAd = new InterstitialAd(this);
+//        FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-2413503271886460/2902785115");
+        FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().build());
         UMConfigure.init(getApplicationContext(), "5b56a706a40fa34b8100014f", "GOOGLE_PLAY", UMConfigure.DEVICE_TYPE_PHONE, null);
         UMConfigure.setLogEnabled(true);
         MobclickAgent.setScenarioType(getApplicationContext(), MobclickAgent.EScenarioType.E_UM_NORMAL);
@@ -117,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         Runnable task = new Runnable() {
             @Override
             public void run() {
-                if (FormatUtil.isPlayingVideoView != null && FormatUtil.isUserSliding == false) {
+                if (FormatUtil.isPlayingVideoView != null && !FormatUtil.isUserSliding) {
                     Log.v("currentPosition", "" + FormatUtil.isPlayingVideoView.tinerMediaPlayer.getCurrentPosition());
                     float time = FormatUtil.isPlayingVideoView.tinerMediaPlayer.getCurrentPosition() / 1000.0f;
                     int duration = Math.round(time);
@@ -164,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (currentPage != 0) {
+                    FormatUtil.pauseCurrentVideo();
                     bottomHomeIV.setImageBitmap(FormatUtil.readBitMap(thiss, R.drawable.home_click));
                     bottomHomeTV.setTextColor(getResources().getColor(R.color.tabClickColor));
                     bottomMeIV.setImageBitmap(FormatUtil.readBitMap(thiss, R.drawable.me_button));
@@ -183,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (currentPage != 1) {
+                    FormatUtil.pauseCurrentVideo();
                     bottomHomeIV.setImageBitmap(FormatUtil.readBitMap(thiss, R.drawable.home));
                     bottomHomeTV.setTextColor(getResources().getColor(R.color.tabNotClickColor));
                     bottomMeIV.setImageBitmap(FormatUtil.readBitMap(thiss, R.drawable.me_click_button));
@@ -198,6 +181,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 //        ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        FormatUtil.mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                Log.v("onAdLoaded", "");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Log.v("onAdFailedToLoad", "");
+            }
+
+            @Override
+            public void onAdOpened() {
+                Log.v("onAdOpened", "");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                Log.v("onAdLeftApplication", "");
+            }
+
+            @Override
+            public void onAdClosed() {
+                Log.v("onAdClosed", "");
+                try {
+                    if (FormatUtil.isVideoPlayerAd && FormatUtil.isPlayingVideoView != null) {
+                        FormatUtil.isPlayingVideoView.videoPlay();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -216,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+        FormatUtil.pauseCurrentVideo();
     }
 
     @Override

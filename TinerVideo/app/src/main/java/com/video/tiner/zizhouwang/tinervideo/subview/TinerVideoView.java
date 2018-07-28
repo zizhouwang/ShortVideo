@@ -1,6 +1,7 @@
 package com.video.tiner.zizhouwang.tinervideo.subview;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.res.TypedArray;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
@@ -25,13 +26,13 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Scroller;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.google.android.gms.ads.AdRequest;
 import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseFrameLayout;
 import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseImageView;
 import com.video.tiner.zizhouwang.tinervideo.CustomUI.BaseListView;
@@ -42,7 +43,6 @@ import com.video.tiner.zizhouwang.tinervideo.downloadModules.VideoDownloadManage
 import com.video.tiner.zizhouwang.tinervideo.model.VideoModel;
 import com.video.tiner.zizhouwang.tinervideo.videoProxy.HttpGetProxy;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -270,7 +270,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
         if (videoFLLayout != null) {
             videoFLLayout.topMargin = (int) (fullScreenCorrectedTopMargin - (mPosY - mCurPosY));
             videoFLLayout.bottomMargin = (int) (fullScreenCorrectedBottomMargin + (mPosY - mCurPosY));
-            if (isClickedView == true) {
+            if (isClickedView) {
                 for (int i = 0; i < listView.mTotalItemViews.size(); i++) {
                     TinerVideoView tinerVideoView = listView.mTotalItemViews.get(i).tinerInteView;
                     Log.v("correctedTopMargin:", "" + fullScreenCorrectedTopMargin + " videoThumbnailIVTag:" + customPosition);
@@ -390,6 +390,9 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                         float currentTimeTVWidth = currentTimeTV.getWidth();
                         float totalTimeTVX = totalTimeTV.getX();
                         float screenWidth = totalTimeTV.getContext().getResources().getDisplayMetrics().widthPixels;
+                        if (isFullScreen) {
+                            screenWidth = totalTimeTV.getContext().getResources().getDisplayMetrics().heightPixels;
+                        }
                         currentTimeSBLayoutParams.setMargins((int) (currentTimeTVX + currentTimeTVWidth + 0.0f), 0, (int) (screenWidth - totalTimeTVX + 0.0f), 0);
                         currentTimeSB.setLayoutParams(currentTimeSBLayoutParams);
                     }
@@ -398,7 +401,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
             currentTimeSB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if (fromUser == true) {
+                    if (fromUser) {
                         currentTimeTV.setText(FormatUtil.integerToTimeStr(seekBar.getProgress()));
                     }
                 }
@@ -654,7 +657,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                             return;
                         }
                         if (isNeedPlay == true) {
-                            videoPlay();
+                            videoPlayOrShowAd();
                         }
                     }
                 });
@@ -944,13 +947,33 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 }
             } else {
                 if (isPrepare) {
-                    videoPlay();
+                    videoPlayOrShowAd();
                 }
             }
         }
     };
 
-    private void videoPlay() {
+    private void videoPlayOrShowAd() {
+        if (tagStr == "home") {
+            if (FormatUtil.adCount <= 0) {
+                if (FormatUtil.mInterstitialAd.isLoaded()) {
+                    FormatUtil.mInterstitialAd.show();
+                    FormatUtil.isVideoPlayerAd = true;
+                    FormatUtil.adCount = FormatUtil.waitAdCount;
+                } else {
+                    videoPlay();
+                }
+                FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            } else {
+                videoPlay();
+                FormatUtil.adCount--;
+            }
+        } else {
+            videoPlay();
+        }
+    }
+
+    public void videoPlay() {
         cropThumbnailIV.setImageBitmap(null);
         Handler mHandler = new Handler(Looper.getMainLooper());
         mHandler.postDelayed(new Runnable() {
@@ -1024,6 +1047,7 @@ public class TinerVideoView extends LinearLayout implements TextureView.SurfaceT
                 }
             } else {
                 tinerMediaPlayer.setDataSource(proxyURL);
+                isSetVideoPath = true;
             }
         } catch (Exception e) {
 

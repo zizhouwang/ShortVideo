@@ -124,7 +124,7 @@ public class HomeFragment extends BaseFragment {
                     case ViewPager.SCROLL_STATE_IDLE:
                         Log.v("SCROLL_STATE_IDLE" ,"getCurrentItem:" + videoViewPager.getCurrentItem());
                         XListView xListView = xListViews.get(videoViewPager.getCurrentItem());
-                        if (videoViewPager.getCurrentItem() >= 1 && xListView.isRefreshing == false && xListView.getAdapter() == null) {
+                        if (videoViewPager.getCurrentItem() >= 1 && !xListView.isRefreshing && xListView.getAdapter() == null) {
                             SharedPreferences sp = view.getContext().getSharedPreferences("SP_VIDEO_LIST", Activity.MODE_PRIVATE);
                             String videoListJson = sp.getString(xListView.tagStr, "");
                             if (videoListJson != "") {
@@ -179,7 +179,7 @@ public class HomeFragment extends BaseFragment {
 
         TinerNavView tinerNavView = FormatUtil.getTinerNavView((AppCompatActivity) view.getContext(), homeFL, videoViewPager, true);
         tinerNavView.bringToFront();
-        tinerNavView.navTextView.setText("Funny Video");
+        tinerNavView.navTextView.setText("Pop Tiner");
         tinerNavView.navTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         tinerNavView.navTextView.setGravity(Gravity.CENTER);
         tinerNavView.navTextView.setTextColor(Color.argb(0xff, 0xff, 0xff, 0xff));
@@ -290,9 +290,9 @@ public class HomeFragment extends BaseFragment {
                     try {
                         URL url;
                         if (xListView.tagStr == "VIDEO_LIST") {
-                            url = new URL("http://101.200.77.107:6566/short-video/get-short-videos?screenType=1");
+                            url = new URL("http://172.96.240.118/?screenType=1");
                         } else {
-                            url = new URL("http://101.200.77.107:6566/short-video/get-short-videos?screenType=2");
+                            url = new URL("http://172.96.240.118/?screenType=2");
                         }
                         connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
@@ -309,7 +309,7 @@ public class HomeFragment extends BaseFragment {
                         String responseStr = response.toString();
                         JSONObject videoObjects = new JSONObject(responseStr);
                         JSONArray videoArray = videoObjects.getJSONArray("result");
-                        if (videoArray.length() > 0 && isLoadMore == false) {
+                        if (videoArray.length() > 0 && !isLoadMore) {
                             SharedPreferences sp = context.getSharedPreferences("SP_VIDEO_LIST", Activity.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sp.edit();
                             editor.putString(xListView.tagStr, videoArray.toString());
