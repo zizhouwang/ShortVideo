@@ -37,6 +37,7 @@ public class MeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = createNewView(inflater);
+        savedView = view;
         view.setBackgroundResource(R.color.whiteColor);
         return view;
     }
@@ -57,6 +58,7 @@ public class MeFragment extends BaseFragment {
         if (savedView == null) {
             LayoutInflater inflater = LayoutInflater.from(FormatUtil.mainContext);
             savedView = createNewView(inflater);
+            savedView.setBackgroundResource(R.color.whiteColor);
         }
         return savedView;
     }

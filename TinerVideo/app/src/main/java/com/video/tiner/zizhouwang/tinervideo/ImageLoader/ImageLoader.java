@@ -68,6 +68,9 @@ public class ImageLoader {
     }
 
     public void loadImageViewWithTagAndVideoPath(final ImageView mImageView, final String videoURL, final int tag, final int videoWidth, final int videoHeight, final ImageView centerCropImageView) {
+        if (videoURL == null) {
+            return;
+        }
         reducThumbImageView(mImageView, centerCropImageView);
 //        new Thread(new Runnable() {
 //            @Override

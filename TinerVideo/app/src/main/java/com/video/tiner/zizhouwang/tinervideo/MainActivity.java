@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +38,8 @@ import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
 import com.video.tiner.zizhouwang.tinervideo.checkUICaton.LooperPrinter;
 import com.video.tiner.zizhouwang.tinervideo.downloadModules.VideoDownloadManager;
 
+import java.sql.Time;
+
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,18 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        FormatUtil.setStatusBarUpper(this);
         super.onCreate(savedInstanceState);
-//        MobileAds.initialize(this, "ca-app-pub-2413503271886460~2547561895");
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
-        FormatUtil.mInterstitialAd = new InterstitialAd(this);
-//        FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-2413503271886460/2902785115");
-        FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
-        FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        UMConfigure.init(getApplicationContext(), "5b56a706a40fa34b8100014f", "GOOGLE_PLAY", UMConfigure.DEVICE_TYPE_PHONE, null);
-        UMConfigure.setLogEnabled(true);
-        MobclickAgent.setScenarioType(getApplicationContext(), MobclickAgent.EScenarioType.E_UM_NORMAL);
         setContentView(R.layout.activity_main);
+        FormatUtil.setStatusBarUpper(this);
         tabContentFL = findViewById(R.id.tabContentFL);
         windowFL = (FrameLayout) tabContentFL.getParent();
         FormatUtil.mainContext = this;
@@ -76,23 +71,16 @@ public class MainActivity extends AppCompatActivity {
         FormatUtil.homeFragment = homeFragment;
 
         getFragmentManager().beginTransaction().replace(R.id.tabContentFL, homeFragment).commit();
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        try {
-            Fabric.with(this, new TweetUi(), new TweetComposer(), new Crashlytics(), new TwitterCore(authConfig), new Digits());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
 //        LooperPrinter.start();
-
-        final Window window = getWindow();
-        FormatUtil.setHideVirtualKey(window);
-        window.getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                FormatUtil.setHideVirtualKey(window);
-            }
-        });
+//        final Window window = getWindow();
+//        FormatUtil.setHideVirtualKey(window);
+//        window.getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+//            @Override
+//            public void onSystemUiVisibilityChange(int visibility) {
+//                FormatUtil.setHideVirtualKey(window);
+//            }
+//        });
 
         videoPlayHandler = new Handler();
         Runnable task = new Runnable() {
@@ -109,11 +97,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         videoPlayHandler.postDelayed(task, 1000);
-
         final AppCompatActivity thiss = this;
-
         FormatUtil.getShareView(this);
-
         callbackManager = CallbackManager.Factory.create();
         FormatUtil.shareDialog = new ShareDialog(this);
         FormatUtil.shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
@@ -180,40 +165,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-//        ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        FormatUtil.mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                Log.v("onAdLoaded", "");
-            }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                Log.v("onAdFailedToLoad", "");
-            }
-
-            @Override
-            public void onAdOpened() {
-                Log.v("onAdOpened", "");
-            }
-
-            @Override
-            public void onAdLeftApplication() {
-                Log.v("onAdLeftApplication", "");
-            }
-
-            @Override
-            public void onAdClosed() {
-                Log.v("onAdClosed", "");
-                try {
-                    if (FormatUtil.isVideoPlayerAd && FormatUtil.isPlayingVideoView != null) {
-                        FormatUtil.isPlayingVideoView.videoPlay();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     @Override
@@ -226,6 +177,67 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+        final Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+        };
+        final AppCompatActivity thiss = this;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+//        MobileAds.initialize(this, "ca-app-pub-2413503271886460~2547561895");
+                MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
+                FormatUtil.mInterstitialAd = new InterstitialAd(getApplicationContext());
+//        FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-2413503271886460/2902785115");
+                FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+                FormatUtil.mInterstitialAd.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdLoaded() {
+                        Log.v("onAdLoaded", "");
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(int errorCode) {
+                        Log.v("onAdFailedToLoad", "");
+                    }
+
+                    @Override
+                    public void onAdOpened() {
+                        Log.v("onAdOpened", "");
+                    }
+
+                    @Override
+                    public void onAdLeftApplication() {
+                        Log.v("onAdLeftApplication", "");
+                    }
+
+                    @Override
+                    public void onAdClosed() {
+                        Log.v("onAdClosed", "");
+                        try {
+                            if (FormatUtil.isVideoPlayerAd && FormatUtil.isPlayingVideoView != null) {
+                                FormatUtil.isPlayingVideoView.videoPlay();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                UMConfigure.init(getApplicationContext(), "5b56a706a40fa34b8100014f", "GOOGLE_PLAY", UMConfigure.DEVICE_TYPE_PHONE, null);
+                UMConfigure.setLogEnabled(true);
+                MobclickAgent.setScenarioType(getApplicationContext(), MobclickAgent.EScenarioType.E_UM_NORMAL);
+                handler.sendEmptyMessage(0);
+                TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+                try {
+                    Fabric.with(thiss, new TweetUi(), new TweetComposer(), new Crashlytics(), new TwitterCore(authConfig), new Digits());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -233,10 +245,5 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         MobclickAgent.onPause(this);
         FormatUtil.pauseCurrentVideo();
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
     }
 }

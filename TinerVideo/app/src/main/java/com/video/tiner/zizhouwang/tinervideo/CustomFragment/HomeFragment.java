@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
@@ -47,6 +48,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -87,7 +89,8 @@ public class HomeFragment extends BaseFragment {
         return savedView;
     }
 
-    private View createNewView(LayoutInflater inflater) {
+    @SuppressWarnings("unchecked")
+    private View createNewView(final LayoutInflater inflater) {
         final FrameLayout view = (FrameLayout) inflater.inflate(R.layout.home_layout, null);
 
         homeFL = view.findViewById(R.id.homeFL);
@@ -154,28 +157,6 @@ public class HomeFragment extends BaseFragment {
         xListViews = new ArrayList<>();
         xListViews.add(horizontalVideoListView);
         xListViews.add(verticalVideoListView);
-        videoViewPager.setAdapter(new PagerAdapter() {
-            @Override
-            public int getCount() {
-                return 2;
-            }
-
-            @Override
-            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-                return view == object;
-            }
-
-            @NonNull
-            @Override
-            public Object instantiateItem(@NonNull ViewGroup container, int position) {
-                FrameLayout frameLayout = new FrameLayout(container.getContext());
-                container.addView(frameLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                XListView xListView = xListViews.get(position);
-                frameLayout.addView((FrameLayout) xListView.loadVideoIV.getParent(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                frameLayout.addView(xListView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                return frameLayout;
-            }
-        });
 
         TinerNavView tinerNavView = FormatUtil.getTinerNavView((AppCompatActivity) view.getContext(), homeFL, videoViewPager, true);
         tinerNavView.bringToFront();
@@ -192,38 +173,119 @@ public class HomeFragment extends BaseFragment {
         videoViewPagerLayout.topMargin += tabHeight - 3;
         videoViewPager.setLayoutParams(videoViewPagerLayout);
 
-        FormatUtil.homeListView = xListViews.get(0);
-        initXListView(inflater, verticalVideoListView);
-        verticalVideoListView.tagStr = "VIDEO_LIST";
-        initXListView(inflater, horizontalVideoListView);
-        horizontalVideoListView.tagStr = "HORIZONTAL_VIDEO_LIST";
+        final View emptyView = inflater.inflate(R.layout.empty_view, null);
+        homeFL.addView(emptyView);
 
-        SharedPreferences sp = view.getContext().getSharedPreferences("SP_VIDEO_LIST", Activity.MODE_PRIVATE);//创建sp对象,如果有key为"SP_PEOPLE"的sp就取出
-        String videoListJson = sp.getString(FormatUtil.homeListView.tagStr, "");
-        if (videoListJson != "") {
-            Gson gson = new Gson();
-            List<VideoModel> videoModelList = gson.fromJson(videoListJson, new TypeToken<LinkedList<VideoModel>>() {
-            }.getType());
-            if (videoModelList.size() == 0) {
-                sendRequestWithHttpURLConnection(view.getContext(), FormatUtil.homeListView, false);
-            } else {
-                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, FormatUtil.homeListView, "home");
-                FormatUtil.homeListView.setAdapter(videoListAdapter);
+        final Handler videoListLoadDataHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.obj.getClass().equals(HashMap.class)) {
+                    HashMap<String, Object> msgObjMap = (HashMap<String, Object>) msg.obj;
+                    XListView xListView = (XListView) msgObjMap.get("listView");
+                    VideoListAdapter videoListAdapter = (VideoListAdapter) msgObjMap.get("adapter");
+                    xListView.setAdapter(videoListAdapter);
+                }
             }
-        } else {
-            sendRequestWithHttpURLConnection(view.getContext(), FormatUtil.homeListView, false);
-        }
+        };
 
-        videoListJson = sp.getString(xListViews.get(1).tagStr, "");
-        if (videoListJson != "") {
-            Gson gson = new Gson();
-            List<VideoModel> videoModelList = gson.fromJson(videoListJson, new TypeToken<LinkedList<VideoModel>>() {
-            }.getType());
-            if (videoModelList.size() > 0) {
-                VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, xListViews.get(1), "home");
-                xListViews.get(1).setAdapter(videoListAdapter);
+        final Handler videoListRequestDataHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.obj.getClass().equals(XListView.class)) {
+                    XListView xListView = (XListView) msg.obj;
+                    sendRequestWithHttpURLConnection(FormatUtil.mainContext, xListView, false);
+                }
             }
-        }
+        };
+
+        final Handler videoViewPagerAdapterInitHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                homeFL.removeView(emptyView);
+                videoViewPager.setAdapter(new PagerAdapter() {
+                    @Override
+                    public int getCount() {
+                        return 2;
+                    }
+
+                    @Override
+                    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                        return view == object;
+                    }
+
+                    @NonNull
+                    @Override
+                    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+                        FrameLayout frameLayout = new FrameLayout(container.getContext());
+                        container.addView(frameLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        XListView xListView = xListViews.get(position);
+                        frameLayout.addView((FrameLayout) xListView.loadVideoIV.getParent(), new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        frameLayout.addView(xListView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                        return frameLayout;
+                    }
+                });
+            }
+        };
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FormatUtil.homeListView = xListViews.get(0);
+                initXListView(inflater, verticalVideoListView);
+                verticalVideoListView.tagStr = "VIDEO_LIST";
+                initXListView(inflater, horizontalVideoListView);
+                horizontalVideoListView.tagStr = "HORIZONTAL_VIDEO_LIST";
+
+                SharedPreferences sp = view.getContext().getSharedPreferences("SP_VIDEO_LIST", Activity.MODE_PRIVATE);//创建sp对象,如果有key为"SP_PEOPLE"的sp就取出
+                String videoListJson = sp.getString(FormatUtil.homeListView.tagStr, "");
+                if (videoListJson != "") {
+                    Gson gson = new Gson();
+                    List<VideoModel> videoModelList = gson.fromJson(videoListJson, new TypeToken<LinkedList<VideoModel>>() {
+                    }.getType());
+                    if (videoModelList.size() == 0) {
+                        Message msg = new Message();
+                        msg.obj = xListViews.get(0);
+                        videoListRequestDataHandler.sendMessage(msg);
+//                        sendRequestWithHttpURLConnection(view.getContext(), FormatUtil.homeListView, false);
+                    } else {
+                        VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, FormatUtil.homeListView, "home");
+//                        FormatUtil.homeListView.setAdapter(videoListAdapter);
+                        Message msg = new Message();
+                        HashMap<String, Object> hashObjMap = new HashMap<>();
+                        hashObjMap.put("listView", xListViews.get(0));
+                        hashObjMap.put("adapter", videoListAdapter);
+                        msg.obj = hashObjMap;
+                        videoListLoadDataHandler.sendMessage(msg);
+                    }
+                } else {
+//                    sendRequestWithHttpURLConnection(view.getContext(), FormatUtil.homeListView, false);
+                    Message msg = new Message();
+                    msg.obj = xListViews.get(0);
+                    videoListRequestDataHandler.sendMessage(msg);
+                }
+
+                videoListJson = sp.getString(xListViews.get(1).tagStr, "");
+                if (videoListJson != "") {
+                    Gson gson = new Gson();
+                    List<VideoModel> videoModelList = gson.fromJson(videoListJson, new TypeToken<LinkedList<VideoModel>>() {
+                    }.getType());
+                    if (videoModelList.size() > 0) {
+                        VideoListAdapter videoListAdapter = new VideoListAdapter(view.getContext(), videoModelList, xListViews.get(1), "home");
+//                        xListViews.get(1).setAdapter(videoListAdapter);
+                        Message msg = new Message();
+                        HashMap<String, Object> hashObjMap = new HashMap<>();
+                        hashObjMap.put("listView", xListViews.get(1));
+                        hashObjMap.put("adapter", videoListAdapter);
+                        msg.obj = hashObjMap;
+                        videoListLoadDataHandler.sendMessage(msg);
+                    }
+                }
+                videoViewPagerAdapterInitHandler.sendEmptyMessage(0);
+            }
+        }).start();
 
         savedView = view;
 
@@ -280,6 +342,14 @@ public class HomeFragment extends BaseFragment {
         if (isLoadMore == false) {
             xListView.oldVideoModelList = new LinkedList<>();
         }
+        final Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                xListView.loadVideoPB.setVisibility(View.INVISIBLE);
+                xListView.loadVideoIV.setVisibility(View.VISIBLE);
+            }
+        };
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -336,6 +406,9 @@ public class HomeFragment extends BaseFragment {
                                     videoListAdapter.notifyDataSetChanged();
                                 } else {
                                     Log.v("videoListSize", "" + videoModelList.size());
+                                    if (videoModelList.size() == 0) {
+                                        handler.sendEmptyMessage(0);
+                                    }
                                     VideoListAdapter videoListAdapter = new VideoListAdapter(context, videoModelList, xListView, "home");
                                     xListView.setAdapter(videoListAdapter);
                                 }
@@ -345,12 +418,11 @@ public class HomeFragment extends BaseFragment {
                         Log.v("网络超时", "网络超时");
                         e.printStackTrace();
                         try {
-                            Thread.sleep(3000);
+                            Thread.sleep(1000);
                         } catch (Exception ee) {
                             ee.printStackTrace();
                         }
-                        xListView.loadVideoPB.setVisibility(View.INVISIBLE);
-                        xListView.loadVideoIV.setVisibility(View.VISIBLE);
+                        handler.sendEmptyMessage(0);
                     } finally {
                         Handler mainHandler = new Handler(Looper.getMainLooper());
                         mainHandler.post(new Runnable() {
