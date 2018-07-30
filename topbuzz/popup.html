@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <script src="lib/jquery.min.js"></script>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <meta property="og:url"           content="https://www.baidu.com" />
+      <meta property="og:type"          content="website" />
+      <meta property="og:title"         content="shortVideo" />
+      <meta property="og:description"   content="shortVideo" />
+      <meta property="og:image"         content="images/get_started128.png" />
+    <style>
+      body{background-color: #ffffff}
+      .m{ width: 740px; height: 400px; margin-left: auto; margin-right: auto; margin-top: 100px; }
+        button {
+          height: 60px;
+          width: 60px;
+          outline: none;
+        }
+        #container{  
+          width: 90%;  
+          background: #ccc;  
+          height:auto;  
+          margin: 0 auto;  
+
+        }  
+        #headerDiv{  
+          top:0;
+          width:100%;
+          height: 70px;
+          background: #fff;    
+          z-index:  99;
+          border-bottom:1px solid #bbb;
+          box-shadow: 0 0 5px #bbb;
+          font-size:20px;
+          color: #333;
+          position: fixed;
+          left: 0;
+          width:100%;
+        }  
+        #main{  
+          width:100%;  
+          height:1000px;  
+          margin-top:35px;  
+          background:green;  
+          padding-top: 10px;  
+        }
+
+        video::-internal-media-controls-download-button {
+            display:none;
+        }
+        /*video::-webkit-media-controls-fullscreen-button {
+          display:none;
+        }*/
+
+        /*video::-internal-media-controls-overlay-play-button-internal {
+          display:none;
+        }*/
+
+        video::-webkit-media-controls-fullscreen-button {
+          display:none;
+        }
+
+        video::-webkit-media-controls-overlay-play-button-internal {
+          background-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /*video::-webkit-media-controls-current-time-display {
+          margin-left: 10px;
+        }
+
+        video::-webkit-media-controls-enclosure {
+          overflow:hidden;
+        }
+        video::-webkit-media-controls-panel {
+          width: calc(100% + 0px);
+          background-color: rgba(227, 227, 227, 0.5);
+        }
+        ::-webkit-scrollbar {
+          display: none;
+        }*/
+      a {font-size:15px}   
+      a:link {color: #333; text-decoration:none;}
+      a:visited {color:#333;text-decoration:none;}
+      a:hover {color: #333; text-decoration:none;}
+      a {
+        outline: none;
+      }
+      </style>
+    </head>
+    <body>
+      <div id="headerDiv">
+        <div style="float:left;margin-top: 25px;margin-left: 15px;"><img src="images/icon32.png"></div>
+        <div style="margin-top:30px;padding-left: 10px; float:left">TopBuzz</div>
+        <!-- <div style="width:85px; padding-left: 10px; border-bottom:2px solid #FF8000;"> -->
+        <!-- <div style="width:85px; padding-left: 10px; border-bottom:2px solid #FF8000; display:inline-block;">
+          <div style="font-size:14px; margin-top:15px; margin-bottom:5px; color:#333">Hot Videos</div>
+          </div> -->
+        <div style="width:120px; padding-right:10px; display:inline-block; float:right;margin-top:25px;">
+          <div style="font-size:14px; margin-top:10px; margin-bottom:5px; color:#333">
+            <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fchrome.google.com/webstore/detail/topbuzz/nafdccbgkafpfgafnlmcpkcgghekglke?authuser=0" target="_blank">SHARE</a>
+            <span style="color:#aaaaaa;">&nbsp;&nbsp;| &nbsp;&nbsp;</span>
+            <a href="https://chrome.google.com/webstore/detail/topbuzz/nafdccbgkafpfgafnlmcpkcgghekglke/reviews?authuser=0" target="_blank">LIKE</a>
+          </div>
+        </div>
+      </div>
+
+      <div id="videosDiv" style="margin-top: 80px;">
+        <img src="images/refresh.gif" id="refreshGif">
+      <div id="videosDiv1" style="margin-right: 8px;">
+      </div>
+      <div id="videosDiv2">
+      </div>
+      <img src="images/refresh.gif" id="bottomRefreshGif" hidden="true">
+      </div>
+      <script src="js/popup.js"></script>
+    </body>
+  </html>
