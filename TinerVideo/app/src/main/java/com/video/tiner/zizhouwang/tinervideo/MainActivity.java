@@ -1,6 +1,8 @@
 package com.video.tiner.zizhouwang.tinervideo;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -87,8 +89,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (FormatUtil.isPlayingVideoView != null && !FormatUtil.isUserSliding) {
-                    Log.v("currentPosition", "" + FormatUtil.isPlayingVideoView.tinerMediaPlayer.getCurrentPosition());
-                    float time = FormatUtil.isPlayingVideoView.tinerMediaPlayer.getCurrentPosition() / 1000.0f;
+                    int currentPosition = FormatUtil.isPlayingVideoView.tinerMediaPlayer.getCurrentPosition();
+                    Log.v("currentPosition", "" + currentPosition);
+                    float time = currentPosition / 1000.0f;
                     int duration = Math.round(time);
                     FormatUtil.isPlayingVideoView.currentTimeSB.setProgress(duration);
                     FormatUtil.isPlayingVideoView.currentTimeTV.setText(FormatUtil.integerToTimeStr(duration));
@@ -181,18 +184,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().addTestDevice("2E6F45C53EEEFF1C7B9DF9977F15C085").build());
             }
         };
         final AppCompatActivity thiss = this;
         new Thread(new Runnable() {
             @Override
             public void run() {
-//        MobileAds.initialize(this, "ca-app-pub-2413503271886460~2547561895");
-                MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
+                MobileAds.initialize(getApplicationContext(), "ca-app-pub-2413503271886460~2547561895");
+//                MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
                 FormatUtil.mInterstitialAd = new InterstitialAd(getApplicationContext());
-//        FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-2413503271886460/2902785115");
-                FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+                FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-2413503271886460/2902785115");
+//                FormatUtil.mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
                 FormatUtil.mInterstitialAd.setAdListener(new AdListener() {
                     @Override
                     public void onAdLoaded() {
@@ -238,12 +241,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
+        SharedPreferences adSp = getApplication().getSharedPreferences("AD_WAIT_COUNT", Activity.MODE_PRIVATE);
+        FormatUtil.waitAdCount = adSp.getInt("adWaitCount", 10);
+        if (FormatUtil.adCount > FormatUtil.waitAdCount) {
+            FormatUtil.adCount = FormatUtil.waitAdCount;
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         FormatUtil.pauseCurrentVideo();
     }
 }

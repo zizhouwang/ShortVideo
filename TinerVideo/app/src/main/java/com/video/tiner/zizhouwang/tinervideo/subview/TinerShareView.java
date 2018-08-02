@@ -108,7 +108,7 @@ public class TinerShareView extends FrameLayout {
                 FrameLayout windowFL = (FrameLayout) thiss.getParent();
                 windowFL.removeView(thiss);
                 TwitterShareFragment twitterShareFragment = new TwitterShareFragment();
-                twitterShareFragment.url = "https://twitter.com/intent/tweet?text=Multi-platform+video:+https://play.google.com/store/apps/details?id=com.poptiner.zizhouwang+&url=" + FormatUtil.toURLEncoded(shareURL);
+                twitterShareFragment.url = "https://twitter.com/intent/tweet?text=Multi-platform+video:+" + FormatUtil.toURLEncoded(shareURL) + "+&url=https://play.google.com/store/apps/details?id=com.poptiner.zizhouwang";
                 FragmentManager fm = context.getFragmentManager();
                 FragmentTransaction beginTransaction = fm.beginTransaction();
                 beginTransaction.replace(windowFL.getId(), twitterShareFragment).addToBackStack(null).commit();
@@ -122,7 +122,7 @@ public class TinerShareView extends FrameLayout {
                 windowFL.removeView(thiss);
                 Uri smsToUri = Uri.parse("smsto:");
                 Intent mIntent = new Intent(Intent.ACTION_SENDTO, smsToUri);
-                mIntent.putExtra("sms_body", "Multi-platform video: https://play.google.com/store/apps/details?id=com.poptiner.zizhouwang\n" + shareURL);
+                mIntent.putExtra("sms_body", "Multi-platform video: " + shareURL + "\n\nGoogle Player URL: https://play.google.com/store/apps/details?id=com.poptiner.zizhouwang");
                 context.startActivity(mIntent);
             }
         });
@@ -133,7 +133,6 @@ public class TinerShareView extends FrameLayout {
                 FrameLayout windowFL = (FrameLayout) thiss.getParent();
                 windowFL.removeView(thiss);
                 VideoDownloadManager.addNeedDownloadVideo(bean);
-                Toast.makeText(FormatUtil.mainContext, "视频开始下载", Toast.LENGTH_LONG).show();
             }
         });
 //        saveFL = findViewById(R.id.saveFL);

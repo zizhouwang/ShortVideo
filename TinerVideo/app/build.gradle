@@ -16,12 +16,21 @@ repositories {
 
 
 android {
+    signingConfigs {
+        popTiner {
+            keyAlias 'popTiner'
+            keyPassword 'a2231298'
+            storeFile file('C:/Users/Administrator/Desktop/ShortVideo/TinerVideo/qianming.jks')
+            storePassword 'a2231298'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.poptiner.zizhouwang"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 1
+        multiDexEnabled true
+        versionCode 5
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -29,6 +38,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.popTiner
+        }
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'
         }
     }
 }
@@ -69,4 +84,5 @@ dependencies {
     compile 'com.umeng.sdk:analytics:7.5.3'
     compile 'com.github.castorflex.verticalviewpager:library:19.0.1'
     implementation 'com.google.android.gms:play-services-ads:15.0.1'
+    compile(name: 'unity-ads', ext: 'aar')
 }

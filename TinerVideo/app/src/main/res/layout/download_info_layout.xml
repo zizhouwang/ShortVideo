@@ -21,7 +21,8 @@
                 android:layout_marginLeft="40px"
                 android:gravity="center_vertical"
                 android:text="200.5KB/s"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/videoInfoTextColor"/>
 
             <TextView
                 android:id="@+id/downloadInfoTextView"
@@ -30,7 +31,8 @@
                 android:layout_marginRight="40px"
                 android:gravity="center_vertical|right"
                 android:text="100.5KB/200.4MB"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@color/videoInfoTextColor"/>
         </LinearLayout>
 
         <ProgressBar

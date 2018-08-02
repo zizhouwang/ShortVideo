@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -57,11 +58,6 @@ public class VideoDownloadManager {
             Toast.makeText(FormatUtil.mainContext, "视频正在下载", Toast.LENGTH_LONG).show();
             return;
         }
-        if (FormatUtil.mInterstitialAd.isLoaded()) {
-            FormatUtil.mInterstitialAd.show();
-            FormatUtil.isVideoPlayerAd = false;
-        }
-        FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().build());
         String currentFileAbsolutePath = getSavedVideoFilePath(videoModel.getVideo_id());
         File file = new File(currentFileAbsolutePath);
         if (file.exists()) {
@@ -77,6 +73,12 @@ public class VideoDownloadManager {
                 }
             }
         }
+        if (FormatUtil.mInterstitialAd.isLoaded()) {
+            FormatUtil.mInterstitialAd.show();
+            FormatUtil.isVideoPlayerAd = false;
+        }
+        Toast.makeText(FormatUtil.mainContext, "视频开始下载", Toast.LENGTH_LONG).show();
+        FormatUtil.mInterstitialAd.loadAd(new AdRequest.Builder().addTestDevice("2E6F45C53EEEFF1C7B9DF9977F15C085").build());
         saveFileTotalLength(FormatUtil.mainContext, (long) 0, "File_Length" + videoModel.getVideo_id());
         saveFileLength(FormatUtil.mainContext, (long) 0, "File_startOffset" + videoModel.getVideo_id());
         videoDownloadingModels.add(videoModel);
@@ -118,7 +120,6 @@ public class VideoDownloadManager {
                     if (videoDownloadingModels.size() > 0) {
                         newVideoModel = videoDownloadingModels.get(0);
                     } else {
-                        downloadThread.interrupt();
                         currentVideoModel = null;
                     }
                 }
@@ -149,7 +150,7 @@ public class VideoDownloadManager {
 
     public static void startDownloadVideo(final Context context) {
         loadVideoInfoJsons(context, "videoJsons");
-        if (isRunning == false) {
+        if (!isRunning) {
             try {
                 downloadThread = new Thread(new DownloadVideoRunnable());
                 downloadThread.start();
@@ -164,11 +165,11 @@ public class VideoDownloadManager {
         @Override
         public void run() {
             Context context = FormatUtil.mainContext;
-            if (videoDownloadingModels.size() == 0) {
-                isRunning = false;
-                return;
-            }
             while (true) {
+                if (videoDownloadingModels.size() == 0) {
+                    isRunning = false;
+                    return;
+                }
                 currentVideoModel = videoDownloadingModels.get(0);
                 newVideoModel = currentVideoModel;
                 currentVideoId = currentVideoModel.getVideo_id();

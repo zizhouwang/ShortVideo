@@ -132,6 +132,7 @@ public class VideoListAdapter extends BaseAdapter {
                 convertView.setTag(viewHolder);
             }
             if (!listView.mTotalItemViews.contains(viewHolder)) {
+                listView.mTotalConvertViews.add(convertView);
                 listView.mTotalItemViews.add(viewHolder);
             }
         } else {

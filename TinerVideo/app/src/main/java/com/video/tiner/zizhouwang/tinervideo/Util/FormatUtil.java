@@ -76,7 +76,7 @@ public class FormatUtil {
 
     private static FrameLayout videoGuideFrameLayout = null;
 
-    final public static int waitAdCount = 5;
+    public static int waitAdCount = 10;
     public static int adCount = waitAdCount;
     public static InterstitialAd mInterstitialAd;
     public static boolean isVideoPlayerAd = false;
@@ -86,8 +86,8 @@ public class FormatUtil {
     }
 
     public static int getCurrentItemIndex(TinerVideoView tinerVideoView) {
-        for (int i = 0; i < homeListView.mTotalItemViews.size(); i++) {
-            if (homeListView.mTotalItemViews.get(i).tinerInteView == tinerVideoView) {
+        for (int i = 0; i < currentListView.mTotalItemViews.size(); i++) {
+            if (currentListView.mTotalItemViews.get(i).tinerInteView == tinerVideoView) {
                 return i;
             }
         }
@@ -618,8 +618,8 @@ public class FormatUtil {
     }
 
     public static boolean isCouldSlideVideoListView() {
-        for (int i = 0; i < homeListView.mTotalItemViews.size(); i++) {
-            if (homeListView.mTotalItemViews.get(i).tinerInteView.formatUtil.isCorrecting) {
+        for (int i = 0; i < currentListView.mTotalItemViews.size(); i++) {
+            if (currentListView.mTotalItemViews.get(i).tinerInteView.formatUtil.isCorrecting) {
                 return true;
             }
         }
@@ -628,13 +628,7 @@ public class FormatUtil {
 
     public static void smoothScrollListView(boolean isClickedView) {
         if (Build.VERSION.SDK_INT < 230) {
-//            if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition && FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition != 0) {
-//                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(0).tinerInteView.customPosition + 1, 100, 0);
-//            }
-//            if (isClickedView == true && FormatUtil.homeListView.currentFullScreenTag == FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition) {
-//                FormatUtil.homeListView.smoothScrollToPositionFromTop(FormatUtil.homeListView.mTotalItemViews.get(FormatUtil.homeListView.mTotalItemViews.size() - 1).tinerInteView.customPosition + 1, 100, 0);
-//            }
-            FormatUtil.homeListView.smoothScrollToPositionFromTop(currentItemView.customPosition + 1, 100, 0);
+            FormatUtil.currentListView.smoothScrollToPositionFromTop(currentItemView.customPosition + 1, 100, 0);
         }
     }
 

@@ -102,8 +102,8 @@ public class HomeFragment extends BaseFragment {
                 videoViewPager.setCurrentItem(index, true);
             }
         });
-        tinerTabView.addTab("horizontal");
-        tinerTabView.addTab("vertical");
+        tinerTabView.addTab("portrait");
+        tinerTabView.addTab("landscape");
         videoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -155,8 +155,8 @@ public class HomeFragment extends BaseFragment {
         verticalVideoListView = new XListView(FormatUtil.mainContext);
         horizontalVideoListView = new XListView(FormatUtil.mainContext);
         xListViews = new ArrayList<>();
-        xListViews.add(horizontalVideoListView);
         xListViews.add(verticalVideoListView);
+        xListViews.add(horizontalVideoListView);
 
         TinerNavView tinerNavView = FormatUtil.getTinerNavView((AppCompatActivity) view.getContext(), homeFL, videoViewPager, true);
         tinerNavView.bringToFront();
@@ -378,6 +378,15 @@ public class HomeFragment extends BaseFragment {
                         }
                         String responseStr = response.toString();
                         JSONObject videoObjects = new JSONObject(responseStr);
+                        int adWaitCount = videoObjects.getInt("adWaitCount");
+                        FormatUtil.waitAdCount = adWaitCount;
+                        if (FormatUtil.adCount > adWaitCount) {
+                            FormatUtil.adCount = adWaitCount;
+                        }
+                        SharedPreferences adSp = context.getSharedPreferences("AD_WAIT_COUNT", Activity.MODE_PRIVATE);
+                        SharedPreferences.Editor adEditor = adSp.edit();
+                        adEditor.putInt("adWaitCount", adWaitCount);
+                        adEditor.apply();
                         JSONArray videoArray = videoObjects.getJSONArray("result");
                         if (videoArray.length() > 0 && !isLoadMore) {
                             SharedPreferences sp = context.getSharedPreferences("SP_VIDEO_LIST", Activity.MODE_PRIVATE);

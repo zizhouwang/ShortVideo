@@ -3,6 +3,7 @@ package com.video.tiner.zizhouwang.tinervideo.adapter;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ import bolts.Bolts;
  */
 
 public class DownloadedVideoListAdapter extends VideoListAdapter {
-    public DownloadedVideoListAdapter(Context context, List<VideoModel> list, XListView listView, String tagStr) {
+    public DownloadedVideoListAdapter(Context context, List<VideoModel> list, final XListView listView, String tagStr) {
         super(context, list, listView, tagStr);
         final DownloadedVideoListAdapter thiss = this;
         final Handler handler = new Handler(Looper.getMainLooper());
@@ -44,11 +45,16 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
                     if (downloadViewHolder.position < mList.size()) {
                         VideoModel bean = mList.get(downloadViewHolder.position);
                         if (VideoDownloadManager.isDownloadedVideo(bean)) {
-                            downloadViewHolder.tinerInteView.videoThumbnailIV.setEnabled(true);
                             downloadViewHolder.vLBottomItemLL.setVisibility(View.VISIBLE);
                             downloadViewHolder.downloadInfoView.setVisibility(View.GONE);
+//                            downloadViewHolder.tinerInteView.videoThumbnailIV.setEnabled(true);
+                            downloadViewHolder.tinerInteView.playVideoIV.setEnabled(true);
+//                            try {
+//                                downloadViewHolder.tinerInteView.tinerMediaPlayer.setDataSource(VideoDownloadManager.getSavedVideoFilePath(bean.getVideo_id()));
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
                         } else {
-                            downloadViewHolder.tinerInteView.videoThumbnailIV.setEnabled(false);
                             downloadViewHolder.downloadProgressBar.setMax(100);
                             downloadViewHolder.downloadProgressBar.setProgress(0);
                             downloadViewHolder.speedTextView.setText("");
@@ -71,7 +77,23 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
                             }
                             downloadViewHolder.vLBottomItemLL.setVisibility(View.GONE);
                             downloadViewHolder.downloadInfoView.setVisibility(View.VISIBLE);
+//                            downloadViewHolder.tinerInteView.videoThumbnailIV.setEnabled(false);
+                            downloadViewHolder.tinerInteView.playVideoIV.setEnabled(false);
                         }
+                    }
+                }
+            }
+        };
+        final Handler videoDownloadCompleteHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+//                thiss.notifyDataSetChanged();
+                int videoId = (int) msg.obj;
+                for (VideoModel videoModel : mList) {
+                    if (videoModel.getVideo_id() == videoId) {
+                        thiss.getView(mList.indexOf(videoModel), listView.mTotalConvertViews.get(mList.indexOf(videoModel)), listView);
+                        mList.indexOf(videoModel);
                     }
                 }
             }
@@ -84,7 +106,9 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
 
             @Override
             public void videoDownloadComplete(int videoId) {
-                handler.post(runnable);
+                Message msg = new Message();
+                msg.obj = videoId;
+                videoDownloadCompleteHandler.sendMessage(msg);
             }
         });
     }
@@ -117,10 +141,14 @@ public class DownloadedVideoListAdapter extends VideoListAdapter {
                 convertView.setTag(downloadViewHolder);
             }
             if (!listView.mTotalItemViews.contains(downloadViewHolder)) {
+                listView.mTotalConvertViews.add(convertView);
                 listView.mTotalItemViews.add(downloadViewHolder);
             }
         } else {
             downloadViewHolder = (DownloadViewHolder) convertView.getTag();
+            if (downloadViewHolder.tinerInteView.tinerMediaPlayer != null && downloadViewHolder.tinerInteView.tinerMediaPlayer.isPlaying()) {
+                return convertView;
+            }
         }
         View view = super.getView(position, convertView, parent);
         final VideoModel bean = mList.get(position);
