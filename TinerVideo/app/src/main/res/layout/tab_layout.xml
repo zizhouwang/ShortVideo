@@ -25,7 +25,7 @@
             android:layout_height="60px"
             android:gravity="center_horizontal"
             android:layout_gravity="bottom"
-            android:text="Home"
+            android:text="@string/home"
             android:textColor="@color/tabClickColor"/>
     </FrameLayout>
 
@@ -49,7 +49,7 @@
             android:layout_height="60px"
             android:gravity="center_horizontal"
             android:layout_gravity="bottom"
-            android:text="Me"
+            android:text="@string/Me"
             android:textColor="@color/tabNotClickColor" />
     </FrameLayout>
 </LinearLayout>

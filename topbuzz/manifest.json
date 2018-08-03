@@ -1,7 +1,7 @@
 {
     "name": "TopBuzz",
-    "version": "0.5",
-    "description": "Most pop videos from Musical.ly...",
+    "version": "0.6",
+    "description": "Most pop videos from Musical.ly, TopBuzz...",
     "permissions": [
       "activeTab", 
       "storage", 

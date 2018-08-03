@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="8px"
-            android:text="Downloaded Video"
+            android:text="@string/DownloadedVideo"
             android:gravity="center_vertical"
             android:textSize="20sp"
             android:textColor="@color/itemTitleColor"/>

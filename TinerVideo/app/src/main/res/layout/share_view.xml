@@ -81,7 +81,7 @@
             <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
                 android:layout_width="270px"
                 android:layout_height="wrap_content"
-                android:text="message"
+                android:text="@string/message"
                 android:gravity="center"
                 android:layout_marginTop="300px"
                 android:paddingLeft="10dp"
@@ -119,7 +119,7 @@
             <com.video.tiner.zizhouwang.tinervideo.CustomUI.EquScaTextView
                 android:layout_width="270px"
                 android:layout_height="wrap_content"
-                android:text="download"
+                android:text="@string/download"
                 android:gravity="center"
                 android:layout_marginTop="300px"
                 android:paddingLeft="10dp"
