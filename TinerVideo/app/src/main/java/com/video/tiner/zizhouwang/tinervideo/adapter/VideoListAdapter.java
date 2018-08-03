@@ -92,6 +92,8 @@ public class VideoListAdapter extends BaseAdapter {
 //            viewHolder.downloadCoinsTV = convertView.findViewById(R.id.downloadCoinsTV);
 //            viewHolder.downloadVideoIV = convertView.findViewById(R.id.downloadVideoIV);
 //            viewHolder.downloadVideoIV.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.download_button));
+        viewHolder.viewImageView = convertView.findViewById(R.id.viewImageView);
+        viewHolder.viewImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.view1));
         viewHolder.likeImageView = convertView.findViewById(R.id.likeImageView);
         viewHolder.likeImageView.setImageBitmap(FormatUtil.readBitMap(convertView.getContext(), R.drawable.like_button));
         viewHolder.shareImageView = convertView.findViewById(R.id.shareImageView);
@@ -192,6 +194,13 @@ public class VideoListAdapter extends BaseAdapter {
         } else {
             viewHolder.shareCountTV.setText("" + shareNumber);
         }
+        int viewNumber = (int)((float)bean.getVideo_details().getLiked_number() * (Math.random() * 0.5f + 1.5f));
+        if (viewNumber > 1000) {
+            viewNumber = viewNumber / 1000;
+            viewHolder.videoChannelTV.setText("" + viewNumber + "k");
+        } else {
+            viewHolder.videoChannelTV.setText("" + viewNumber);
+        }
 
         viewHolder.shareLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,8 +243,9 @@ public class VideoListAdapter extends BaseAdapter {
         public TextView videoChannelTV;
         public TextView likeCountTV;
         public TextView shareCountTV;
-//        public TextView downloadCoinsTV;
+        //        public TextView downloadCoinsTV;
 //        public ImageView downloadVideoIV;
+        public ImageView viewImageView;
         public ImageView likeImageView;
         public ImageView shareImageView;
         public TinerVideoView tinerInteView;
