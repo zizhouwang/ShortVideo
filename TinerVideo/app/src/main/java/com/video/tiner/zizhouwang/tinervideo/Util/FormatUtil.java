@@ -557,7 +557,7 @@ public class FormatUtil {
                     } else {
                         layoutParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
                         frameLayout.setLayoutParams(layoutParams);
-                        if (isClickedView) {
+                        if (isClickedView && !currentItemView.isNeedPlay) {
                             currentItemView.videoStart();
                         }
                         smoothScrollListView(isClickedView);
