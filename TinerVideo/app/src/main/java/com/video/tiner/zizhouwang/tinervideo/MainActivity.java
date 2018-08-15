@@ -36,6 +36,7 @@ import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.HomeFragment;
 import com.video.tiner.zizhouwang.tinervideo.CustomFragment.MeFragment;
+import com.video.tiner.zizhouwang.tinervideo.Util.CrashHandler;
 import com.video.tiner.zizhouwang.tinervideo.Util.FormatUtil;
 import com.video.tiner.zizhouwang.tinervideo.checkUICaton.LooperPrinter;
 import com.video.tiner.zizhouwang.tinervideo.downloadModules.VideoDownloadManager;
@@ -59,10 +60,11 @@ public class MainActivity extends AppCompatActivity {
     private Handler videoPlayHandler;
 
     CallbackManager callbackManager;
-
+private TextView a;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CrashHandler.getInstance().init(this);
         setContentView(R.layout.activity_main);
         FormatUtil.setStatusBarUpper(this);
         tabContentFL = findViewById(R.id.tabContentFL);
@@ -83,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
 //                FormatUtil.setHideVirtualKey(window);
 //            }
 //        });
+
+        a.setText("");
 
         videoPlayHandler = new Handler();
         Runnable task = new Runnable() {

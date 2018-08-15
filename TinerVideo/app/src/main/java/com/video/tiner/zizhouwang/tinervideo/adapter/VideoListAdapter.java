@@ -205,15 +205,23 @@ public class VideoListAdapter extends BaseAdapter {
         viewHolder.shareLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppCompatActivity appContext = (AppCompatActivity) FormatUtil.mainContext;
-                TinerShareView shareView = FormatUtil.getShareView(appContext);
-                shareView.downloadFL.setVisibility(View.VISIBLE);
-                shareView.deleteFL.setVisibility(View.INVISIBLE);
-                shareView.bean = bean;
-                shareView.shareURL = bean.getVideo_cdn_url();
-                FrameLayout tabContentFL = appContext.findViewById(R.id.tabContentFL);
-                FrameLayout windowFL = (FrameLayout) tabContentFL.getParent();
-                windowFL.addView(shareView);
+                try {
+                    AppCompatActivity appContext = (AppCompatActivity) FormatUtil.mainContext;
+                    TinerShareView shareView = FormatUtil.getShareView(appContext);
+                    ViewParent shareViewParent = shareView.getParent();
+                    if (shareViewParent != null) {
+                        ((ViewGroup)shareView.getParent()).removeView(shareView);
+                    }
+                    shareView.downloadFL.setVisibility(View.VISIBLE);
+                    shareView.deleteFL.setVisibility(View.INVISIBLE);
+                    shareView.bean = bean;
+                    shareView.shareURL = bean.getVideo_cdn_url();
+                    FrameLayout tabContentFL = appContext.findViewById(R.id.tabContentFL);
+                    FrameLayout windowFL = (FrameLayout) tabContentFL.getParent();
+                    windowFL.addView(shareView);
+                } catch (Exception e) {
+
+                }
             }
         });
 
