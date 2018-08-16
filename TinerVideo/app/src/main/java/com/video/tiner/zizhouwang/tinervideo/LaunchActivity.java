@@ -1,7 +1,9 @@
 package com.video.tiner.zizhouwang.tinervideo;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 /**
@@ -12,20 +14,24 @@ public class LaunchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //后台处理耗时任务
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //耗时任务，比如加载网络数据
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        LaunchActivity.this.finish();
-                    }
-                });
-            }
-        }).start();
+        if (Build.VERSION.SDK_INT <= 24) {
+            Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
+            startActivity(intent);
+            LaunchActivity.this.finish();
+        } else {
+            setContentView(R.layout.activity_launch);
+            Integer time = 500;    //设置等待时间，单位为毫秒
+
+            Handler handler = new Handler();
+            //当计时结束时，跳转至主界面
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    LaunchActivity.this.finish();
+                }
+            }, time);
+        }
     }
 }

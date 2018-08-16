@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler videoPlayHandler;
 
     CallbackManager callbackManager;
-private TextView a;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +85,6 @@ private TextView a;
 //                FormatUtil.setHideVirtualKey(window);
 //            }
 //        });
-
-        a.setText("");
 
         videoPlayHandler = new Handler();
         Runnable task = new Runnable() {
