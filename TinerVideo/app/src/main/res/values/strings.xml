@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">PopTiner</string>
-
     <string name="hello">Hello</string>
     <string name="xlistview_header_hint_normal">pull down and refresh</string>
     <string name="xlistview_header_hint_ready">move up and refresh</string>
@@ -9,11 +8,9 @@
     <string name="xlistview_footer_hint_normal">load more</string>
     <string name="xlistview_footer_hint_ready">move up and load more</string>
     <string name="facebook_app_id">372605239898946</string>
-
     <string name="home">home</string>
     <string name="Me">Me</string>
     <string name="DownloadedVideo">Downloaded Video</string>
     <string name="message">message</string>
     <string name="download">download</string>
-
 </resources>
