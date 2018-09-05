@@ -117,7 +117,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($screenType = 1)
+    public function actionIndex($screenType = 0, $channel = 0)
     {
 	$allTime = 0;
         $time1 = intval(time());
@@ -137,7 +137,20 @@ class SiteController extends Controller
         while (true) {
             foreach ($ids as $index => $id) {
                 $sqlTime1 = intval(time());
-                $oldShortVideos = ShortVideo::findBySql("SELECT id, video_channel_id, video_url, video_image_url, share_url, share_text, width_height, video_details FROM short_video WHERE id>{$id} AND screen_type={$screenType} LIMIT 100")->all();
+                $sqlStr = "SELECT id, video_channel_id, video_url, video_image_url, share_url, share_text, width_height, video_details FROM short_video WHERE id>{$id}";
+                if ($channel != 0) {
+                    $sqlStr .= " AND video_channel_id={$channel}";
+                }
+                if ($screenType != 0) {
+                    $sqlStr .= " AND screen_type={$screenType}";
+                }
+                $sqlStr .= " LIMIT 100";
+                $oldShortVideos = ShortVideo::findBySql($sqlStr)->all();
+                /*if ($channel == 0) {
+                    $oldShortVideos = ShortVideo::findBySql("SELECT id, video_channel_id, video_url, video_image_url, share_url, share_text, width_height, video_details FROM short_video WHERE id>{$id} AND screen_type={$screenType} LIMIT 100")->all();
+                } else {
+                    $oldShortVideos = ShortVideo::findBySql("SELECT id, video_channel_id, video_url, video_image_url, share_url, share_text, width_height, video_details FROM short_video WHERE id>{$id} AND screen_type={$screenType} AND video_channel_id={$channel} LIMIT 100")->all();
+                }*/
                 $sqlTime2 = intval(time());
                 $sqlTime += $sqlTime2 - $sqlTime1;
                 if (count($oldShortVideos) === 0) {
@@ -186,7 +199,9 @@ class SiteController extends Controller
                     }
                     $resultShortVideo['width_height'] = $shortVideo->width_height;
                     $resultShortVideo['video_details'] = json_decode($shortVideo->video_details, true);
-                    $resultShortVideo['channel'] = $channelInfo[$shortVideo->video_channel_id];
+                    $videoChannelId = $shortVideo->video_channel_id;
+                    //settype($videoChannelId, 'string');
+                    $resultShortVideo['channel'] = $channelInfo[$videoChannelId];
                     $resultShortVideos[] = $resultShortVideo;
                 }
             }
@@ -205,8 +220,8 @@ class SiteController extends Controller
         }
         $time2 = intval(time());
         $allTime += $time2 - $time1;
-	$response = [];
-	$response['adWaitCount'] = 10;
+	    $response = [];
+	    $response['adWaitCount'] = 10;
         $response['resultCode'] = 1;
         $response['result'] = $resultShortVideos;
         return json_encode($response);

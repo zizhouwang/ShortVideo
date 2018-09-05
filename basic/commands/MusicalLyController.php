@@ -9,6 +9,7 @@ class MusicalLyController extends Controller {
     public function actionIndex() {
         $musicalLyCurl = "curl -H 'X-Request-Info5: eyJvc3R5cGUiOiJpb3MiLCJvcyI6ImlPUyAxMS4zIiwiWC1SZXF1ZXN0LUlEIjoiMDM2QzBCQ0ItMTcwNC00RjczLTlGM0QtMjMxODM5ODc3MDI4Iiwic2xpZGVyLXNob3ctY29va2llIjoiVlVsRVh6RkRORVExUXpJNVJrSTNPVUl4TlVZNE5ETkVOVUU1TlRNNVJrVTJSakF4WDNGeFgzVnVhVzl1T2tWU2NrMU1ZVVZ6ZURCdmJtNTNSM0Z3Y0V0c01VRTlQVHBqWkdVeU1HSTVNek5qWkdabVpURTBZekJrTXpsaFlUTmtPREptWTJNMU9UbzJOVFF6TVRVMk1UTTJNakUwTnprMU1qYzUiLCJtZXRob2QiOiJHRVQiLCJkZXZpY2VpZCI6ImkwMzlkM2JlYTIxNzEzNGE5OGIyMWIyOTg2ZDc0NDhiOGQ2NSIsInZlcnNpb24iOiI2LjguMiIsInRpbWVzdGFtcCI6IjE1MjM0NDc5NzkwMDAiLCJ1cmwiOiJodHRwczpcL1wvYXBpLm11c2ljYWwubHlcL3Jlc3RcL211c2ljYWxzXC9leHBsb3JlXC9saXN0P2xpbWl0PTgmX19fZD1leUpoWXlJNklreEpVMVFpTENKaWVpSTZJbVY0Y0d4dmNtVmZaR2x6WTI5MlpYSjVJaXdpWkcwaU9pSk5WVk5KUTBGTUlpd2lkbVZ5SWpvaVpHVm1ZWFZzZENKOSZob3RLZXk9bW9kZWwmZGlzcGxheU1vZGU9MSJ9' -H 'build: 20180322001' -H 'slider-show-cookie: VUlEXzFDNEQ1QzI5RkI3OUIxNUY4NDNENUE5NTM5RkU2RjAxX3FxX3VuaW9uOkVSck1MYUVzeDBvbm53R3FwcEtsMUE9PTpjZGUyMGI5MzNjZGZmZTE0YzBkMzlhYTNkODJmY2M1OTo2NTQzMTU2MTM2MjE0Nzk1Mjc5' -H 'X-Request-Sign5: 01i6fdda67ba8996880438054fb1dad7d6257f9298a6'  --compressed 'https://api.musical.ly/rest/musicals/explore/list?limit=10&___d=eyJhYyI6IkxJU1QiLCJieiI6ImV4cGxvcmVfZGlzY292ZXJ5IiwiZG0iOiJNVVNJQ0FMIiwidmVyIjoiZGVmYXVsdCJ9&hotKey=model&displayMode=1'";
         $musicalLyCurl = "curl 'https://api2.musical.ly/aweme/v1/feed/?account_region=&device_id=6543155919369356805&feed_style=0&is_my_cn=1&os_version=11.3&filter_warn=0&mas=0182d051f4357831d0dca915a238673cb6557a1ddd623f368eecf7&iid=6586846865898178310&app_name=musical_ly&pull_type=1&ac=WIFI&max_cursor=0&sys_region=US&ts=1535123214&type=0&as=a1455178fe004b6fb01844&volume=0.25&version_code=2.4.1&vid=B99D13C2-3C19-4DE6-8735-B9C727669C07&channel=App%20Store&min_cursor=0&count=6&os_api=18&idfa=25412B5C-31D4-41FE-854D-FF555AD9455E&device_platform=iphone&device_type=iPhone8%2C4&openudid=e79745e58469919780f1c97d14da96621be429f6&tz_name=Asia%2FShanghai&tz_offset=28800&app_language=en&carrier_region=US&build_number=80105&aid=1233&mcc_mnc=46011&screen_width=640&language=zh&app_version=2.4.1.'";
+        $musicalLyCurl = "curl -H 'User-Agent: Musically/8.0.1 (iPhone; iOS 11.3; Scale/2.00)' -H 'Host: api2.musical.ly' 'https://api2.musical.ly/aweme/v1/feed/?version_code=2.4.1&language=zh&app_name=musical_ly&vid=B99D13C2-3C19-4DE6-8735-B9C727669C07&app_version=2.4.1.&carrier_region=US&is_my_cn=1&channel=App%20Store&mcc_mnc=46011&device_id=6543155919369356805&tz_offset=28800&account_region=&sys_region=US&aid=1233&screen_width=640&openudid=e79745e58469919780f1c97d14da96621be429f6&os_api=18&ac=WIFI&os_version=11.3&app_language=en&tz_name=Asia/Shanghai&device_platform=iphone&build_number=80105&device_type=iPhone8,4&iid=6586846865898178310&idfa=25412B5C-31D4-41FE-854D-FF555AD9455E&count=6&feed_style=0&filter_warn=0&max_cursor=0&min_cursor=0&pull_type=0&type=0&volume=0.00&mas=011080455bfb384222de6fc39e5286379400fdf4756c6f035d5eb1&as=a145ca28a0f73b19cc5309&ts=1535945072'";
         unset($output);
         exec($musicalLyCurl, $output);
         $execResult = implode("", $output);
@@ -55,6 +56,11 @@ class MusicalLyController extends Controller {
             $shortVideo->share_url = $videoInfo['share_url'];
             $shortVideo->share_text = json_encode($videoInfo['desc']);
             $shortVideo->width_height = $videoURLInfo['width'] . "x" . $videoURLInfo['height'];
+            if ($videoURLInfo['width'] > $videoURLInfo['height']) {
+                $shortVideo->screen_type = 2;
+            } else {
+                $shortVideo->screen_type = 1;
+            }
             $shortVideo->duration = intval($videoURLInfo['duration']);
             $shortVideo->video_created_time = intval($videoInfo['create_time']);
             $videoDetail = [];
@@ -105,7 +111,7 @@ class MusicalLyController extends Controller {
     }
 
     public function actionRepairScreenType() {
-        $shortVideos = ShortVideo::find()->where("screen_type=0")->limit(500)->all();
+        $shortVideos = ShortVideo::find()->where("screen_type=0 and video_channel_id=12")->each(500);
         foreach ($shortVideos as $shortVideo) {
             var_dump($shortVideo->id);
             $widthHeight = $shortVideo->width_height;

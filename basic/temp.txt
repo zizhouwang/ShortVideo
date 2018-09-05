@@ -1,6 +1,0 @@
-PDO
-mysql:host=localhost;dbname=mysql
-nginx
-!Aa2231298
-
-
