@@ -189,6 +189,8 @@
 #pragma mark - ZZVideoPlayerProtocol
 - (void)playbackFinish:(NSNotification *)notifi {
     NSLog(@"播放完成%li", (long)_index);
+    [_player.avPlayerItem seekToTime:kCMTimeZero];
+    [_player.avPlayer play];
 }
 
 - (void)dealloc {

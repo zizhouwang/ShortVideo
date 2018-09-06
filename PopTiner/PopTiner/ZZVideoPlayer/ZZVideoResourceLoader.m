@@ -156,6 +156,45 @@
     AVAssetResourceLoadingRequest * loadingRequest = _loadingRequestsDic[dataTask];
     [loadingRequest.dataRequest respondWithData:data];
     NSLog(@"%lu", (unsigned long)data.length);
+    
+//    ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];
+//    [library enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+//        [group setAssetsFilter:[ALAssetsFilter allVideos]];
+//        if (group.numberOfAssets > 0)
+//        {
+//            NSIndexSet *videoSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, group.numberOfAssets)];
+//            [group enumerateAssetsAtIndexes:videoSet options:0 usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+//                ALAssetRepresentation *representation = [result defaultRepresentation];
+//                NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",representation.filename];
+//                [[NSFileManager defaultManager]createFileAtPath:savingPath contents:nil attributes:nil];
+//                NSFileHandle *writingHandle = [NSFileHandle fileHandleForWritingAtPath:savingPath];
+//                int bufferSize = 1024;
+//                uint8_t buffer[bufferSize];
+//                unsigned long long read = 0,length = 0;
+//                NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
+//                int n = 0;
+//                for (;read < representation.size;)
+//                {
+//                    if (n % 10 == 0)
+//                    {
+//                        [pool release];
+//                        pool = nil;
+//                        pool = [[NSAutoreleasePool alloc]init];
+//                    }
+//                    length = [representation getBytes:buffer fromOffset:read length:bufferSize error:nil];
+//                    read += length;
+//                    NSData *fileData = [NSData dataWithBytes:(const void *)buffer length:(NSUInteger)length];
+//                    [writingHandle writeData:fileData];
+//                    n++;
+//                }
+//                [writingHandle closeFile];
+//                [pool drain];
+//            }];
+//        }
+//    } failureBlock:^(NSError *error) {
+//
+//    }];
+    
 //    [SUFileHandle writeTempFileData:data];
 //    self.cacheLength += data.length;
 //    if (self.delegate && [self.delegate respondsToSelector:@selector(requestTaskDidUpdateCache)]) {
