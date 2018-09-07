@@ -15,5 +15,6 @@
 
 + (Util *)shareInstance;
 + (long long)fileSizeAtPath:(NSString*)filePath;
++ (BOOL)jp_safeWriteData:(NSFileHandle*)fileHandle data:(NSData *)data;
 
 @end

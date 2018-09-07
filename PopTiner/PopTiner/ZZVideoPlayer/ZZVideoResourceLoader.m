@@ -158,14 +158,17 @@
     AVAssetResourceLoadingRequest * loadingRequest = _loadingRequestsDic[dataTask];
     [loadingRequest.dataRequest respondWithData:data];
     
-    NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",@"abc.mp4"];
-    NSFileHandle *writingHandle = [NSFileHandle fileHandleForWritingAtPath:savingPath];
-    [writingHandle seekToEndOfFile];
-    [writingHandle writeData:data];
-    [writingHandle closeFile];
+    if (data.length > 64) {
+        NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",@"abc.mp4"];
+        NSFileHandle *writingHandle = [NSFileHandle fileHandleForWritingAtPath:savingPath];
+        [writingHandle seekToEndOfFile];
+        //    [Util jp_safeWriteData:writingHandle data:data];
+        [writingHandle writeData:data];
+        [writingHandle closeFile];
+        long long size = [Util fileSizeAtPath:savingPath];
+        NSLog(@"文件大小为%lli", size);
+    }
     NSLog(@"网络数据为%lu", (unsigned long)data.length);
-    long long size = [Util fileSizeAtPath:savingPath];
-    NSLog(@"文件大小为%lli", size);
     
 //    [SUFileHandle writeTempFileData:data];
 //    self.cacheLength += data.length;
@@ -180,18 +183,18 @@
     if (self.cancel) {
         NSLog(@"下载取消");
     }else {
-        AVAssetResourceLoadingRequest * loadingRequest = _loadingRequestsDic[(NSURLSessionDataTask*)task];
-        [_loadingRequests removeObject:loadingRequest];
-        NSLog(@"下载完成 目前有%lu个请求", (unsigned long)_loadingRequests.count);
-        [_loadingRequestsDic removeObjectForKey:(NSURLSessionDataTask*)task];
-        [loadingRequest finishLoading];
         if (error) {
             NSLog(@"%@", error);
 //            if (self.delegate && [self.delegate respondsToSelector:@selector(requestTaskDidFailWithError:)]) {
 //                [self.delegate requestTaskDidFailWithError:error];
 //            }
         }else {
+            AVAssetResourceLoadingRequest * loadingRequest = _loadingRequestsDic[(NSURLSessionDataTask*)task];
+            [_loadingRequests removeObject:loadingRequest];
+            NSLog(@"下载完成 目前有%lu个请求", (unsigned long)_loadingRequests.count);
+            [_loadingRequestsDic removeObjectForKey:(NSURLSessionDataTask*)task];
             if(_loadingRequests.count == 0){ // 全部完成.
+                [loadingRequest finishLoading];
 //                NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",@"abc"];
 //                long long size = [Util fileSizeAtPath:savingPath];
 //                NSLog(@"文件大小为%lli", size);
