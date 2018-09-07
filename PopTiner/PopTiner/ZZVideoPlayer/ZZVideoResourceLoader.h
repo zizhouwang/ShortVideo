@@ -11,6 +11,10 @@
 
 @interface ZZVideoResourceLoader : NSObject<AVAssetResourceLoaderDelegate>
 
+@property (nonatomic, strong) NSString * tag;
 @property (nonatomic, strong) NSString * urlStr;
+@property (nonatomic, strong) NSString * originURLStr;
+
+- (id)initWithURLStr:(NSString*)urlStr originURLStr:(NSString*)originURLStr;
 
 @end

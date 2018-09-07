@@ -26,8 +26,9 @@
     // 创建要播放的资源
     NSURL * url = [NSURL URLWithString:urlStr];
     _asset = [AVURLAsset URLAssetWithURL:[self getSchemeVideoURL:url] options:nil];
-    _resourceLoader = [[ZZVideoResourceLoader alloc] init];
+    _resourceLoader = [[ZZVideoResourceLoader alloc] initWithURLStr:_urlStr originURLStr:_originURLStr];
     _resourceLoader.urlStr = _urlStr;
+    _resourceLoader.originURLStr = _urlStr;
 //    JPVideoPlayerResourceLoader *resourceLoader = [JPVideoPlayerResourceLoader resourceLoaderWithCustomURL:url];
     [_asset.resourceLoader setDelegate:_resourceLoader queue:dispatch_get_main_queue()];
 //    _avPlayerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:urlStr]];

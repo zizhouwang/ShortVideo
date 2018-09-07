@@ -45,6 +45,7 @@
 //    }];
     [self installMovieNotificationObservers];
     _player.urlStr = urlStr;
+    _player.originURLStr = urlStr;
     __weak typeof(self) weakSelf = self;
     NSURL *url = [NSURL URLWithString:urlStr];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
@@ -74,6 +75,7 @@
     [_player setIsNeedPlay:true];
     _isNeedPlay = true;
     [_player.avPlayer play];
+    [Util shareInstance].currentVideoPlayer = _player;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -189,8 +191,19 @@
 #pragma mark - ZZVideoPlayerProtocol
 - (void)playbackFinish:(NSNotification *)notifi {
     NSLog(@"播放完成%li", (long)_index);
+    NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",@"abc.mp4"];
+    UISaveVideoAtPathToSavedPhotosAlbum(savingPath, self, @selector(video:didFinishSavingWithError:contextInfo:), nil);
     [_player.avPlayerItem seekToTime:kCMTimeZero];
     [_player.avPlayer play];
+}
+
+#pragma mark 视频保存完毕的回调
+- (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInf{
+    if (error) {
+        NSLog(@"保存视频过程中发生错误，错误信息:%@",error.localizedDescription);
+    }else{
+        NSLog(@"视频保存成功.");
+    }
 }
 
 - (void)dealloc {

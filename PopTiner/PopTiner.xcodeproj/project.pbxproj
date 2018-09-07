@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F07D9D321421A5700C85B4F /* Util.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F07D9D221421A5700C85B4F /* Util.m */; };
+		7F07D9D62142239000C85B4F /* MD5Encrypt.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F07D9D52142239000C85B4F /* MD5Encrypt.m */; };
 		7FC02249213FE3DF00419C45 /* VideoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FC02247213FE3DF00419C45 /* VideoModel.m */; };
 		7FC0224C2140CAE800419C45 /* AppIcon40x40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7FC0224B2140CAE800419C45 /* AppIcon40x40@2x.png */; };
 		7FC022502140D28100419C45 /* ZZVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FC0224F2140D28100419C45 /* ZZVideoPlayer.m */; };
@@ -87,6 +89,10 @@
 
 /* Begin PBXFileReference section */
 		1CCC467FF61BABCD5B688666 /* Pods-PopTiner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PopTiner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PopTiner/Pods-PopTiner.debug.xcconfig"; sourceTree = "<group>"; };
+		7F07D9D121421A5700C85B4F /* Util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
+		7F07D9D221421A5700C85B4F /* Util.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Util.m; sourceTree = "<group>"; };
+		7F07D9D42142239000C85B4F /* MD5Encrypt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MD5Encrypt.h; sourceTree = "<group>"; };
+		7F07D9D52142239000C85B4F /* MD5Encrypt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MD5Encrypt.m; sourceTree = "<group>"; };
 		7FC02247213FE3DF00419C45 /* VideoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoModel.m; sourceTree = "<group>"; };
 		7FC02248213FE3DF00419C45 /* VideoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoModel.h; sourceTree = "<group>"; };
 		7FC0224B2140CAE800419C45 /* AppIcon40x40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon40x40@2x.png"; sourceTree = "<group>"; };
@@ -224,6 +230,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7F07D9D021421A3F00C85B4F /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				7F07D9D121421A5700C85B4F /* Util.h */,
+				7F07D9D221421A5700C85B4F /* Util.m */,
+				7F07D9D42142239000C85B4F /* MD5Encrypt.h */,
+				7F07D9D52142239000C85B4F /* MD5Encrypt.m */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
 		7FC02246213FE3D400419C45 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -307,6 +324,7 @@
 		7FE36B02213D64CE00EF2E9A /* PopTiner */ = {
 			isa = PBXGroup;
 			children = (
+				7F07D9D021421A3F00C85B4F /* Util */,
 				7FC022542141135E00419C45 /* JPVideoPlayer */,
 				7FC0224D2140D26800419C45 /* ZZVideoPlayer */,
 				7FC02246213FE3D400419C45 /* Model */,
@@ -592,10 +610,12 @@
 				7FC0227D2141137500419C45 /* JPVideoPlayerResourceLoader.m in Sources */,
 				7FC022772141137500419C45 /* JPVideoPlayerCache.m in Sources */,
 				7FC022782141137500419C45 /* JPVideoPlayerCachePath.m in Sources */,
+				7F07D9D321421A5700C85B4F /* Util.m in Sources */,
 				7FE36B47213F746B00EF2E9A /* HomeVC.m in Sources */,
 				7FC022742141137500419C45 /* JPResourceLoadingRequestTask.m in Sources */,
 				7FC02288214127F200419C45 /* NSURLSessionDataTask+CustomContent.m in Sources */,
 				7FC0227F2141137500419C45 /* JPVideoPlayerManager.m in Sources */,
+				7F07D9D62142239000C85B4F /* MD5Encrypt.m in Sources */,
 				7FC0227E2141137500419C45 /* UITableView+WebVideoCache.m in Sources */,
 				7FE36B13213D64D700EF2E9A /* main.m in Sources */,
 				7FE36B44213F6E9100EF2E9A /* BasePageViewController.m in Sources */,

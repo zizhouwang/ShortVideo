@@ -28,6 +28,7 @@
 @property (nonatomic, weak) id<ZZVideoPlayerProtocol> delegate;
 
 @property (nonatomic, strong) NSString * urlStr;
+@property (nonatomic, strong) NSString * originURLStr;
 @property (nonatomic, strong) AVURLAsset * asset;
 @property (nonatomic, strong) AVPlayerItem * avPlayerItem;
 @property (nonatomic, strong) AVPlayer * avPlayer;

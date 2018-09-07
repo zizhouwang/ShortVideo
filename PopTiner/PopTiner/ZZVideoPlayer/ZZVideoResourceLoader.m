@@ -10,6 +10,8 @@
 #import "BaseURLSessionDataTask.h"
 #import "NSURLSessionDataTask+CustomContent.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <AssetsLibrary/AssetsLibrary.h>
+#import "Util.h"
 
 @interface ZZVideoResourceLoader()<NSURLConnectionDataDelegate, NSURLSessionDataDelegate>
 
@@ -23,11 +25,15 @@
 
 @implementation ZZVideoResourceLoader
 
-- (id)init {
+- (id)initWithURLStr:(NSString*)urlStr originURLStr:(NSString*)originURLStr {
     self = [super init];
     if (self) {
         _loadingRequests = [NSMutableArray array];
         _loadingRequestsDic = [NSMutableDictionary dictionary];
+        _urlStr = urlStr;
+        _originURLStr = originURLStr;
+        NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",@"abc.mp4"];
+        [[NSFileManager defaultManager] createFileAtPath:savingPath contents:nil attributes:nil];
     }
     return self;
 }
@@ -70,10 +76,27 @@
     return ((range.location != NSNotFound) || (range.length > 0));
 }
 
+- (long long)getVideoFileLength:(NSURLResponse *)response {
+    NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
+    NSString *range = [res allHeaderFields][@"Content-Range"];
+    if (range) {
+        NSArray *ranges = [range componentsSeparatedByString:@"/"];
+        if (ranges.count > 0) {
+            NSString *lengthString = [[ranges lastObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            return [lengthString longLongValue];
+        }
+    }
+    else {
+        return [response expectedContentLength];
+    }
+    return 0;
+}
+
 #pragma mark - AVAssetResourceLoaderDelegate
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest {
     NSLog(@"%@", @"收到新的请求");
     [_loadingRequests addObject:loadingRequest];
+    NSLog(@"开始下载 目前有%lu个请求", (unsigned long)_loadingRequests.count);
     NSRange range = [self fetchRequestRangeWithRequest:loadingRequest];
     
     NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:_urlStr] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20.0f];
@@ -94,28 +117,19 @@
 }
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
-    if ([_loadingRequests containsObject:loadingRequest]) {
-        if (self.runningLoadingRequest == loadingRequest) {
-            
-        }
-        [_loadingRequests removeObject:loadingRequest];
-    }
-}
-
-- (long long)getVideoFileLength:(NSURLResponse *)response {
-    NSHTTPURLResponse *res = (NSHTTPURLResponse *)response;
-    NSString *range = [res allHeaderFields][@"Content-Range"];
-    if (range) {
-        NSArray *ranges = [range componentsSeparatedByString:@"/"];
-        if (ranges.count > 0) {
-            NSString *lengthString = [[ranges lastObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            return [lengthString longLongValue];
-        }
-    }
-    else {
-        return [response expectedContentLength];
-    }
-    return 0;
+    NSLog(@"%@", @"取消下载");
+//    if ([_loadingRequests containsObject:loadingRequest]) {
+//        [_loadingRequests removeObject:loadingRequest];
+//        NSURLSessionDataTask * theKey = nil;
+//        for (NSURLSessionDataTask * key in _loadingRequestsDic) {
+//            AVAssetResourceLoadingRequest * tempLoadingRequest = _loadingRequestsDic[key];
+//            if (tempLoadingRequest == loadingRequest) {
+//                theKey = key;
+//            }
+//        }
+//        [_loadingRequestsDic removeObjectForKey:theKey];
+//        NSLog(@"取消下载 目前有%lu个请求", (unsigned long)_loadingRequests.count);
+//    }
 }
 
 #pragma mark - NSURLSessionDataDelegate
@@ -132,22 +146,10 @@
     loadingRequest.contentInformationRequest.contentType = CFBridgingRelease(contentType);
     long long contentLength = [self getVideoFileLength:response];
     loadingRequest.contentInformationRequest.contentLength = contentLength;
-    NSLog(@"%i", loadingRequest.contentInformationRequest.byteRangeAccessSupported);
-    NSLog(@"%@", loadingRequest.contentInformationRequest.contentType);
     NSLog(@"%lli", loadingRequest.contentInformationRequest.contentLength);
     if (completionHandler) {
         completionHandler(NSURLSessionResponseAllow);
     }
-//    response.MIMEType
-//    completionHandler(NSURLSessionResponseAllow);
-//    NSHTTPURLResponse * httpResponse = (NSHTTPURLResponse *)response;
-//    NSString * contentRange = [[httpResponse allHeaderFields] objectForKey:@"Content-Range"];
-//    NSString * fileLength = [[contentRange componentsSeparatedByString:@"/"] lastObject];
-//    self.fileLength = fileLength.integerValue > 0 ? fileLength.integerValue : response.expectedContentLength;
-//
-//    if (self.delegate && [self.delegate respondsToSelector:@selector(requestTaskDidReceiveResponse)]) {
-//        [self.delegate requestTaskDidReceiveResponse];
-//    }
 }
 
 //服务器返回数据 可能会调用多次
@@ -155,45 +157,15 @@
     if (self.cancel) return;
     AVAssetResourceLoadingRequest * loadingRequest = _loadingRequestsDic[dataTask];
     [loadingRequest.dataRequest respondWithData:data];
-    NSLog(@"%lu", (unsigned long)data.length);
     
-//    ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];
-//    [library enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-//        [group setAssetsFilter:[ALAssetsFilter allVideos]];
-//        if (group.numberOfAssets > 0)
-//        {
-//            NSIndexSet *videoSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, group.numberOfAssets)];
-//            [group enumerateAssetsAtIndexes:videoSet options:0 usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-//                ALAssetRepresentation *representation = [result defaultRepresentation];
-//                NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",representation.filename];
-//                [[NSFileManager defaultManager]createFileAtPath:savingPath contents:nil attributes:nil];
-//                NSFileHandle *writingHandle = [NSFileHandle fileHandleForWritingAtPath:savingPath];
-//                int bufferSize = 1024;
-//                uint8_t buffer[bufferSize];
-//                unsigned long long read = 0,length = 0;
-//                NSAutoreleasePool *pool = [[NSAutoreleasePool alloc]init];
-//                int n = 0;
-//                for (;read < representation.size;)
-//                {
-//                    if (n % 10 == 0)
-//                    {
-//                        [pool release];
-//                        pool = nil;
-//                        pool = [[NSAutoreleasePool alloc]init];
-//                    }
-//                    length = [representation getBytes:buffer fromOffset:read length:bufferSize error:nil];
-//                    read += length;
-//                    NSData *fileData = [NSData dataWithBytes:(const void *)buffer length:(NSUInteger)length];
-//                    [writingHandle writeData:fileData];
-//                    n++;
-//                }
-//                [writingHandle closeFile];
-//                [pool drain];
-//            }];
-//        }
-//    } failureBlock:^(NSError *error) {
-//
-//    }];
+    NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",@"abc.mp4"];
+    NSFileHandle *writingHandle = [NSFileHandle fileHandleForWritingAtPath:savingPath];
+    [writingHandle seekToEndOfFile];
+    [writingHandle writeData:data];
+    [writingHandle closeFile];
+    NSLog(@"网络数据为%lu", (unsigned long)data.length);
+    long long size = [Util fileSizeAtPath:savingPath];
+    NSLog(@"文件大小为%lli", size);
     
 //    [SUFileHandle writeTempFileData:data];
 //    self.cacheLength += data.length;
@@ -208,19 +180,22 @@
     if (self.cancel) {
         NSLog(@"下载取消");
     }else {
+        AVAssetResourceLoadingRequest * loadingRequest = _loadingRequestsDic[(NSURLSessionDataTask*)task];
+        [_loadingRequests removeObject:loadingRequest];
+        NSLog(@"下载完成 目前有%lu个请求", (unsigned long)_loadingRequests.count);
+        [_loadingRequestsDic removeObjectForKey:(NSURLSessionDataTask*)task];
+        [loadingRequest finishLoading];
         if (error) {
             NSLog(@"%@", error);
 //            if (self.delegate && [self.delegate respondsToSelector:@selector(requestTaskDidFailWithError:)]) {
 //                [self.delegate requestTaskDidFailWithError:error];
 //            }
         }else {
-            AVAssetResourceLoadingRequest * loadingRequest = _loadingRequestsDic[(NSURLSessionDataTask*)task];
-            [self.loadingRequests removeObject:loadingRequest];
-            [_loadingRequestsDic removeObjectForKey:(NSURLSessionDataTask*)task];
-            if(self.loadingRequests.count == 0){ // 全部完成.
-                [loadingRequest finishLoading];
-//                [self removeCurrentRequestTaskAndResetAll];
-//                [self findAndStartNextLoadingRequestIfNeed];
+            if(_loadingRequests.count == 0){ // 全部完成.
+//                NSString *savingPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@",@"abc"];
+//                long long size = [Util fileSizeAtPath:savingPath];
+//                NSLog(@"文件大小为%lli", size);
+//                [loadingRequest finishLoading];
             }
             else { // 完成了一部分, 继续请求.
 //                [self startNextTaskIfNeed];
