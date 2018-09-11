@@ -68,6 +68,13 @@ class MusicalLyController extends Controller {
             $videoDetail['comment_number'] = $statistics['comment_count'];
             $videoDetail['liked_number'] = $statistics['digg_count'];
             $shortVideo->video_details = json_encode($videoDetail);
+            $author = $videoInfo['author'];
+            $authorUid = $author['uid'];
+            $authorNickname = $author['nickname'];
+            $authorUniqueId = $author['unique_id'];
+            $shortVideo->author_uid = $authorUid;
+            $shortVideo->author_nickname = json_encode($authorNickname);
+            $shortVideo->author_unique_id = json_encode($authorUniqueId);
             //$tempRating = intval($videoInfo['likedNum']) * 0.01 + intval($videoInfo['commentNum']) + intval($videoInfo['shareNum']);
             $tempRating = (intval($videoDetail['liked_number']) + intval($videoDetail['comment_number'])) * 10 + intval($videoDetail['share_number']) * 100 + ($shortVideo->video_created_time - strtotime("2018-01-01")) / 86400;
             $shortVideo->video_rating = intval($this->calculateTwoMonthRating($shortVideo->video_created_time, $tempRating));

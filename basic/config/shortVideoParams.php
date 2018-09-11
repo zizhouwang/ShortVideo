@@ -12,7 +12,7 @@
             9 => 'Beano',
             10 => 'KuaiShou',
             11 => 'other',
-            12 => 'Tik Tok'
+            12 => 'Tik Tok',
         ]
 	];
 ?>

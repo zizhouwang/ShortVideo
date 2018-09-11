@@ -13,6 +13,7 @@ return [
             8 => 'Coup',
             9 => 'Beano',
             10 => 'KuaiShou',
-            11 => 'other'
+            11 => 'other',
+            12 => 'Tik Tok',
         ],
 ];
