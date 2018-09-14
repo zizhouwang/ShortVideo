@@ -46,6 +46,7 @@ class MusicalLyController extends Controller {
                 $shortVideo->video_identify_md5 = $videoIdentifyMd5;
                 $shortVideo->os = 1;
             }
+            $shortVideo->body = json_encode($videoInfo['desc']);
             $videoURLInfo = $videoInfo['video'];
             $videoUrl = $videoURLInfo['play_addr']['url_list'][0];
             $shortVideo->video_url = $videoUrl;
