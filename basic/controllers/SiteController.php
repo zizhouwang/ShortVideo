@@ -119,16 +119,23 @@ class SiteController extends Controller
      */
     public function actionIndex($screenType = 0, $channel = 0)
     {
-	$allTime = 0;
+	    $allTime = 0;
         $time1 = intval(time());
-        $minId = 1;
-        $maxId = 214565;
+        $minId = 222702;
+        $maxKey = "maxId";
+        $cache = Yii::$app->cache;
+        $maxId = $cache->get($maxKey);
+        if ($maxId === false) {
+            $maxId = intval(ShortVideo::findBySql("SELECT MAX(id) FROM short_video")->scalar());
+            $cache->set($maxKey, $maxId, 86400);
+        }
+        //$maxId = 214565;
         $partDataCount = ($maxId - $minId) / 2;
         $randTime1 = intval(time());
         $id1 = rand($minId, $maxId);
-	$randTime2 = intval(time());
+	    $randTime2 = intval(time());
         $randTime = $randTime2 - $randTime1;
-	$ids = [$id1];
+	    $ids = [$id1];
         $resultShortVideos = [];
         $channelInfo = Yii::$app->params['channel_info'];
         $findTimes = 0;
@@ -137,7 +144,7 @@ class SiteController extends Controller
         while (true) {
             foreach ($ids as $index => $id) {
                 $sqlTime1 = intval(time());
-                $sqlStr = "SELECT id, video_channel_id, video_url, video_image_url, share_url, share_text, width_height, video_details FROM short_video WHERE id>{$id}";
+                $sqlStr = "SELECT id, video_channel_id, video_url, video_image_url, share_url, share_text, width_height, video_details, body, author_nickname, author_uid FROM short_video WHERE id>{$id}";
                 if ($channel != 0) {
                     $sqlStr .= " AND video_channel_id={$channel}";
                 }
@@ -146,11 +153,6 @@ class SiteController extends Controller
                 }
                 $sqlStr .= " LIMIT 100";
                 $oldShortVideos = ShortVideo::findBySql($sqlStr)->all();
-                /*if ($channel == 0) {
-                    $oldShortVideos = ShortVideo::findBySql("SELECT id, video_channel_id, video_url, video_image_url, share_url, share_text, width_height, video_details FROM short_video WHERE id>{$id} AND screen_type={$screenType} LIMIT 100")->all();
-                } else {
-                    $oldShortVideos = ShortVideo::findBySql("SELECT id, video_channel_id, video_url, video_image_url, share_url, share_text, width_height, video_details FROM short_video WHERE id>{$id} AND screen_type={$screenType} AND video_channel_id={$channel} LIMIT 100")->all();
-                }*/
                 $sqlTime2 = intval(time());
                 $sqlTime += $sqlTime2 - $sqlTime1;
                 if (count($oldShortVideos) === 0) {
@@ -189,6 +191,9 @@ class SiteController extends Controller
                 foreach ($shortVideos as $shortVideo) {
                     $resultShortVideo = [];
                     $resultShortVideo['video_id'] = $shortVideo->id;
+                    $resultShortVideo['desc'] = $shortVideo->body;
+                    $resultShortVideo['author_nickname'] = $shortVideo->author_nickname;
+                    $resultShortVideo['author_uid'] = $shortVideo->author_uid;
                     $ids[$index] = $resultShortVideo['video_id'];
                     $resultShortVideo['video_cdn_url'] = $shortVideo->video_url;
                     $resultShortVideo['share_url'] = $shortVideo->share_url;

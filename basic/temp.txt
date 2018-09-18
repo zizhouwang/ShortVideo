@@ -1,0 +1,6 @@
+PDO
+mysql:host=localhost;dbname=mysql
+root
+!Aa2231298
+
+

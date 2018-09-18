@@ -44,6 +44,10 @@ $config = [
             ],
         ],
         'db' => $db,
+        'cache' => [ 
+            'class' => 'yii\caching\FileCache', 
+            'cachePath' => '@runtime/cache2', 
+        ], 
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
