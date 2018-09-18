@@ -7,6 +7,7 @@
 //
 
 #import "BaseTabbarController.h"
+#import "Util.h"
 
 @interface BaseTabbarController ()
 
@@ -16,6 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [Util shareInstance].homeTabbarController = self;
 }
 
 - (void)didReceiveMemoryWarning {

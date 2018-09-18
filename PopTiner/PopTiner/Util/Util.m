@@ -7,6 +7,7 @@
 //
 
 #import "Util.h"
+#import "MD5Encrypt.h"
 
 @implementation Util
 
@@ -53,6 +54,52 @@
         }
     }
     return bytesLeft == 0;
+}
+
++ (void)saveVideoInfo {
+    [[NSUserDefaults standardUserDefaults] setObject:[Util shareInstance].savedVideoDic forKey:@"savedVideoDic"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++ (NSString*)generateLocalVideoPath:(NSString *)originURL {
+    NSString * videoURLMd5 = [MD5Encrypt MD5ForLower32Bate:originURL];
+    return [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@.mp4", videoURLMd5];
+}
+
++ (BOOL)isSavedVideoURL:(NSString *)originURLStr {
+    NSDictionary * videoInfo = [[Util shareInstance].savedVideoDic objectForKey:originURLStr];
+    if (videoInfo != nil) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
++ (NSString*)numberToKStr:(NSInteger)number {
+    CGFloat numberFloat = number;
+    if (numberFloat > 10000) {
+        numberFloat = numberFloat / 1000.0f;
+        return [NSString stringWithFormat:@"%.1fw", numberFloat];
+    } else {
+        return [NSString stringWithFormat:@"%.0f", numberFloat];
+    }
+}
+
++ (CGFloat)screenWidth {
+    return [[UIScreen mainScreen] bounds].size.width;
+}
+
++ (CGFloat)screenHeight {
+    return [[UIScreen mainScreen] bounds].size.height;
+}
+
++ (UIWindow*)mainWindow {
+    UIApplication *app = [UIApplication sharedApplication];
+    if ([app.delegate respondsToSelector:@selector(window)]) {
+        return [app.delegate window];
+    } else {
+        return [app keyWindow];
+    }
 }
 
 @end

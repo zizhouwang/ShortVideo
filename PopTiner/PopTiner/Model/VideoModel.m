@@ -3,13 +3,12 @@
 //
 
 #import "VideoModel.h"
-@implementation VideoModel
 
+@implementation VideoModel
 
 @end
 
 @implementation VideoDetails
-
 
 @end
 

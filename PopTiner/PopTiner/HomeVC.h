@@ -7,12 +7,16 @@
 //
 
 #import "BaseViewController.h"
+#import "VideoModel.h"
 
 @interface HomeVC : BaseViewController
 
 @property (nonatomic, assign) NSInteger index;
+@property (nonatomic, strong) NSString * originURLStr;
 @property (nonatomic, strong) NSString * urlStr;
 
-- (void)startInitVideo:(NSString*)urlStr;
+- (void)setVideoInfo:(NSString*)urlStr;
+- (void)setVideoModel:(VideoModel*)videoModel;
+- (void)loadDataWithModel;
 
 @end

@@ -13,6 +13,12 @@
 
 @property (nonatomic, copy) NSString *share_text;
 
+@property (nonatomic, copy) NSString *desc;
+
+@property (nonatomic, copy) NSString *author_nickname;
+
+@property (nonatomic, copy) NSString *author_uid;
+
 @property (nonatomic, assign) NSInteger video_id;
 
 @property (nonatomic, copy) NSString *video_cdn_url;

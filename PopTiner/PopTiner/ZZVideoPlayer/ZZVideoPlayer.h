@@ -11,10 +11,13 @@
 #import <AVFoundation/AVFoundation.h>
 #import "ZZVideoResourceLoader.h"
 
+@class ZZVideoPlayer;
+
 @protocol ZZVideoPlayerProtocol<NSObject>
 
 @required
 - (void)playbackFinish:(NSNotification*)notifi;
+- (void)readyToPlay:(ZZVideoPlayer*)videoPlayer;
 
 @end
 
@@ -22,6 +25,7 @@
 
 @property (nonatomic, assign) Boolean isNeedPlay;
 @property (nonatomic, assign) Boolean isCouldPlay;
+@property (nonatomic, assign) NSInteger index;
 //@property (nonatomic, assign) Boolean isPlayed;
 //@property (nonatomic, assign) Boolean isPause;
 
@@ -37,5 +41,6 @@
 
 - (void)startLoadVideo:(NSString*)urlStr;
 - (void)p_currentItemRemoveObserver;
+- (void)p_currentItemAddObserver;
 
 @end

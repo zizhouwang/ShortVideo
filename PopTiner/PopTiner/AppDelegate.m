@@ -17,6 +17,19 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    NSDictionary *savedVideoDic = [[NSUserDefaults standardUserDefaults] objectForKey:@"savedVideoDic"];
+    if (savedVideoDic == nil) {
+        [Util shareInstance].savedVideoDic = [NSMutableDictionary dictionary];
+        [Util saveVideoInfo];
+    } else {
+        [Util shareInstance].savedVideoDic = [NSMutableDictionary dictionaryWithDictionary:savedVideoDic];
+    }
+    NSInteger userId = [[NSUserDefaults standardUserDefaults] integerForKey:@"userId"];
+    if (userId == 0) {
+        userId = arc4random() % 3294967296 + 99999999;
+        [[NSUserDefaults standardUserDefaults] setInteger:userId forKey:@"userId"];
+    }
+    [Util shareInstance].userId = userId;
     return YES;
 }
 
